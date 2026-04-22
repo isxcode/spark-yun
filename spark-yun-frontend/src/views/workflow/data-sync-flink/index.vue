@@ -190,8 +190,8 @@
                 <data-sync-table ref="dataSyncTableRef" :disabled="disabled" :formData="formData"></data-sync-table>
             </div>
         </LoadingPage>
-        <!-- 数据同步日志部分  v-if="instanceId" -->
-        <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+        <!-- 数据同步日志部分 -->
+        <el-collapse v-if="showLogPanel" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
@@ -354,6 +354,7 @@ const btnLoadingConfig = reactive({
     exportLoading: false,
     stopLoading: false
 })
+const showLogPanel = computed(() => !!instanceId.value || btnLoadingConfig.runningLoading)
 
 // 日志tab切换
 function startResizeLogPanel(event: MouseEvent) {
@@ -388,7 +389,7 @@ function tabChangeEvent(e: string) {
   activeName.value = e
   currentTab.value = markRaw(lookup[e])
   nextTick(() => {
-    containerInstanceRef.value.initData(instanceId.value)
+    containerInstanceRef.value?.initData(instanceId.value)
   })
 }
 
@@ -458,13 +459,13 @@ function getDate() {
             formData.targetDBId = syncConfig.targetDBId
             formData.targetTable = syncConfig.targetTable
             formData.overMode = 'INTO'
+            sourceTablesList.value = []
+            targetTablesList.value = []
 
             nextTick(() => {
                 Promise.all([
                     getDataSource(true, formData.sourceDBType, 'source'),
-                    getDataSource(true, formData.targetDBType, 'target'),
-                    getDataSourceTable(true, formData.sourceDBId, 'source'),
-                    getDataSourceTable(true, formData.targetDBId, 'target')
+                    getDataSource(true, formData.targetDBType, 'target')
                 ]).then(() => {
                     loading.value = false
                 }).catch((err: any) => {
@@ -825,10 +826,16 @@ function saveAdvancedConfig() {
 }
 
 function changeCollapseDown() {
+    if (!logCollapseRef.value) {
+        return
+    }
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
 }
 function changeCollapseUp(e: any) {
+    if (!logCollapseRef.value) {
+        return
+    }
     if (e && e.paneName === activeName.value && isCollapse.value) {
         changeCollapseDown()
     } else {

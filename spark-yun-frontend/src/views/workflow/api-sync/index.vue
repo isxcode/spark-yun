@@ -290,8 +290,8 @@
             </div>
             <data-sync-table ref="dataSyncTableRef" :formData="formData" :disabled="props.disabled"></data-sync-table>
         </div>
-        <!-- 数据同步日志部分  v-if="instanceId" -->
-        <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+        <!-- 数据同步日志部分 -->
+        <el-collapse v-if="showLogPanel" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
@@ -532,6 +532,7 @@ const btnLoadingConfig = reactive({
     runningLoading: false,
     stopLoading: false
 })
+const showLogPanel = computed(() => !!instanceId.value || btnLoadingConfig.runningLoading)
 
 function toNumberOrDefault(value: any, defaultValue: number) {
     const numberValue = Number(value)
@@ -579,7 +580,7 @@ function tabChangeEvent(e: string) {
   }
   nextTick(() => {
     changeCollapseUp()
-    containerInstanceRef.value.initData(instanceId.value)
+    containerInstanceRef.value?.initData(instanceId.value)
   })
 }
 
@@ -706,14 +707,12 @@ function getData() {
             formData.targetDBId = apiSyncConfig.targetDBId || formData.targetDBId || ''
             formData.targetTable = apiSyncConfig.targetTable || formData.targetTable || ''
             formData.overMode = apiSyncConfig.overMode || formData.overMode || 'INTO'
+            sourceTablesList.value = []
+            targetTablesList.value = []
 
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
-                if (formData.sourceDBType === 'DATASOURCE') {
-                    getDataSourceTable(true, formData.sourceDBId, 'source')
-                }
-                getDataSourceTable(true, formData.targetDBId, 'target')
 
                 dataSyncTableRef.value.initPageData(tableInitData)
                 changeStatus.value = false
@@ -733,14 +732,12 @@ function getData() {
             formData.pageEnd = toNumberOrDefault(formData.pageEnd, 1)
             formData.pageAll = !!formData.pageAll
             formData.overMode = formData.overMode || 'INTO'
+            sourceTablesList.value = []
+            targetTablesList.value = []
 
             nextTick(() => {
                 getDataSource(true, formData.sourceDBType, 'source')
                 getDataSource(true, formData.targetDBType, 'target')
-                if (formData.sourceDBType === 'DATASOURCE') {
-                    getDataSourceTable(true, formData.sourceDBId, 'source')
-                }
-                getDataSourceTable(true, formData.targetDBId, 'target')
 
                 dataSyncTableRef.value.initPageData(res.data.syncWorkConfig)
                 changeStatus.value = false
@@ -807,7 +804,7 @@ function runTimeFunc() {
         nextTick(() => {
             suppressTabLogInitOnce.value = false
             changeCollapseUp()
-            containerInstanceRef.value.initData(instanceId.value)
+            containerInstanceRef.value?.initData(instanceId.value)
         })
         btnLoadingConfig.runningLoading = false
     }).catch(() => {
@@ -1111,10 +1108,16 @@ function setConfigData() {
 }
 
 function changeCollapseDown() {
+    if (!logCollapseRef.value) {
+        return
+    }
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
 }
 function changeCollapseUp(e: any) {
+    if (!logCollapseRef.value) {
+        return
+    }
     if (e && e.paneName === activeName.value && isCollapse.value) {
         changeCollapseDown()
     } else {

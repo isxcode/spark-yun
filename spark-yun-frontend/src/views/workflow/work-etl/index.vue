@@ -15,8 +15,8 @@
                 ></ZEtlFlow>
             </div>
         </LoadingPage>
-         <!-- 数据同步日志部分  v-if="instanceId" -->
-         <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+         <!-- 数据同步日志部分 -->
+         <el-collapse v-if="showLogPanel" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, defineEmits, defineProps, onMounted, onUnmounted, nextTick, markRaw } from 'vue'
+import { ref, reactive, defineEmits, defineProps, onMounted, onUnmounted, nextTick, markRaw, computed } from 'vue'
 import OptionsContainer from './options-container/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -102,6 +102,7 @@ const tabList = reactive([
         hide: false
     }
 ])
+const showLogPanel = computed(() => !!instanceId.value || optionsContainerRef.value?.btnLoadingConfig?.runningLoading)
 
 function optionsEvent(e: string) {
     if (e === 'goBack') {
@@ -331,10 +332,16 @@ function tabChangeEvent(e: string) {
     })
 }
 function changeCollapseDown() {
+    if (!logCollapseRef.value) {
+        return
+    }
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
 }
 function changeCollapseUp(e: any) {
+    if (!logCollapseRef.value) {
+        return
+    }
     if (e && e.paneName === activeName.value && isCollapse.value) {
         changeCollapseDown()
     } else {

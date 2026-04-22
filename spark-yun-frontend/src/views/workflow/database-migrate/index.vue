@@ -154,8 +154,8 @@
                 <table-list ref="tableListRef" :formData="formData"></table-list>
             </div>
         </LoadingPage>
-        <!-- 数据同步日志部分  v-if="instanceId" -->
-        <el-collapse v-if="!!instanceId" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
+        <!-- 数据同步日志部分 -->
+        <el-collapse v-if="showLogPanel" v-model="collapseActive" class="data-sync-log__collapse" ref="logCollapseRef">
             <div class="log-resize-handle" @mousedown="startResizeLogPanel"></div>
             <el-collapse-item title="查看日志" :disabled="true" name="1">
                 <template #title>
@@ -180,7 +180,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted, defineProps, nextTick, markRaw } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, defineProps, nextTick, markRaw, computed } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import ConfigDetail from '../workflow-page/config-detail/index.vue'
 import { GetWorkItemConfig, RunWorkItemConfig, SaveWorkItemConfig, TerWorkItemConfig } from '@/services/workflow.service'
@@ -263,6 +263,7 @@ const btnLoadingConfig = reactive({
     exportLoading: false,
     stopLoading: false
 })
+const showLogPanel = computed(() => !!instanceId.value || btnLoadingConfig.runningLoading)
 
 
 // 保存数据
@@ -346,7 +347,7 @@ function runWorkData() {
                 instanceId.value = res.data.instanceId
                 ElMessage.success(res.msg)
                 nextTick(() => {
-                    containerInstanceRef.value.initData(instanceId.value)
+                    containerInstanceRef.value?.initData(instanceId.value)
                 })
                 btnLoadingConfig.runningLoading = false
                 nextTick(() => {
@@ -367,7 +368,7 @@ function runWorkData() {
             instanceId.value = res.data.instanceId
             ElMessage.success(res.msg)
             nextTick(() => {
-                containerInstanceRef.value.initData(instanceId.value)
+                containerInstanceRef.value?.initData(instanceId.value)
             })
             btnLoadingConfig.runningLoading = false
             // initData(res.data.instanceId)
@@ -433,11 +434,17 @@ function setConfigData() {
 }
 
 function changeCollapseDown() {
+    if (!logCollapseRef.value) {
+        return
+    }
     logCollapseRef.value.setActiveNames('0')
     isCollapse.value = false
 }
 
 function changeCollapseUp(e: any) {
+    if (!logCollapseRef.value) {
+        return
+    }
     if (e && e.paneName === activeName.value && isCollapse.value) {
         changeCollapseDown()
     } else {
@@ -483,7 +490,7 @@ function tabChangeEvent(e: string) {
     activeName.value = e
     currentTab.value = markRaw(lookup[e])
     nextTick(() => {
-        containerInstanceRef.value.initData(instanceId.value)
+        containerInstanceRef.value?.initData(instanceId.value)
     })
 }
 
