@@ -32,7 +32,7 @@
             <el-form-item label="accessTokenUrl" prop="accessTokenUrl">
                 <el-input v-model="formData.accessTokenUrl" maxlength="2000" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="redirectUrl" prop="redirectUrl">
+            <el-form-item label="redirectUrl (回调地址)" prop="redirectUrl">
                 <el-input v-model="formData.redirectUrl" maxlength="2000" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="userUrl" prop="userUrl">

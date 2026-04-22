@@ -1,5 +1,5 @@
 import type { ElForm, FormRules } from "element-plus";
-import { reactive, readonly, ref } from "vue";
+import { onMounted, reactive, readonly, ref } from "vue";
 
 import logo from '@/assets/imgs/logo1.svg';
 import { OauthUrlList } from "@/services/login.service";
@@ -29,6 +29,7 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
   }
   let btnLoading = ref(false)
   let oauthUrlList = ref([])
+  let oauthLoaded = ref(false)
   let loginModel = reactive<LoginModel>({
     account: '',
     passwd: ''
@@ -57,13 +58,20 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
     }
   }
 
-  const handleShow = function() {
+  const queryOauthList = function() {
     OauthUrlList().then((res: any) => {
       oauthUrlList.value = res.data
     }).catch(() => {
       oauthUrlList.value = []
+    }).finally(() => {
+      oauthLoaded.value = true
     })
   }
+
+  onMounted(() => {
+    queryOauthList()
+  })
+
   const handleRedirect = function(e: any) {
     location.href = e.invokeUrl
   }
@@ -109,25 +117,22 @@ export function useLogin (callback: ((callback: LoginModel) => Promise<void>)) {
           loading={btnLoading.value}
           onClick={handleLogin}
         >确认登录</el-button>
-        <div class="oauth-login">
+        {oauthLoaded.value && !!oauthUrlList.value.length && <div class="oauth-login">
           <el-popover
             trigger="click"
             placement="bottom"
             width={180}
-            onShow={handleShow}
             v-slots={{
                 reference: () => <span class="oauth-login-text">免密登录</span>,
                 default: () =>
                 <div class="oauth-redirect-url">
                   {
-                    !oauthUrlList.value.length ?
-                    <div style="margin: auto;">暂无数据</div> :
                     oauthUrlList.value.map(item => <el-button type="primary" onClick={ () => handleRedirect(item)}>{item.name}</el-button>)
                   }
                 </div>
             }}>
           </el-popover>
-        </div>
+        </div>}
       </div>
     ),
 
