@@ -60,16 +60,23 @@
                 <div class="sql-code-container">
                     <!-- 这里是表单部分 -->
                     <el-form ref="form" label-position="top" label-width="70px" :model="apiWorkConfig" :rules="rules">
-                        <el-form-item prop="requestUrl" label="接口地址">
-                            <el-input v-model="apiWorkConfig.requestUrl" clearable placeholder="请输入"
-                                maxlength="1000"></el-input>
-                        </el-form-item>
-                        <el-form-item label="请求方式" prop="requestType">
-                            <el-select v-model="apiWorkConfig.requestType" placeholder="请选择"
-                                @change="requestTypeChange">
-                                <el-option label="GET" value="GET" />
-                                <el-option label="POST" value="POST" />
-                            </el-select>
+                        <el-form-item label="接口地址" class="api-request-line__form-item">
+                            <div class="api-request-line">
+                                <el-form-item prop="requestType" class="api-request-line__method">
+                                    <el-select v-model="apiWorkConfig.requestType" placeholder="请选择" @change="requestTypeChange">
+                                        <el-option label="GET" value="GET" />
+                                        <el-option label="POST" value="POST" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item prop="requestUrl" class="api-request-line__url">
+                                    <el-input
+                                        v-model="apiWorkConfig.requestUrl"
+                                        clearable
+                                        placeholder="请输入"
+                                        maxlength="1000"
+                                    ></el-input>
+                                </el-form-item>
+                            </div>
                         </el-form-item>
                         <el-form-item label="请求头" prop="requestHeader">
                             <span class="add-btn">
@@ -248,7 +255,7 @@ let workConfig = reactive({
 })
 let apiWorkConfig = reactive({
     requestUrl: '',     // 接口请求url
-    requestType: '',    // 接口请求类型
+    requestType: 'GET',    // 接口请求类型
     requestParam: [
         {
             label: '',
@@ -286,6 +293,19 @@ const tabList = reactive([
         hide: true
     },
 ])
+
+function setReturnDataTabVisible(visible: boolean) {
+    tabList.forEach((item: any) => {
+        if (item.code === 'ReturnData') {
+            item.hide = !visible
+        }
+    })
+    if (!visible && activeName.value === 'ReturnData') {
+        activeName.value = 'PublishLog'
+        currentTab.value = markRaw(PublishLog)
+    }
+}
+
 function initData(id?: string, tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
@@ -300,16 +320,15 @@ function initData(id?: string, tableLoading?: boolean) {
                     apiWorkConfig[key] = res.data.apiWorkConfig[key]
                 })
             }
+            if (!apiWorkConfig.requestType) {
+                apiWorkConfig.requestType = 'GET'
+            }
             nextTick(() => {
                 changeStatus.value = false
+                setReturnDataTabVisible(false)
                 containerInstanceRef.value.initData(id || instanceId.value, (status: string) => {
-                    // 运行结束
                     if (workConfig.workType === 'API') {
-                        tabList.forEach((item: any) => {
-                            if (['ReturnData'].includes(item.code)) {
-                                item.hide = false
-                            }
-                        })
+                        setReturnDataTabVisible(status === 'SUCCESS')
                     }
                 })
             })
@@ -608,6 +627,25 @@ onUnmounted(() => {
             height: calc(100vh - 150px);
             .sql-code-container {
                 margin-top: 12px;
+
+                .api-request-line__form-item {
+                    .api-request-line {
+                        width: 100%;
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 12px;
+                    }
+
+                    .api-request-line__method {
+                        width: 100px;
+                        margin-bottom: 0;
+                    }
+
+                    .api-request-line__url {
+                        flex: 1;
+                        margin-bottom: 0;
+                    }
+                }
             }
         }
     }
