@@ -32,7 +32,7 @@
         <td><a href="https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz">https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz</a></td>
     </tr>
     <tr>
-        <td>友情链接</td>
+        <td>产品推荐</td>
         <td><a href="https://zhishuyun.isxcode.com">[至数云] - 超轻量级人工智能应用平台</a></td>
     </tr>
     <tr>
