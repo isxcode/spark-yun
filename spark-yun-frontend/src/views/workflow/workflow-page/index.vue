@@ -11,20 +11,41 @@
                             <EllipsisTooltip class="title-tooltip" :label="workFlowData.name" />
                         </span>
                     </div>
-                    <el-dropdown trigger="click">
+                    <el-dropdown
+                        ref="workflowDropdownRef"
+                        trigger="click"
+                        :hide-on-click="false"
+                        @visible-change="workflowDropdownVisibleChange"
+                    >
                         <el-icon class="change-workflow">
                             <Expand />
                         </el-icon>
                         <template #dropdown>
-                            <el-dropdown-menu style="max-height: 340px; overflow: auto; padding: 12px 8px;">
-                                <el-dropdown-item
-                                    @click="changeWorkFlow(workFlow)"
-                                    v-for="workFlow in workFlowList"
-                                    class="workflow-page__change-item"
-                                    :class="{ 'workflow-choose-item': workFlow.id === workFlowData.id }"
-                                >
-                                    {{ workFlow.name }}
-                                </el-dropdown-item>
+                            <el-dropdown-menu class="workflow-page__change-menu">
+                                <div class="workflow-page__change-search-box" @click.stop @mousedown.stop>
+                                    <el-input
+                                        v-model="workflowSearchParam"
+                                        clearable
+                                        placeholder="搜索作业流名称"
+                                        @click.stop
+                                        @mousedown.stop
+                                        @keydown.stop
+                                    ></el-input>
+                                </div>
+                                <div class="workflow-page__change-list">
+                                    <el-dropdown-item
+                                        @click="changeWorkFlow(workFlow)"
+                                        v-for="workFlow in filteredWorkFlowList"
+                                        :key="workFlow.id"
+                                        class="workflow-page__change-item"
+                                        :class="{ 'workflow-choose-item': workFlow.id === workFlowData.id }"
+                                    >
+                                        {{ workFlow.name }}
+                                    </el-dropdown-item>
+                                    <el-dropdown-item disabled v-if="!filteredWorkFlowList.length" class="workflow-page__change-empty">
+                                        无匹配作业流
+                                    </el-dropdown-item>
+                                </div>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -345,6 +366,8 @@ import { TypeList } from '../workflow.config'
 const route = useRoute()
 
 const searchParam = ref('')
+const workflowSearchParam = ref('')
+const workflowDropdownRef = ref<any>(null)
 const workListItem = ref([])
 const zqyFlowRef = ref<any>(null)
 const addModalRef = ref(null)
@@ -353,7 +376,7 @@ const zqyLogRef = ref(null)
 const containerType = ref('flow')
 const workConfig = ref()
 const showWorkItem = ref(true)
-const workFlowList = ref()
+const workFlowList = ref<any[]>([])
 const workFlowData = ref({
     name: '',
     id: ''
@@ -405,6 +428,20 @@ const orderTypeText = computed(() => {
     }
     return '排序'
 })
+
+const filteredWorkFlowList = computed(() => {
+    const searchValue = workflowSearchParam.value?.trim().toLowerCase()
+    if (!searchValue) {
+        return workFlowList.value
+    }
+    return workFlowList.value.filter((item: any) => item?.name?.toLowerCase().includes(searchValue))
+})
+
+function workflowDropdownVisibleChange(visible: boolean) {
+    if (!visible) {
+        workflowSearchParam.value = ''
+    }
+}
 
 function initData() {
     return new Promise((resolve) => {
@@ -904,6 +941,7 @@ function changeWorkFlow(workFlow: any) {
     initData().then(() => {
         initFlowData()
     })
+    workflowDropdownRef.value?.handleClose?.()
 }
 
 onMounted(() => {
@@ -1038,12 +1076,12 @@ onUnmounted(() => {
                 box-sizing: border-box;
                 .option-title__href {
                     cursor: pointer;
+                    color: getCssVar('color', 'primary');
                     .title-tooltip {
                         max-width: 150px;
                     }
                     &:hover {
-                        color: getCssVar('color', 'primary');
-                        text-decoration: underline;
+                        color: getCssVar('color', 'primary', 'dark-2');
                     }
                 }
             }
@@ -1224,5 +1262,22 @@ onUnmounted(() => {
         background-color: getCssVar('color', 'primary', 'light-9');
         color: getCssVar('color', 'primary');
     }
+}
+.workflow-page__change-menu {
+    padding: 12px 8px;
+    .workflow-page__change-list {
+        max-height: 288px;
+        overflow: auto;
+    }
+}
+.workflow-page__change-search-box {
+    padding: 4px 0 8px;
+    .el-input {
+        width: 100%;
+    }
+}
+.workflow-page__change-empty {
+    color: getCssVar('text-color', 'placeholder');
+    cursor: default;
 }
 </style>
