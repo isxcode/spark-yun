@@ -54,12 +54,17 @@
 </template>
 
 <script lang="ts" setup>
-import { defineExpose, reactive, ref, watch } from 'vue'
+import { computed, defineExpose, reactive, ref, watch } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 
 const form = ref<FormInstance>()
 const callback = ref<((data: any) => Promise<any>) | null>(null)
-const typeList = ref([
+const props = withDefaults(defineProps<{
+  showExcelType?: boolean
+}>(), {
+  showExcelType: true
+})
+const allTypeList = [
   {
     label: '作业',
     value: 'JOB',
@@ -76,7 +81,10 @@ const typeList = ref([
     label: 'Excel',
     value: 'EXCEL',
   }
-])
+]
+const typeList = computed(() =>
+  props.showExcelType ? allTypeList : allTypeList.filter(item => item.value !== 'EXCEL')
+)
 const renderSence = ref<'new' | 'edit'>('new')
 const fileList = ref<any[]>([]) // el-upload 使用的文件列表
 const modelConfig = reactive({

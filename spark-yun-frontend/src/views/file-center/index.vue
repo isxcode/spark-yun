@@ -72,12 +72,12 @@
         </BlockTable>
       </div>
     </LoadingPage>
-    <AddModal ref="addModalRef" />
+    <AddModal ref="addModalRef" :show-excel-type="showExcelType" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { computed, reactive, ref, onMounted } from 'vue'
 import Breadcrumb from '@/layout/bread-crumb/index.vue'
 import BlockTable from '@/components/block-table/index.vue'
 import LoadingPage from '@/components/loading/index.vue'
@@ -87,6 +87,7 @@ import { BreadCrumbList, TableConfig } from './file-center.config'
 import { GetFileCenterList, UploadFileData, DeleteFileData, DownloadFileData, UpdateFileData } from '@/services/file-center.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
+import { getVipLicenseEnabled } from '@/utils/vip-license'
 
 const breadCrumbList = reactive(BreadCrumbList)
 const tableConfig: any = reactive(TableConfig)
@@ -95,7 +96,8 @@ const type = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref<any>(null)
-const typeList = ref([
+const showExcelType = ref(true)
+const allTypeList = [
   {
     label: '作业',
     value: 'JOB',
@@ -112,7 +114,10 @@ const typeList = ref([
     label: 'Excel',
     value: 'EXCEL',
   }
-])
+]
+const typeList = computed(() =>
+  showExcelType.value ? allTypeList : allTypeList.filter(item => item.value !== 'EXCEL')
+)
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -234,6 +239,13 @@ function handleCurrentChange(e: number) {
 }
 
 onMounted(() => {
+  getVipLicenseEnabled().then((enabled) => {
+    showExcelType.value = enabled
+    if (!enabled && type.value === 'EXCEL') {
+      type.value = ''
+      initData(false)
+    }
+  })
   tableConfig.pagination.currentPage = 1
   tableConfig.pagination.pageSize = 10
   initData()

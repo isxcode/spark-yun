@@ -93,6 +93,9 @@ public class CurlExecutor extends WorkExecutor {
             // 脚本需要返回网络状态
             script = script.replace("curl", "curl -w \"%{http_code}\" ");
 
+            // 替换 --data-raw 改为 --data，兼容Linux
+            script = script.replace("--data-raw", "--data");
+
             // 解析上游参数
             script = parseJsonPath(script, workInstance);
 
