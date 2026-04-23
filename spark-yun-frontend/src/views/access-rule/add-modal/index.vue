@@ -46,7 +46,7 @@ const callback = ref<any>()
 const okLoading = ref<boolean>(false)
 
 const modelConfig = reactive({
-    title: '添加规则',
+    title: '新建名单',
     visible: false,
     width: '520px',
     cancelConfig: {
@@ -83,12 +83,12 @@ function showModal(cb: () => void, data: any): void {
         formData.ruleType = data.ruleType
         formData.ipAddress = data.ipAddress
         formData.remark = data.remark
-        modelConfig.title = '编辑规则'
+        modelConfig.title = '编辑名单'
     } else {
         Object.keys(formData).forEach((key) => {
             formData[key] = ''
         })
-        modelConfig.title = '添加规则'
+        modelConfig.title = '新建名单'
     }
     nextTick(() => {
         form.value?.resetFields()
@@ -134,4 +134,3 @@ defineExpose({
     width: 100%;
 }
 </style>
-

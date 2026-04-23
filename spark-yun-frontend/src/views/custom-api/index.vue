@@ -2,7 +2,7 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="zqy-seach-table driver-table">
         <div class="zqy-table-top">
-            <el-button type="primary" @click="addData">添加接口</el-button>
+            <el-button type="primary" @click="addData">新建接口</el-button>
             <el-button @click="goAccessRule">黑白名单</el-button>
             <div class="zqy-seach">
                 <el-input

@@ -444,7 +444,7 @@ const DEFAULT_RES_BODY = `{
 }`
 
 const modelConfig = reactive({
-    title: '添加接口',
+    title: '新建接口',
     visible: false,
     width: '564px',
     cancelConfig: {
@@ -544,7 +544,7 @@ function showModal(cb: () => void, data: any, cb2?: () => void): void {
         formData.tokenType = 'ANONYMOUS'
         formData.pageType = false
         isEdit.value = false
-        modelConfig.title = '添加接口'
+        modelConfig.title = '新建接口'
     }
     nextTick(() => {
         form.value?.resetFields()
