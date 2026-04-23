@@ -65,6 +65,10 @@ const componentList = ref([])
 const chartTypeList = ref(ChartTypeList)
 const breadCrumbList = reactive(BreadCrumbList)
 
+function syncBreadCrumbByType(type: unknown) {
+    breadCrumbList[1].name = type === 'edit' ? '大屏配置' : '大屏预览'
+}
+
 // 后续迁出组件
 watch(
     () => authStore.isCollapse,
@@ -73,6 +77,14 @@ watch(
             ZChartsEngineRef.value.resizeAllCharts()
         }, 320)
     }
+)
+
+watch(
+    () => route.query.type,
+    (type) => {
+        syncBreadCrumbByType(type)
+    },
+    { immediate: true }
 )
 
 // 获取可以拖拽的报表组件

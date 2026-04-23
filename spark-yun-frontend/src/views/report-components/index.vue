@@ -198,7 +198,7 @@ function showDetail(data: any) {
     query: {
         id: data.id,
         reportViewId: route.query.reportViewId,
-        reportViewType: route.query.reportViewType
+        reportViewType: route.query.reportViewId ? 'edit' : route.query.reportViewType
     }
   })
 }
@@ -227,11 +227,11 @@ onMounted(() => {
                 code: 'report-views'
             },
             {
-                name: '大屏详情',
+                name: '大屏配置',
                 code: 'report-views-detail',
                 query: {
                     id: route.query.reportViewId,
-                    type: route.query.reportViewType || 'edit'
+                    type: 'edit'
                 }
             },
             {

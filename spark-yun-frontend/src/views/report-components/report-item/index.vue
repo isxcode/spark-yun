@@ -248,7 +248,7 @@ function publishChartEvent() {
                 name: 'report-components',
                 query: {
                     reportViewId: route.query.reportViewId,
-                    reportViewType: route.query.reportViewType
+                    reportViewType: route.query.reportViewId ? 'edit' : route.query.reportViewType
                 }
             })
         }).catch(() => {
@@ -331,11 +331,11 @@ onMounted(() => {
                 code: 'report-views'
             },
             {
-                name: '大屏详情',
+                name: '大屏配置',
                 code: 'report-views-detail',
                 query: {
                     id: route.query.reportViewId,
-                    type: route.query.reportViewType || 'edit'
+                    type: 'edit'
                 }
             },
             {
@@ -343,7 +343,7 @@ onMounted(() => {
                 code: 'report-components',
                 query: {
                     reportViewId: route.query.reportViewId,
-                    reportViewType: route.query.reportViewType || 'edit'
+                    reportViewType: 'edit'
                 }
             },
             {
