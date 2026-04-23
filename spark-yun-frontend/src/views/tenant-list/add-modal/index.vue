@@ -75,8 +75,8 @@
           value-format="YYYY-MM-DD HH:mm:ss"
           :unlink-panels="true"
           range-separator="~"
-          start-placeholder="有效期开始时间"
-          end-placeholder="有效期结束时间"
+          start-placeholder="有效开始时间"
+          end-placeholder="有效结束时间"
           :editable="false"
         />
       </div>
@@ -96,7 +96,7 @@ const callback = ref<any>()
 const userList = ref([])
 const renderSence = ref('new')
 const modelConfig = reactive({
-  title: '添加租户',
+  title: '新建租户',
   visible: false,
   width: '520px',
   okConfig: {
@@ -165,7 +165,7 @@ function showModal(cb: () => void, data: any): void {
     formData.remark = ''
     formData.validDateTime = []
     formData.id = ''
-    modelConfig.title = '添加租户'
+    modelConfig.title = '新建租户'
     renderSence.value = 'new'
   }
   nextTick(() => {
