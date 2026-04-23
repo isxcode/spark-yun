@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/useAuth"
 import { computed, ref } from "vue"
-import { useRouter } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { OfficeBuilding, Search, Setting } from '@element-plus/icons-vue'
 import { useSwitchTenant, type TenantInfo } from '@/hooks/switch-tenant'
 import EllipsisTooltip from '@/components/ellipsis-tooltip/ellipsis-tooltip.vue'
@@ -15,6 +15,7 @@ export type AvatarMenuCommand = 'logout'
 export function useMenuAvatar() {
   let authStore = useAuthStore()
   let router = useRouter()
+  let route = useRoute()
   let menuVisible = ref(false)
   let tenantDialogVisible = ref(false)
   let selectedTenantId = ref('')
@@ -86,25 +87,38 @@ export function useMenuAvatar() {
     if (!selectedTenantId.value || switchTenantLoading.value) {
       return
     }
-    if (authStore.tenantId === selectedTenantId.value) {
+    const targetTenantId = selectedTenantId.value
+    if (authStore.tenantId === targetTenantId) {
       closeTenantDialog()
       return
     }
 
     switchTenantLoading.value = true
-    onTenantChange(selectedTenantId.value)
+    onTenantChange(targetTenantId)
 
     ChangeTenantData({
-      tenantId: selectedTenantId.value
-    }, selectedTenantId.value).then(() => {
+      tenantId: targetTenantId
+    }, targetTenantId).then(() => {
       getVipLicenseEnabled(true).finally(() => {
-        ElMessage.success('租户切换成功')
+        const needBackToWorkflowList = ['workflow-page', 'work-item', 'workflow-detail'].includes(String(route.name || ''))
+        const applyTenantContext = () => {
+          authStore.setTenantId(targetTenantId)
+          http.setHeader({
+            tenant: targetTenantId
+          })
+        }
 
-        authStore.setTenantId(selectedTenantId.value)
-        http.setHeader({
-          tenant: selectedTenantId.value
-        })
+        ElMessage.success('租户切换成功')
         closeTenantDialog()
+        if (needBackToWorkflowList) {
+          router.replace({
+            name: 'workflow'
+          }).finally(() => {
+            applyTenantContext()
+          })
+        } else {
+          applyTenantContext()
+        }
       })
     }).catch(() => {
       onTenantChange(authStore.tenantId)
