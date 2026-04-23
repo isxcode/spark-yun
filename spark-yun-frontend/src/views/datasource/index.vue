@@ -3,7 +3,7 @@
   <div class="zqy-seach-table">
     <div class="zqy-table-top">
       <el-button type="primary" @click="addData">
-        添加数据源
+        新建数据源
       </el-button>
       <el-button @click="goDriverManagement">
         驱动管理

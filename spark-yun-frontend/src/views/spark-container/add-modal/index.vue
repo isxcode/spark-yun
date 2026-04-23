@@ -65,7 +65,7 @@ const clusterList = ref([])  // 计算集群
 const dataSourceList = ref([])
 const fullStatus = ref(false)
 const modelConfig = reactive({
-  title: '添加容器',
+  title: '新建容器',
   visible: false,
   width: '520px',
   okConfig: {
@@ -138,7 +138,7 @@ function showModal(cb: () => void, data: any): void {
     formData.sparkConfig = ''
     formData.resourceLevel = ''
     formData.id = ''
-    modelConfig.title = '添加容器'
+    modelConfig.title = '新建容器'
   }
   nextTick(() => {
     form.value?.resetFields()

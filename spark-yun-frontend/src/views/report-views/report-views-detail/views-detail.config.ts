@@ -10,7 +10,7 @@ export const BreadCrumbList: Array<BreadCrumb> = [
         code: 'report-views'
     },
     {
-        name: '大屏详情',
+        name: '大屏配置',
         code: 'report-views-detail'
     }
 ]

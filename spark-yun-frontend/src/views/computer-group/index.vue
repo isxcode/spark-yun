@@ -6,7 +6,7 @@
         type="primary"
         @click="addGroup"
       >
-        添加集群
+        新建集群
       </el-button>
       <div class="zqy-seach">
         <el-input

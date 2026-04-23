@@ -40,8 +40,9 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'funcName',
-    title: '函数名称',
+    title: '名称',
     minWidth: 125,
+    customSlot: 'funcName',
     showOverflowTooltip: true
   },
   {

@@ -231,7 +231,7 @@ const connectConfigList = ref<Array<{ key: string; value: string }>>([])
 const licenseEnabled = ref(true)
 const isEditMode = ref(false)
 const modelConfig = reactive({
-  title: '添加数据源',
+  title: '新建数据源',
   visible: false,
   width: '520px',
   customClass: 'datasource-add-modal',
@@ -533,7 +533,7 @@ async function showModal(cb: () => void, data: any): Promise<void> {
     formData.metastoreUris = ''
     formData.connectConfig = {}
     formData.id = ''
-    modelConfig.title = '添加数据源'
+    modelConfig.title = '新建数据源'
     connectConfigList.value = []
   }
   getDriverIdList(true)

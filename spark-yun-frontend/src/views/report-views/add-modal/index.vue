@@ -29,7 +29,7 @@ const callback = ref<any>()
 const userList = ref([])
 const renderSence = ref('new')
 const modelConfig = reactive({
-    title: '添加租户',
+    title: '新建大屏',
     visible: false,
     width: '520px',
     okConfig: {
@@ -63,13 +63,13 @@ function showModal(cb: () => void, data: any): void {
         formData.name = data.name
         formData.remark = data.remark
         formData.id = data.id
-        modelConfig.title = '编辑视图'
+        modelConfig.title = '编辑大屏'
         renderSence.value = 'edit'
     } else {
         formData.name = ''
         formData.remark = ''
         formData.id = ''
-        modelConfig.title = '添加视图'
+        modelConfig.title = '新建大屏'
         renderSence.value = 'new'
     }
     nextTick(() => {

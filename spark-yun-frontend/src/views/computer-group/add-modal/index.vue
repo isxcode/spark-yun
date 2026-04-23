@@ -46,7 +46,7 @@ import { getVipLicenseEnabled } from '@/utils/vip-license'
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const modelConfig = reactive({
-  title: '添加集群',
+  title: '新建集群',
   visible: false,
   width: '520px',
   okConfig: {
@@ -116,7 +116,7 @@ async function showModal(cb: () => void, data: any): Promise<void> {
     formData.clusterType = licenseEnabled.value ? '' : 'standalone'
     formData.remark = ''
     formData.id = ''
-    modelConfig.title = '添加集群'
+    modelConfig.title = '新建集群'
   }
   nextTick(() => {
     form.value?.resetFields()

@@ -14,6 +14,9 @@
             <div class="zqy-table">
                 <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
                     @current-change="handleCurrentChange">
+                    <template #name="scopeSlot">
+                        <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
                     <template #statusTag="scopeSlot">
                         <div class="btn-group">
                             <ZStatusTag :status="scopeSlot.row.status == 'CHECK_FAIL' ? 'CHECK_ERROR' : scopeSlot.row.status == 'ACTIVE' ? 'ENABLE' : scopeSlot.row.status"></ZStatusTag>

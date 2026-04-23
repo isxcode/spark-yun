@@ -40,7 +40,7 @@ const chartTypeList = ref<Option[]>(ChartTypeList)
 const renderSence = ref<string>('new')
 
 const modelConfig = reactive({
-  title: '添加卡片',
+  title: '新建卡片',
   visible: false,
   width: '564px',
   okConfig: {
@@ -94,7 +94,7 @@ function showModal(cb: () => void, data: any): void {
     Object.keys(formData).forEach(key => {
       formData[key] = null
     })
-    modelConfig.title = '添加卡片'
+    modelConfig.title = '新建卡片'
   }
   nextTick(() => {
     form.value?.resetFields()

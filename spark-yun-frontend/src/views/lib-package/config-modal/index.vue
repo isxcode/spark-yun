@@ -77,7 +77,7 @@ const hasMore = ref(true)
 const currentPage = ref(0)
 
 const modelConfig = reactive({
-  title: '配置依赖合集',
+  title: '配置合集',
   visible: false,
   width: '900px',
   okConfig: {
@@ -416,4 +416,3 @@ defineExpose({
   }
 }
 </style>
-

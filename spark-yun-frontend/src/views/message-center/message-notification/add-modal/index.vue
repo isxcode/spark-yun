@@ -79,7 +79,7 @@ const typeList = ref([
 ])
 const regionList = ref(RegionList)
 const modelConfig = reactive({
-  title: '添加',
+  title: '新建消息体',
   visible: false,
   width: '520px',
   okConfig: {
@@ -143,12 +143,12 @@ function showModal(cb: () => void, data: any): void {
       })
     }
     formData.id = data.id
-    modelConfig.title = '编辑'
+    modelConfig.title = '编辑消息体'
   } else {
     Object.keys(formData).forEach((key: string) => {
       formData[key] = ''
     })
-    modelConfig.title = '添加'
+    modelConfig.title = '新建消息体'
   }
 
   callback.value = cb

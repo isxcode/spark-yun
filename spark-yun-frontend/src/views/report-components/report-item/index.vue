@@ -347,7 +347,7 @@ onMounted(() => {
                 }
             },
             {
-                name: '组件详情',
+                name: '卡片配置',
                 code: 'report-item'
             }
         )

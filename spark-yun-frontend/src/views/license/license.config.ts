@@ -39,7 +39,7 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'code',
-    title: '许可证编号',
+    title: '证书编号',
     minWidth: 125,
     showOverflowTooltip: true
   },
@@ -55,17 +55,17 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'maxMemberNum',
-    title: '成员',
+    title: '最大成员数',
     minWidth: 80
   },
   {
     prop: 'maxTenantNum',
-    title: '租户',
+    title: '最大租户数',
     minWidth: 80
   },
   {
     prop: 'maxWorkflowNum',
-    title: '作业流',
+    title: '最大作业流数',
     minWidth: 80
   },
   {

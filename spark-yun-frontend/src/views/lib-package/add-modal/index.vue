@@ -60,7 +60,7 @@ function showModal(cb: () => void, data: any): void {
     formData.name = data.name
     formData.remark = data.remark
     formData.id = data.id
-    modelConfig.title = '编辑依赖合集'
+    modelConfig.title = '编辑合集'
   } else {
     formData.name = ''
     formData.remark = ''
@@ -106,4 +106,3 @@ defineExpose({
   padding: 20px;
 }
 </style>
-
