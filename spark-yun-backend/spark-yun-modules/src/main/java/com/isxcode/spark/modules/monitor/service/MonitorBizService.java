@@ -127,17 +127,20 @@ public class MonitorBizService {
         SystemMonitorDto apiMonitor = SystemMonitorDto.builder().total(allApiNum).activeNum(publishedApiNum).build();
 
         // 作业流监控信息
-        long allSuccessWorkflowNum = workflowInstanceRepository.countByInstanceType(InstanceStatus.SUCCESS);
+        long allSuccessWorkflowNum = workflowInstanceRepository.countByStatus(InstanceStatus.SUCCESS);
         long allWorkflowInstanceNum = workflowInstanceRepository.count();
-        SystemMonitorDto successWorkflowInstanceMonitor = SystemMonitorDto.builder().total(allWorkflowInstanceNum).activeNum(allSuccessWorkflowNum).build();
+        SystemMonitorDto successWorkflowInstanceMonitor =
+            SystemMonitorDto.builder().total(allWorkflowInstanceNum).activeNum(allSuccessWorkflowNum).build();
 
         // 作业监控信息
-        long allSuccessWorkNum = workInstanceRepository.countByInstanceType(InstanceStatus.SUCCESS);
+        long allSuccessWorkNum = workInstanceRepository.countByStatus(InstanceStatus.SUCCESS);
         long allWorkInstanceNum = workInstanceRepository.count();
-        SystemMonitorDto successWorkInstanceMonitor = SystemMonitorDto.builder().total(allWorkInstanceNum).activeNum(allSuccessWorkNum).build();
+        SystemMonitorDto successWorkInstanceMonitor =
+            SystemMonitorDto.builder().total(allWorkInstanceNum).activeNum(allSuccessWorkNum).build();
 
         // 封装返回
-        return GetSystemMonitorRes.builder().successWorkflowInstanceMonitor(successWorkflowInstanceMonitor).successWorkInstanceMonitor(successWorkInstanceMonitor).apiMonitor(apiMonitor).workflowMonitor(workMonitor)
+        return GetSystemMonitorRes.builder().successWorkflowInstanceMonitor(successWorkflowInstanceMonitor)
+            .successWorkInstanceMonitor(successWorkInstanceMonitor).apiMonitor(apiMonitor).workflowMonitor(workMonitor)
             .clusterMonitor(clusterMonitor).datasourceMonitor(datasourceMonitor).build();
     }
 

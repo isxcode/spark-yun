@@ -44,8 +44,8 @@ export type SystemBaseInfoItem = {
 export type SystemBaseInfo = {
   clusterMonitor: SystemBaseInfoItem
   datasourceMonitor: SystemBaseInfoItem
-  workflowMonitor: SystemBaseInfoItem
-  apiMonitor: SystemBaseInfoItem
+  successWorkInstanceMonitor: SystemBaseInfoItem
+  successWorkflowInstanceMonitor: SystemBaseInfoItem
 }
 
 export function querySystemBaseInfo() {

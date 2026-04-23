@@ -1,5 +1,5 @@
 export interface ChartInfo {
-  type: 'clusterMonitor' | 'datasourceMonitor' | 'workflowMonitor' | 'apiMonitor'
+  type: 'clusterMonitor' | 'datasourceMonitor' | 'successWorkInstanceMonitor' | 'successWorkflowInstanceMonitor'
   title: string
   mix?: number
   total: number

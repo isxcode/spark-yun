@@ -111,12 +111,13 @@ public class TenantUserBizService {
             tenantId = TENANT_ID.get();
         }
 
-        Page<PageTenantUserRes> tenantUserPage = tenantUserRepository.searchTenantUser(tenantId,
-            turAddTenantUserReq.getSearchKeyWord(),
-            PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
+        Page<PageTenantUserRes> tenantUserPage =
+            tenantUserRepository.searchTenantUser(tenantId, turAddTenantUserReq.getSearchKeyWord(),
+                PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
 
         tenantUserPage.getContent().forEach(item -> {
-            item.setPhone(Strings.isEmpty(item.getPhone()) ? item.getPhone() : DesensitizedUtil.mobilePhone(item.getPhone()));
+            item.setPhone(
+                Strings.isEmpty(item.getPhone()) ? item.getPhone() : DesensitizedUtil.mobilePhone(item.getPhone()));
             item.setEmail(Strings.isEmpty(item.getEmail()) ? item.getEmail() : DesensitizedUtil.email(item.getEmail()));
         });
 

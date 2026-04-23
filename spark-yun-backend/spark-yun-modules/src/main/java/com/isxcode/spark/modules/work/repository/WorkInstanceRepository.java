@@ -45,5 +45,5 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
 
     void deleteAllByWorkflowInstanceId(String workflowInstanceId);
 
-    long countByInstanceType(String instanceType);
+    long countByStatus(String status);
 }

@@ -37,18 +37,18 @@ const sysInfoData = ref<Array<ChartInfo>>([
     color: '#1967BF'
   },
   {
-    type: 'workflowMonitor',
-    title: '发布作业',
-    mix: undefined,
-    total: 100,
-    color: '#03A89D'
-  },
-  {
-    type: 'apiMonitor',
-    title: '发布接口',
+    type: 'successWorkflowInstanceMonitor',
+    title: '作业流',
     mix: undefined,
     total: 100,
     color: '#4B19BF'
+  },
+  {
+    type: 'successWorkInstanceMonitor',
+    title: '作业',
+    mix: undefined,
+    total: 100,
+    color: '#03A89D'
   }
 ])
 
