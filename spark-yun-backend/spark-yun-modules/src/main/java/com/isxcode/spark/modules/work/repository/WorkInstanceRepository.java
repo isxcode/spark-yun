@@ -44,4 +44,6 @@ public interface WorkInstanceRepository extends JpaRepository<WorkInstanceEntity
     List<WorkInstanceEntity> findAllByWorkflowInstanceIdAndWorkIds(String workflowInstanceId, List<String> workIds);
 
     void deleteAllByWorkflowInstanceId(String workflowInstanceId);
+
+    long countByInstanceType(String instanceType);
 }
