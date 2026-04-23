@@ -39,6 +39,7 @@ import com.isxcode.spark.modules.datasource.repository.DatasourceRepository;
 import com.isxcode.spark.modules.monitor.entity.MonitorEntity;
 import com.isxcode.spark.modules.monitor.mapper.MonitorMapper;
 import com.isxcode.spark.modules.monitor.repository.MonitorRepository;
+import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
 import com.isxcode.spark.modules.workflow.entity.WorkflowInstanceEntity;
 import com.isxcode.spark.modules.workflow.mapper.WorkflowMapper;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
@@ -98,6 +99,8 @@ public class MonitorBizService {
 
     private final WorkflowMapper workflowMapper;
 
+    private final WorkInstanceRepository workInstanceRepository;
+
     public GetSystemMonitorRes getSystemMonitor() {
 
         // 集群信息
@@ -123,8 +126,18 @@ public class MonitorBizService {
         long publishedApiNum = apiRepository.countByStatus(ApiStatus.PUBLISHED);
         SystemMonitorDto apiMonitor = SystemMonitorDto.builder().total(allApiNum).activeNum(publishedApiNum).build();
 
+        // 作业流监控信息
+        long allSuccessWorkflowNum = workflowInstanceRepository.countByInstanceType(InstanceStatus.SUCCESS);
+        long allWorkflowInstanceNum = workflowInstanceRepository.count();
+        SystemMonitorDto successWorkflowInstanceMonitor = SystemMonitorDto.builder().total(allWorkflowInstanceNum).activeNum(allSuccessWorkflowNum).build();
+
+        // 作业监控信息
+        long allSuccessWorkNum = workInstanceRepository.countByInstanceType(InstanceStatus.SUCCESS);
+        long allWorkInstanceNum = workInstanceRepository.count();
+        SystemMonitorDto successWorkInstanceMonitor = SystemMonitorDto.builder().total(allWorkInstanceNum).activeNum(allSuccessWorkNum).build();
+
         // 封装返回
-        return GetSystemMonitorRes.builder().apiMonitor(apiMonitor).workflowMonitor(workMonitor)
+        return GetSystemMonitorRes.builder().successWorkflowInstanceMonitor(successWorkflowInstanceMonitor).successWorkInstanceMonitor(successWorkInstanceMonitor).apiMonitor(apiMonitor).workflowMonitor(workMonitor)
             .clusterMonitor(clusterMonitor).datasourceMonitor(datasourceMonitor).build();
     }
 

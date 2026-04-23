@@ -20,4 +20,10 @@ public class GetSystemMonitorRes {
 
     @Schema(title = "接口监控信息")
     private SystemMonitorDto apiMonitor;
+
+    @Schema(title = "作业实例监控信息")
+    private SystemMonitorDto successWorkInstanceMonitor;
+
+    @Schema(title = "作业流实例监控信息")
+    private SystemMonitorDto successWorkflowInstanceMonitor;
 }
