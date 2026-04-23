@@ -126,7 +126,7 @@ const fieldTypeList = ref<Option[]>([
 ])
 
 const modelConfig = reactive({
-    title: '添加',
+    title: '新建标准',
     visible: false,
     width: '520px',
     okConfig: {
@@ -217,7 +217,7 @@ function showModal(cb: () => void, data: any, type?: string): void {
         const columnRuleInfo = parseColumnRule(formData.columnRule)
         columnRuleMode.value = columnRuleInfo.mode
         formData.columnRuleInput = columnRuleInfo.input
-        modelConfig.title = '编辑'
+        modelConfig.title = '编辑标准'
     } else {
         readonly.value = false
         const keys = ['isNull', 'isPrimary', 'isDuplicate', 'isPartition']
@@ -228,7 +228,7 @@ function showModal(cb: () => void, data: any, type?: string): void {
             }
         })
         columnRuleMode.value = 'prefix'
-        modelConfig.title = '添加'
+        modelConfig.title = '新建标准'
     }
 
     if (type === 'readonly') {

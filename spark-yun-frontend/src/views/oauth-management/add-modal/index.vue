@@ -88,7 +88,7 @@ const typeList = ref<Option[]>([
     }
 ])
 const modelConfig = reactive({
-    title: '添加配置',
+    title: '新建免密',
     visible: false,
     width: '520px',
     okConfig: {
@@ -140,13 +140,13 @@ function showModal(cb: () => void, data: any): void {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = data[key]
         })
-        modelConfig.title = '编辑配置'
+        modelConfig.title = '编辑免密'
         renderSence.value = 'edit'
     } else {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
         })
-        modelConfig.title = '添加配置'
+        modelConfig.title = '新建免密'
         renderSence.value = 'new'
     }
     nextTick(() => {

@@ -61,7 +61,7 @@ const showForm = ref(true)
 const renderSense = ref('')
 
 const modelConfig = reactive({
-  title: '添加作业',
+  title: '新建实时',
   visible: false,
   width: '520px',
   okConfig: {
@@ -98,14 +98,14 @@ function showModal(cb: () => void, data: any): void {
       formData[key] = data[key]
     });
     formData.clusterId && getClusterList(true)
-    modelConfig.title = '编辑'
+    modelConfig.title = '编辑实时'
     renderSense.value = 'edit'
   } else {
     formData.name = ''
     formData.remark = ''
     formData.clusterId = ''
     formData.id = ''
-    modelConfig.title = '添加'
+    modelConfig.title = '新建实时'
     renderSense.value = 'new'
   }
   nextTick(() => {

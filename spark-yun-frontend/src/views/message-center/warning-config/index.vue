@@ -3,7 +3,7 @@
     <div class="zqy-seach-table message-notification">
         <div class="zqy-table-top">
             <el-button class="top-action-btn" type="primary" @click="addData">
-                新增基线
+                新建基线
             </el-button>
             <el-button @click="goWarningSchedule">
                 告警实例
@@ -17,6 +17,9 @@
             <div class="zqy-table">
                 <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
                     @current-change="handleCurrentChange">
+                    <template #name="scopeSlot">
+                        <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
                     <template #statusTag="scopeSlot">
                         <ZStatusTag :status="scopeSlot.row.status"></ZStatusTag>
                     </template>

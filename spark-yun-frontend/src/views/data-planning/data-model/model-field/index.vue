@@ -4,7 +4,7 @@
         <div class="zqy-table-top">
             <div class="btn-container">
                 <el-button type="primary" @click="addData">
-                    新建字段
+                    添加字段
                 </el-button>
                 <el-button @click="backDataModel">返回数据模型</el-button>
             </div>

@@ -78,7 +78,7 @@ const callback = ref<any>()
 const uploadRef = ref()
 const renderSence = ref<string>('new')
 const modelConfig = reactive({
-  title: '添加驱动',
+  title: '新建驱动',
   visible: false,
   width: '520px',
   okConfig: {
@@ -245,7 +245,7 @@ function showModal(cb: () => void, data: any): void {
     formData.dbType = ''
     formData.remark = ''
     formData.id = ''
-    modelConfig.title = '添加驱动'
+    modelConfig.title = '新建驱动'
   }
   nextTick(() => {
     form.value?.resetFields()

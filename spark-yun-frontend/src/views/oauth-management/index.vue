@@ -3,7 +3,7 @@
     <div class="zqy-seach-table">
         <div class="zqy-table-top">
             <el-button type="primary" @click="addData">
-                新建登录
+                新建免密
             </el-button>
             <div class="zqy-seach">
                 <el-input v-model="keyword" placeholder="请输入备注 回车进行搜索" :maxlength="200" clearable @input="inputEvent"
@@ -14,6 +14,9 @@
             <div class="zqy-table">
                 <BlockTable :table-config="tableConfig" @size-change="handleSizeChange"
                     @current-change="handleCurrentChange">
+                    <template #name="scopeSlot">
+                        <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
                     <template #statusTag="scopeSlot">
                         <div class="btn-group">
                             <el-tag v-if="scopeSlot.row.status === 'ENABLE'" class="ml-2" type="success">

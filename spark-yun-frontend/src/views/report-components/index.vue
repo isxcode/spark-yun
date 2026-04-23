@@ -2,7 +2,7 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="zqy-seach-table report-component">
         <div class="zqy-table-top">
-            <el-button type="primary" @click="addData">添加卡片</el-button>
+            <el-button type="primary" @click="addData">新建卡片</el-button>
             <div class="zqy-seach">
                 <el-input
                     v-model="keyword"

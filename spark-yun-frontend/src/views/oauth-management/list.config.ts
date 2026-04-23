@@ -41,11 +41,12 @@ export const colConfigs: colConfig[] = [
     prop: 'name',
     title: '名称',
     minWidth: 125,
+    customSlot: 'name',
     showOverflowTooltip: true
   },
   {
     prop: 'ssoType',
-    title: '免密类型',
+    title: '类型',
     minWidth: 100
   },
   {

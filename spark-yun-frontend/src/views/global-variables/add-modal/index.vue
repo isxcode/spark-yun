@@ -21,7 +21,7 @@ import { ElMessage, FormInstance, FormRules } from 'element-plus'
 const form = ref<FormInstance>()
 const callback = ref<any>()
 const modelConfig = reactive({
-  title: '添加变量',
+  title: '新建变量',
   visible: false,
   width: '520px',
   okConfig: {
@@ -67,12 +67,12 @@ function showModal(cb: () => void, data: any): void {
     formData.secretValue = ''
     formData.remark = data.remark
     formData.id = data.id
-    modelConfig.title = '编辑'
+    modelConfig.title = '编辑变量'
   } else {
     formData.keyName = ''
     formData.secretValue = ''
     formData.remark = ''
-    modelConfig.title = '添加'
+    modelConfig.title = '新建变量'
   }
   callback.value = cb
   modelConfig.visible = true

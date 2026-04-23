@@ -229,7 +229,7 @@ export const BreadCrumbList: Array<BreadCrumb> = [
     code: 'realtime-computing'
   },
   {
-    name: '详情',
+    name: '配置',
     code: 'computing-detail'
   }
 ]

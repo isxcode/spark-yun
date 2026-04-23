@@ -85,7 +85,7 @@ const eventList = ref([
 ])
 const messageNotiList = ref([])
 const modelConfig = reactive({
-  title: '测试',
+  title: '新建基线',
   visible: false,
   width: '520px',
   okConfig: {
@@ -133,7 +133,7 @@ function showModal(cb: () => void, data: any): void {
         formData[key] = data[key]
       }
     })
-    modelConfig.title = '编辑'
+    modelConfig.title = '编辑基线'
   } else {
     formData.name = ''
     formData.alarmType = ''
@@ -143,7 +143,7 @@ function showModal(cb: () => void, data: any): void {
     formData.alarmTemplate = ''
     formData.remark = ''
     formData.id = ''
-    modelConfig.title = '新增'
+    modelConfig.title = '新建基线'
   }
 
   callback.value = cb

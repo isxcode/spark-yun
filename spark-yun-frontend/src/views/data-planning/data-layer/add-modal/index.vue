@@ -84,7 +84,7 @@ const tableRuleModeList: Option[] = [
 ]
 
 const modelConfig = reactive({
-    title: '添加',
+    title: '新建分层',
     visible: false,
     width: '520px',
     okConfig: {
@@ -150,7 +150,7 @@ function showModal(cb: () => void, data: any, parentLayerId: string): void {
         const tableRuleInfo = parseTableRule(formData.tableRule)
         tableRuleMode.value = tableRuleInfo.mode
         formData.tableRuleInput = tableRuleInfo.input
-        modelConfig.title = '编辑'
+        modelConfig.title = '编辑分层'
     } else {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
@@ -159,7 +159,7 @@ function showModal(cb: () => void, data: any, parentLayerId: string): void {
             }
         })
         tableRuleMode.value = 'prefix'
-        modelConfig.title = '添加'
+        modelConfig.title = '新建分层'
     }
 
     callback.value = cb

@@ -55,7 +55,7 @@ const form = ref<FormInstance>()
 const callback = ref<any>()
 const clusterList = ref([])  // 计算集群
 const modelConfig = reactive({
-  title: '添加作业流',
+  title: '新建作业流',
   visible: false,
   width: '520px',
   okConfig: {
@@ -101,7 +101,7 @@ function showModal(cb: () => void, data: any): void {
     formData.name = ''
     formData.remark = ''
     formData.id = ''
-    modelConfig.title = '添加作业流'
+    modelConfig.title = '新建作业流'
   }
 
   getClusterList()

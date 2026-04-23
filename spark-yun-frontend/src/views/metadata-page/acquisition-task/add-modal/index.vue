@@ -2,16 +2,16 @@
   <BlockModal :model-config="modelConfig">
     <el-form ref="form" class="add-computer-group acquisition-task-add" label-position="top" :model="formData"
       :rules="rules">
-      <el-form-item label="采集任务名称" prop="name">
+      <el-form-item label="任务名称" prop="name">
         <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="数据源类型" prop="dbType">
-        <el-select :disabled="!!formData.id" v-model="formData.dbType" placeholder="请选择" @change="dbTypeChangeEvent">
+        <el-select v-model="formData.dbType" placeholder="请选择" @change="dbTypeChangeEvent">
           <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="数据源" prop="datasourceId">
-        <el-select :disabled="!!formData.id" v-model="formData.datasourceId" placeholder="请选择" @visible-change="getDataSourceList">
+        <el-select v-model="formData.datasourceId" placeholder="请选择" @visible-change="getDataSourceList">
           <el-option v-for="item in dataSourceList" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
@@ -358,7 +358,7 @@ const weekDateList = ref<Option[]>([
 const dayList = ref()
 
 const modelConfig = reactive({
-  title: '添加',
+  title: '新建采集',
   visible: false,
   width: '520px',
   okConfig: {
@@ -463,7 +463,7 @@ function showModal(cb: () => void, data: any): void {
       }
     })
     formData.datasourceId && getDataSourceList(true)
-    modelConfig.title = '编辑'
+    modelConfig.title = '编辑采集'
   } else {
     Object.keys(formData).forEach((key: string) => {
       if (key == 'cronConfig') {
@@ -488,7 +488,7 @@ function showModal(cb: () => void, data: any): void {
       }
       formData.collectType = 'ALL_TABLE'
     })
-    modelConfig.title = '添加'
+    modelConfig.title = '新建采集'
   }
 
   callback.value = cb
@@ -561,6 +561,7 @@ function cronTypeChange(e: string) {
 
 function dbTypeChangeEvent() {
   formData.datasourceId = ''
+  getDataSourceList(true)
 }
 
 function changeScheduleRangeEvent() {

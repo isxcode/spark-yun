@@ -6,7 +6,7 @@
         type="primary"
         @click="addGroup"
       >
-        添加作业流
+        新建作业流
       </el-button>
       <div class="zqy-seach">
         <el-input

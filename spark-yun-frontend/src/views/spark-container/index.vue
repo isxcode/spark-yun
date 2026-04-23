@@ -3,7 +3,7 @@
   <div class="zqy-seach-table">
     <div class="zqy-table-top">
       <el-button type="primary" @click="addData">
-        添加容器
+        新建容器
       </el-button>
       <div class="zqy-seach">
         <el-input v-model="keyword" placeholder="请输入名称 回车进行搜索" :maxlength="200" clearable
@@ -13,6 +13,9 @@
     <LoadingPage :visible="loading" :network-error="networkError" @loading-refresh="initData(false)">
       <div class="zqy-table">
         <BlockTable :table-config="tableConfig" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+          <template #name="scopeSlot">
+            <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+          </template>
           <template #statusTag="scopeSlot">
             <ZStatusTag :status="
               scopeSlot.row.status === 'STOP' ?

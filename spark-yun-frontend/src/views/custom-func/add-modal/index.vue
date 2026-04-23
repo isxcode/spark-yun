@@ -79,7 +79,7 @@ const resultTypeList = ref([
 ])
 const fileIdList = ref([])
 const modelConfig = reactive({
-  title: '添加函数',
+  title: '新建函数',
   visible: false,
   width: '520px',
   okConfig: {
@@ -163,7 +163,7 @@ function showModal(cb: () => void, data: any): void {
     formData.className = ''
     formData.resultType = ''
     formData.remark = ''
-    modelConfig.title = '添加'
+    modelConfig.title = '新建函数'
   }
 
   callback.value = cb

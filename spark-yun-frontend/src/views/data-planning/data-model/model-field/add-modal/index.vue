@@ -93,7 +93,7 @@ const currentColumnRule = reactive<{ mode: ColumnRuleMode; input: string; raw: s
 })
 
 const modelConfig = reactive({
-    title: '添加',
+    title: '添加字段',
     visible: false,
     width: '520px',
     okConfig: {
@@ -190,7 +190,7 @@ function showModal(cb: () => void, data: any): void {
             formData[key] = data[key]
         })
         fillDefaultColumnNameByRule(false)
-        modelConfig.title = '编辑'
+        modelConfig.title = '编辑字段'
     } else {
         Object.keys(formData).forEach((key: string) => {
             formData[key] = ''
@@ -198,7 +198,7 @@ function showModal(cb: () => void, data: any): void {
         currentColumnRule.mode = 'none'
         currentColumnRule.input = ''
         currentColumnRule.raw = ''
-        modelConfig.title = '添加'
+        modelConfig.title = '添加字段'
     }
     getFieldFormatList(true)
 
