@@ -3,6 +3,7 @@ package com.isxcode.spark.modules.tenant.service.biz;
 import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
+import cn.hutool.core.util.DesensitizedUtil;
 import com.isxcode.spark.api.tenant.req.*;
 import com.isxcode.spark.api.tenant.res.PageTenantUserRes;
 import com.isxcode.spark.api.user.constants.RoleType;
@@ -110,8 +111,16 @@ public class TenantUserBizService {
             tenantId = TENANT_ID.get();
         }
 
-        return tenantUserRepository.searchTenantUser(tenantId, turAddTenantUserReq.getSearchKeyWord(),
+        Page<PageTenantUserRes> tenantUserPage = tenantUserRepository.searchTenantUser(tenantId,
+            turAddTenantUserReq.getSearchKeyWord(),
             PageRequest.of(turAddTenantUserReq.getPage(), turAddTenantUserReq.getPageSize()));
+
+        tenantUserPage.getContent().forEach(item -> {
+            item.setPhone(Strings.isEmpty(item.getPhone()) ? item.getPhone() : DesensitizedUtil.mobilePhone(item.getPhone()));
+            item.setEmail(Strings.isEmpty(item.getEmail()) ? item.getEmail() : DesensitizedUtil.email(item.getEmail()));
+        });
+
+        return tenantUserPage;
     }
 
     public void removeTenantUser(RemoveTenantUserReq removeTenantUserReq) {
