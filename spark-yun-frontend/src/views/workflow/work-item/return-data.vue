@@ -11,20 +11,23 @@
       <BlockTable class="result-table-log" :table-config="tableConfig"/>
     </template>
   </LoadingPage>
-  <span v-if="showParse" class="zqy-json-parse" @click="getJsonParseResult">结果解析</span>
+  <span v-if="showParseWithLicense" class="zqy-json-parse" @click="getJsonParseResult">结果解析</span>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, defineEmits, defineProps } from 'vue'
+import { computed, onMounted, reactive, ref, defineEmits, defineProps } from 'vue'
 import BlockTable from '@/components/block-table/index.vue'
 import { GetResultData } from '@/services/schedule.service'
 import LoadingPage from '@/components/loading/index.vue'
+import { getVipLicenseEnabled } from '@/utils/vip-license'
 
 const emit = defineEmits(['getJsonParseResult'])
 
 const props = defineProps<{
   showParse: boolean
 }>()
+const licenseEnabled = ref(false)
+const showParseWithLicense = computed(() => props.showParse && licenseEnabled.value)
 
 const tableConfig = reactive({
   tableData: [],
@@ -43,6 +46,10 @@ function initData(id: string): void {
 function getJsonParseResult() {
     emit('getJsonParseResult')
 }
+
+onMounted(async () => {
+  licenseEnabled.value = await getVipLicenseEnabled()
+})
 
 // 获取结果
 function getResultDatalist(id: string) {
