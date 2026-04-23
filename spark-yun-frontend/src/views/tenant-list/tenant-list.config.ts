@@ -40,7 +40,7 @@ export interface TableConfig {
 
 export const BreadCrumbList: Array<BreadCrumb> = [
   {
-    name: '租户列表',
+    name: '租户管理',
     code: 'tenant-list'
   }
 ]
@@ -48,20 +48,20 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 export const colConfigs: colConfig[] = [
   {
     prop: 'name',
-    title: '租户名称',
+    title: '名称',
     minWidth: 100,
     customSlot: 'name',
     showOverflowTooltip: true
   },
   {
     prop: 'maxMemberNum',
-    title: '成员',
+    title: '成员数',
     minWidth: 180,
     customSlot: 'memberProgress'
   },
   {
     prop: 'maxWorkflowNum',
-    title: '工作流',
+    title: '作业流数',
     minWidth: 180,
     customSlot: 'workflowProgress'
   },
@@ -73,13 +73,13 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'validStartDateTime',
-    title: '有效期开始时间',
+    title: '有效开始时间',
     minWidth: 140,
     showOverflowTooltip: true
   },
   {
     prop: 'validEndDateTime',
-    title: '有效期结束时间',
+    title: '有效结束时间',
     minWidth: 140,
     showOverflowTooltip: true
   },

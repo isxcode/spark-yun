@@ -6,7 +6,7 @@
         type="primary"
         @click="addData"
       >
-        添加用户
+        新建用户
       </el-button>
       <div class="zqy-seach">
         <el-input
@@ -30,8 +30,8 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
-          <template #username="scopeSlot">
-            <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.username }}</span>
+          <template #account="scopeSlot">
+            <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.account }}</span>
           </template>
           <template #statusTag="scopeSlot">
             <div class="btn-group">

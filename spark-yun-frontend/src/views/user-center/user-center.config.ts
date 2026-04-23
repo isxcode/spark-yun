@@ -46,15 +46,15 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 
 export const colConfigs: colConfig[] = [
   {
-    prop: 'username',
-    title: '用户名',
+    prop: 'account',
+    title: '账号',
     minWidth: 100,
-    customSlot: 'username',
+    customSlot: 'account',
     showOverflowTooltip: true
   },
   {
-    prop: 'account',
-    title: '账号',
+    prop: 'username',
+    title: '用户名',
     minWidth: 100,
     showOverflowTooltip: true
   },
@@ -72,13 +72,13 @@ export const colConfigs: colConfig[] = [
   },
   {
     prop: 'validStartDateTime',
-    title: '有效期开始时间',
+    title: '有效开始时间',
     minWidth: 140,
     showOverflowTooltip: true
   },
   {
     prop: 'validEndDateTime',
-    title: '有效期结束时间',
+    title: '有效结束时间',
     minWidth: 140,
     showOverflowTooltip: true
   },

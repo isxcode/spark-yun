@@ -46,14 +46,14 @@ export const BreadCrumbList: Array<BreadCrumb> = [
 
 export const colConfigs: colConfig[] = [
   {
-    prop: 'username',
-    title: '用户名',
+    prop: 'account',
+    title: '账号',
     minWidth: 100,
     showOverflowTooltip: true
   },
   {
-    prop: 'account',
-    title: '账号',
+    prop: 'username',
+    title: '用户名',
     minWidth: 100,
     showOverflowTooltip: true
   },

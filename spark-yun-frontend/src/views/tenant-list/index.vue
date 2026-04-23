@@ -6,7 +6,7 @@
         type="primary"
         @click="addData"
       >
-        添加租户
+        新建租户
       </el-button>
       <div class="zqy-seach">
         <el-input
