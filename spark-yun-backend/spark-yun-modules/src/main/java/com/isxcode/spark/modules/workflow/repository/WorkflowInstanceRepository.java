@@ -55,6 +55,4 @@ public interface WorkflowInstanceRepository extends JpaRepository<WorkflowInstan
         LocalDateTime execEndDateTime);
 
     long countByStatus(String status);
-
-    long countByInstanceType(String instanceType);
 }
