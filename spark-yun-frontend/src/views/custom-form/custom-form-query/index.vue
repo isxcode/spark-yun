@@ -2,7 +2,7 @@
     <div class="zqy-seach-table custom-form-query">
         <div class="zqy-table-top">
             <div class="btn-container">
-                <el-button type="primary" @click="addData">添加</el-button>
+                <el-button type="primary" @click="addData">添加数据</el-button>
                 <el-button v-if="status !== 'PUBLISHED'" type="default" @click="editFormConfigEvent">配置</el-button>
             </div>
             <div class="zqy-seach">

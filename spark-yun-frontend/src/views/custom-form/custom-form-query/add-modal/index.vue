@@ -31,7 +31,7 @@ const networkError = ref(false)
 const renderSence = ref<string>('new')
 
 const modelConfig = reactive({
-    title: '添加',
+    title: '添加数据',
     visible: false,
     width: '80%',
     okConfig: {
@@ -60,10 +60,10 @@ function showModal(cb: () => void, data?: any): void {
             ...data
         }
         renderSence.value = 'edit'
-        modelConfig.title = '编辑'
+        modelConfig.title = '编辑数据'
     } else {
         renderSence.value = 'new'
-        modelConfig.title = '添加'
+        modelConfig.title = '添加数据'
     }
     modelConfig.visible = true
 }

@@ -7,7 +7,7 @@
             :model="formData"
             :rules="rules"
         >
-            <el-form-item label="表单名称" prop="name">
+            <el-form-item label="名称" prop="name">
                 <el-input v-model="formData.name" maxlength="200" placeholder="请输入" />
             </el-form-item>
             <!-- <el-form-item label="计算集群" prop="clusterId">
@@ -106,7 +106,7 @@ const sourceTablesList = ref<Option[]>([])
 const isEdit = ref(false)
 
 const modelConfig = reactive({
-    title: '添加表单',
+    title: '新建表单',
     visible: false,
     width: '520px',
     okConfig: {
@@ -191,7 +191,7 @@ function showModal(cb: () => void, data?: formDataParam): void {
         formData.remark = ''
         formData.id = ''
         isEdit.value = false
-        modelConfig.title = '添加表单'
+        modelConfig.title = '新建表单'
     }
     nextTick(() => {
         form.value?.resetFields()

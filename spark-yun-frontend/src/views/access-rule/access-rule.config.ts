@@ -52,7 +52,8 @@ export const colConfigs: colConfig[] = [
         prop: 'name',
         title: '名称',
         minWidth: 120,
-        showOverflowTooltip: true
+        showOverflowTooltip: true,
+        customSlot: 'ruleName'
     },
     {
         prop: 'ruleType',

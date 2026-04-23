@@ -2,7 +2,7 @@
     <Breadcrumb :bread-crumb-list="breadCrumbList" />
     <div class="zqy-seach-table">
         <div class="zqy-table-top">
-            <el-button type="primary" @click="addData">添加规则</el-button>
+            <el-button type="primary" @click="addData">新建名单</el-button>
             <div class="zqy-seach">
                 <el-input
                     v-model="keyword"
@@ -21,6 +21,9 @@
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                 >
+                    <template #ruleName="scopeSlot">
+                        <span class="name-click" @click="editData(scopeSlot.row)">{{ scopeSlot.row.name }}</span>
+                    </template>
                     <template #ruleTypeTag="scopeSlot">
                         <el-tag :type="scopeSlot.row.ruleType === 'WHITELIST' ? 'success' : 'danger'">
                             {{ scopeSlot.row.ruleType === 'WHITELIST' ? '白名单' : '黑名单' }}
@@ -146,4 +149,3 @@ onMounted(() => {
     }
 }
 </style>
-

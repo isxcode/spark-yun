@@ -12,7 +12,7 @@ const route = useRoute()
 
 const breadOtherList = [
   {
-    name: '表单查询',
+    name: '表单数据',
     code: 'form-query'
   },
   {
