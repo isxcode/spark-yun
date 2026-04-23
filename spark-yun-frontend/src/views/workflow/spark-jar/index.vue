@@ -85,17 +85,21 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-form-item label="请求参数" class="jar-args-container">
-                            <el-icon class="button-add" @click="addParam(jarJobConfig.args)"><CirclePlusFilled /></el-icon>
-                            <el-scrollbar>
-                                <template v-for="(tag, index) in jarJobConfig.args" :key="index">
-                                    <div class="input-container">
-                                        <el-input v-model="jarJobConfig.args[index]" clearable placeholder="请输入" maxlength="2000" @blur.stop></el-input>
-                                        <el-icon class="button-remove" @click="handleClose(index)"><RemoveFilled /></el-icon>
-                                    </div>
-                                </template>
-                            </el-scrollbar>
-                        </el-form-item>
+                        <el-row :gutter="24">
+                            <el-col :span="18">
+                                <el-form-item label="请求参数" class="jar-args-container">
+                                    <el-icon class="button-add" @click="addParam(jarJobConfig.args)"><CirclePlusFilled /></el-icon>
+                                    <el-scrollbar>
+                                        <template v-for="(tag, index) in jarJobConfig.args" :key="index">
+                                            <div class="input-container">
+                                                <el-input v-model="jarJobConfig.args[index]" clearable placeholder="请输入" maxlength="2000" @blur.stop></el-input>
+                                                <el-icon class="button-remove" @click="handleClose(index)"><RemoveFilled /></el-icon>
+                                            </div>
+                                        </template>
+                                    </el-scrollbar>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
                     </el-form>
                 </div>
                 <el-collapse v-model="collapseActive" class="work-item-log__collapse" ref="logCollapseRef">
@@ -682,14 +686,15 @@ onUnmounted(() => {
         }
         .el-form-item__content {
             position: relative;
-            .el-scrollbar {
-                width: 100%;
-                .el-scrollbar__view {
-                    max-height: calc(100vh - 450px);
-                    padding-right: 20px;
-                    box-sizing: border-box;
+                .el-scrollbar {
+                    width: 100%;
+                    .el-scrollbar__view {
+                        width: 100%;
+                        max-height: calc(100vh - 450px);
+                        padding-right: 0;
+                        box-sizing: border-box;
+                    }
                 }
-            }
             .button-add {
                 position: absolute;
                 top: -27px;
@@ -705,11 +710,19 @@ onUnmounted(() => {
                 &+.input-container {
                     margin-top: 12px;
                 }
-                display: flex;
+                position: relative;
                 width: 100%;
-                align-items: center;
+                .el-input {
+                    width: 100%;
+                }
+                .el-input__wrapper {
+                    padding-right: 28px;
+                }
                 .button-remove {
-                    margin-left: 12px;
+                    position: absolute;
+                    right: 8px;
+                    top: 50%;
+                    transform: translateY(-50%);
                     color: getCssVar('color', 'danger');
                     cursor: pointer;
                     &:hover {
