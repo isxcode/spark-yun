@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
@@ -63,6 +64,19 @@ public class CurlExecutor extends WorkExecutor {
         return WorkType.CURL;
     }
 
+    private String normalizeCurlDataArgByOs(String script) {
+        String osName = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        if (osName.contains("linux")) {
+            // Linux 使用 --data，避免 --data-raw 兼容性问题
+            return script.replace("--data-raw", "--data");
+        }
+        if (osName.contains("mac") || osName.contains("darwin")) {
+            // macOS 使用 --data-raw，避免命令执行异常
+            return script.replaceAll("--data(?!-)\\b", "--data-raw");
+        }
+        return script;
+    }
+
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) {
@@ -93,8 +107,8 @@ public class CurlExecutor extends WorkExecutor {
             // 脚本需要返回网络状态
             script = script.replace("curl", "curl -w \"%{http_code}\" ");
 
-            // 替换 --data-raw 改为 --data，兼容Linux
-            script = script.replace("--data-raw", "--data");
+            // 按操作系统规范化 curl data 参数
+            script = normalizeCurlDataArgByOs(script);
 
             // 解析上游参数
             script = parseJsonPath(script, workInstance);
