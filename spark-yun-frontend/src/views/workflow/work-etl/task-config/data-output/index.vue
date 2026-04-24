@@ -33,7 +33,7 @@
                 />
             </el-select>
         </el-form-item>
-        <el-form-item label="表" prop="outputEtl.tableName" :rules="rules.tableName">
+        <el-form-item label="表" prop="outputEtl.tableName" :rules="rules.tableName" class="table-select-row">
             <el-select
                 v-model="formData.tableName"
                 filterable
@@ -49,6 +49,7 @@
                     :value="item.value"
                 />
             </el-select>
+            <el-button type="primary" link @click="showTableDetail">数据预览</el-button>
         </el-form-item>
         <el-form-item prop="outputEtl.writeMode" label="写入模式" :rules="rules.writeMode">
             <el-select
@@ -65,6 +66,7 @@
                 />
             </el-select>
         </el-form-item>
+        <TableDetail ref="tableDetailRef"></TableDetail>
     </div>
 </template>
 
@@ -74,6 +76,7 @@ import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus'
 import { TypeList, ConfigRules, TableConfig, OverModeList } from './config.ts'
 import { GetDatasourceList } from '@/services/datasource.service'
 import { GetDataSourceTables } from '@/services/data-sync.service'
+import TableDetail from '../data-input/table-detail/index.vue'
 
 interface Option {
     label: string
@@ -90,6 +93,7 @@ const typeList = ref(TypeList)
 const dataSourceList = ref<Option[]>([])
 const sourceTablesList = ref<Option[]>([])
 const overModeList = ref<Option[]>(OverModeList)
+const tableDetailRef = ref<any>()
 
 const preNodeConfig = ref<any>()
 
@@ -180,6 +184,18 @@ function getDataSourceTable(e: boolean, dataSourceId: string) {
         })
     }
 }
+
+// 数据预览
+function showTableDetail(): void {
+    if (formData.value.datasourceId && formData.value.tableName) {
+        tableDetailRef.value.showModal({
+            dataSourceId: formData.value.datasourceId,
+            tableName: formData.value.tableName
+        })
+    } else {
+        ElMessage.warning('请选择数据源和表')
+    }
+}
 onMounted(() => {
     if (formData.value.dbType) {
         getDataSource(true, formData.value.dbType)
@@ -197,6 +213,22 @@ onMounted(() => {
     .el-form-item {
         .el-form-item__content {
             justify-content: flex-end;
+        }
+        &.table-select-row {
+            .el-form-item__content {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: flex-start;
+                .el-select {
+                    flex: 1;
+                    min-width: 0;
+                }
+                .el-button {
+                    flex-shrink: 0;
+                    margin-left: 8px;
+                }
+            }
         }
     }
 }
