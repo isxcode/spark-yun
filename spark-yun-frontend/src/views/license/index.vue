@@ -144,9 +144,14 @@ function addData() {
       formData.append('license', data)
       UploadLicenseFile(formData)
         .then((res: any) => {
-          ElMessage.success(res.data.msg)
+          ElMessage({
+            type: 'success',
+            message: res?.data?.msg || '上传成功',
+            onClose: () => {
+              refreshLicenseAndReload()
+            }
+          })
           initData()
-          refreshLicenseAndReload()
           resolve()
         })
         .catch((error: any) => {
