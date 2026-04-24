@@ -75,6 +75,7 @@ import AddModal from './add-modal/index.vue'
 
 import { BreadCrumbList, TableConfig, FormData } from './workflow.config'
 import { GetWorkflowList, AddWorkflowData, UpdateWorkflowData, DeleteWorkflowData, UnderlineWorkflowData, PublishWorkflowData } from '@/services/workflow.service'
+import { CheckLicenseStatus } from '@/services/license.service'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/useAuth'
@@ -90,6 +91,16 @@ const keyword = ref('')
 const loading = ref(false)
 const networkError = ref(false)
 const addModalRef = ref(null)
+
+function refreshLicenseAndReload() {
+  CheckLicenseStatus()
+    .catch(() => {
+      // 发布/下线后仅做许可证状态刷新，失败也继续刷新页面
+    })
+    .finally(() => {
+      window.location.reload()
+    })
+}
 
 function initData(tableLoading?: boolean) {
   loading.value = tableLoading ? false : true
@@ -153,7 +164,13 @@ function underlineWorkFlow(data: any) {
     workflowId: data.id
   }).then((res: any) => {
     initData()
-    ElMessage.success(res.msg)
+    ElMessage({
+      type: 'success',
+      message: res?.msg || '操作成功',
+      onClose: () => {
+        refreshLicenseAndReload()
+      }
+    })
   }).catch(() => {
   })
 }
@@ -163,8 +180,14 @@ function publishWorkFlow(data: any) {
   PublishWorkflowData({
       workflowId: data.id
   }).then((res: any) => {
-      ElMessage.success(res.msg)
       initData()
+      ElMessage({
+        type: 'success',
+        message: res?.msg || '操作成功',
+        onClose: () => {
+          refreshLicenseAndReload()
+        }
+      })
   }).catch(() => {
   })
 }
