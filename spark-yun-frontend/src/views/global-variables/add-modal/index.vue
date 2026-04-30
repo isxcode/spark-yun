@@ -5,7 +5,7 @@
         <el-input v-model="formData.keyName" maxlength="200" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="变量值" prop="secretValue">
-        <el-input v-model="formData.secretValue" maxlength="200" placeholder="请输入" />
+        <el-input v-model="formData.secretValue" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="备注">
         <el-input v-model="formData.remark" type="textarea" maxlength="200" :autosize="{ minRows: 4, maxRows: 4 }"

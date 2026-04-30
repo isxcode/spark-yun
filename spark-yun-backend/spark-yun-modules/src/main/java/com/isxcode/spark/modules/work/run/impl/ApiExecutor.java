@@ -50,12 +50,12 @@ public class ApiExecutor extends WorkExecutor {
     private final SqlFunctionService sqlFunctionService;
 
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
-                       WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
-                       SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
-                       WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-                       WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
-                       WorkService workService, IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService,
-                       SecretKeyRepository secretKeyRepository, AesUtils aesUtils) {
+        WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
+        SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
+        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
+        WorkService workService, IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService,
+        SecretKeyRepository secretKeyRepository, AesUtils aesUtils) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -140,7 +140,12 @@ public class ApiExecutor extends WorkExecutor {
                 for (int i = 0; i < apiWorkConfig.getRequestParam().size(); i++) {
                     ApiWorkValueDto e = apiWorkConfig.getRequestParam().get(i);
                     if (!e.getLabel().isEmpty()) {
+
+                        // 翻译上下文
                         String value = parseJsonPath(e.getValue(), workInstance);
+                        value = sqlFunctionService.parseSqlFunction(value);
+
+                        // 翻译全局变量
                         for (SecretKeyEntity secretKeyEntity : allKey) {
                             String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                             if (value.contains(secretName)) {
@@ -156,9 +161,12 @@ public class ApiExecutor extends WorkExecutor {
                 for (int i = 0; i < apiWorkConfig.getRequestHeader().size(); i++) {
                     ApiWorkValueDto e = apiWorkConfig.getRequestHeader().get(i);
                     if (!e.getLabel().isEmpty()) {
+
+                        // 翻译上下文
                         String value = parseJsonPath(e.getValue(), workInstance);
                         value = sqlFunctionService.parseSqlFunction(value);
 
+                        // 翻译全局变量
                         for (SecretKeyEntity secretKeyEntity : allKey) {
                             String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                             if (value.contains(secretName)) {
@@ -180,7 +188,11 @@ public class ApiExecutor extends WorkExecutor {
                 }
                 if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
 
+                    // 翻译上下文
                     String value = parseJsonPath(apiWorkConfig.getRequestBody(), workInstance);
+                    value = sqlFunctionService.parseSqlFunction(value);
+
+                    // 翻译全局变量
                     for (SecretKeyEntity secretKeyEntity : allKey) {
                         String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                         if (value.contains(secretName)) {
