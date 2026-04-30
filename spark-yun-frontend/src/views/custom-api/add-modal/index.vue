@@ -533,6 +533,8 @@ function showModal(cb: () => void, data: any, cb2?: () => void): void {
     modelConfig.visible = true
     // 预加载黑白名单列表，确保编辑时能正确显示名称
     fetchAccessRuleList()
+    // 预加载数据源列表，确保编辑时数据源显示名称而不是id
+    getDataSourceList(true)
     if (data) {
         getApiDetailData(data.id)
         isEdit.value = true
