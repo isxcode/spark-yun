@@ -15,9 +15,7 @@ public class SqlCommentService {
 
         for (String line : lines) {
             String processed = removeLineComment(line);
-            if (processed.trim().isEmpty()) {
-                result.append("\n");
-            } else {
+            if (!processed.trim().isEmpty()) {
                 result.append(processed).append("\n");
             }
         }
