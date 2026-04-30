@@ -7,9 +7,12 @@ import com.isxcode.spark.api.instance.constants.InstanceStatus;
 import com.isxcode.spark.api.work.dto.ApiWorkConfig;
 import com.isxcode.spark.api.work.dto.ApiWorkValueDto;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.http.HttpUtils;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
+import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
+import com.isxcode.spark.modules.secret.repository.SecretKeyRepository;
 import com.isxcode.spark.modules.work.entity.WorkInstanceEntity;
 import com.isxcode.spark.modules.work.entity.WorkEventEntity;
 import com.isxcode.spark.modules.work.repository.WorkInstanceRepository;
@@ -29,7 +32,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Service
 @Slf4j
@@ -37,17 +43,27 @@ public class ApiExecutor extends WorkExecutor {
 
     private final IsxAppProperties isxAppProperties;
 
+    private final SecretKeyRepository secretKeyRepository;
+
+    private final AesUtils aesUtils;
+
+    private final SqlFunctionService sqlFunctionService;
+
     public ApiExecutor(WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
-        SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
-        WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
-        WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
-        WorkService workService, IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService) {
+                       WorkflowInstanceRepository workflowInstanceRepository, AlarmService alarmService,
+                       SqlFunctionService sqlFunctionService, WorkEventRepository workEventRepository,
+                       WorkRunJobFactory workRunJobFactory, VipWorkVersionRepository vipWorkVersionRepository,
+                       WorkConfigRepository workConfigRepository, WorkRepository workRepository, Locker locker,
+                       WorkService workService, IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService,
+                       SecretKeyRepository secretKeyRepository, AesUtils aesUtils) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
             workService, metaColumnLineageService);
         this.isxAppProperties = isxAppProperties;
+        this.secretKeyRepository = secretKeyRepository;
+        this.aesUtils = aesUtils;
+        this.sqlFunctionService = sqlFunctionService;
     }
 
     @Override
@@ -113,6 +129,9 @@ public class ApiExecutor extends WorkExecutor {
             // 获取上下文参数
             ApiWorkConfig apiWorkConfig = workRunContext.getApiWorkConfig();
 
+            // 解析全局变量
+            List<SecretKeyEntity> allKey = secretKeyRepository.findAll();
+
             try {
 
                 // 转换一下结构
@@ -121,13 +140,35 @@ public class ApiExecutor extends WorkExecutor {
                 for (int i = 0; i < apiWorkConfig.getRequestParam().size(); i++) {
                     ApiWorkValueDto e = apiWorkConfig.getRequestParam().get(i);
                     if (!e.getLabel().isEmpty()) {
-                        requestParam.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                        String value = parseJsonPath(e.getValue(), workInstance);
+                        for (SecretKeyEntity secretKeyEntity : allKey) {
+                            String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
+                            if (value.contains(secretName)) {
+                                if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                                    throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
+                                }
+                                value = value.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                            }
+                        }
+                        requestParam.put(e.getLabel(), value);
                     }
                 }
                 for (int i = 0; i < apiWorkConfig.getRequestHeader().size(); i++) {
                     ApiWorkValueDto e = apiWorkConfig.getRequestHeader().get(i);
                     if (!e.getLabel().isEmpty()) {
-                        requestHeader.put(e.getLabel(), parseJsonPath(e.getValue(), workInstance));
+                        String value = parseJsonPath(e.getValue(), workInstance);
+                        value = sqlFunctionService.parseSqlFunction(value);
+
+                        for (SecretKeyEntity secretKeyEntity : allKey) {
+                            String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
+                            if (value.contains(secretName)) {
+                                if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                                    throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
+                                }
+                                value = value.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                            }
+                        }
+                        requestHeader.put(e.getLabel(), value);
                     }
                 }
                 if (ApiType.GET.equals(apiWorkConfig.getRequestType())) {
@@ -138,8 +179,20 @@ public class ApiExecutor extends WorkExecutor {
                     workInstance.setResultData(String.valueOf(response));
                 }
                 if (ApiType.POST.equals(apiWorkConfig.getRequestType())) {
+
+                    String value = parseJsonPath(apiWorkConfig.getRequestBody(), workInstance);
+                    for (SecretKeyEntity secretKeyEntity : allKey) {
+                        String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
+                        if (value.contains(secretName)) {
+                            if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                                throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
+                            }
+                            value = value.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
+                        }
+                    }
+
                     Object response = HttpUtils.doPost(apiWorkConfig.getRequestUrl(), requestHeader,
-                        JSON.parseObject(parseJsonPath(apiWorkConfig.getRequestBody(), workInstance), Object.class));
+                        JSON.parseObject(value, Object.class));
 
                     // 保存结果
                     workInstance.setResultData(String.valueOf(response));
