@@ -296,7 +296,21 @@ jobs:
           script: |  
             mkdir -p /data/mysql/data
             mkdir -p /data/mysql/conf.d
-            docker run --name isxcode-mysql --privileged=true --restart=always -d -p 30306:3306 -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=hive_db -v /data/mysql/data:/var/lib/mysql -v /data/mysql/conf.d:/etc/mysql/conf.d mysql:8.0            
+            docker pull mysql:8.0
+            docker run --name isxcode-mysql --privileged=true --restart=always -d -p 30306:3306 -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=hive_db -v /data/mysql/data:/var/lib/mysql -v /data/mysql/conf.d:/etc/mysql/conf.d mysql:8.0
+            for i in {1..60}; do
+              if docker exec isxcode-mysql mysqladmin ping -h127.0.0.1 -uroot -proot123 --silent; then
+                echo "MySQL is ready"
+                break
+              fi
+              echo "Waiting for MySQL to be ready... (${i}/60)"
+              sleep 5
+              if [ "$i" -eq 60 ]; then
+                echo "MySQL did not become ready in time"
+                docker logs isxcode-mysql | tail -n 200
+                exit 1
+              fi
+            done
 
       - name: Download jdbc
         uses: appleboy/ssh-action@v1.0.3
@@ -337,8 +351,7 @@ jobs:
             tar -zxf /tmp/mysql-connector-java-8.0.22.tar.gz -C /tmp
             cp /tmp/mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar /opt/hive/lib/
             mkdir -p /opt/hive/logs
-            nohup schematool -dbType mysql -initSchema >> /opt/hive/initSchema.log 2>&1 &
-            sleep 10s
+            schematool -dbType mysql -initSchema
             nohup hive --service metastore >> /opt/hive/logs/metastore.log 2>&1 &
             sleep 10s
             nohup hive --service hiveserver2 >> /opt/hive/logs/hiveserver2.log 2>&1 &
