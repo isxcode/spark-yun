@@ -466,9 +466,9 @@ function initData() {
 
 function toggleOrderType() {
     if (!orderType.value) {
-        orderType.value = 'desc'
-    } else if (orderType.value === 'desc') {
         orderType.value = 'acs'
+    } else if (orderType.value === 'acs') {
+        orderType.value = 'desc'
     } else {
         orderType.value = ''
     }
