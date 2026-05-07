@@ -170,7 +170,7 @@ public class ExecuteSqlExecutor extends WorkExecutor {
             DatasourceEntity datasourceEntity = datasourceService.getDatasource(datasourceId);
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
-            connectInfo.setLoginTimeout(5);
+            connectInfo.setLoginTimeout(300);
 
             Connection connection = null;
             try {
