@@ -164,7 +164,7 @@ public class QuerySqlExecutor extends WorkExecutor {
             DatasourceEntity datasourceEntity = datasourceService.getDatasource(datasourceId);
             ConnectInfo connectInfo = datasourceMapper.datasourceEntityToConnectInfo(datasourceEntity);
             Datasource datasource = dataSourceFactory.getDatasource(connectInfo.getDbType());
-            connectInfo.setLoginTimeout(5);
+            connectInfo.setLoginTimeout(300);
 
             Connection connection = null;
             try {
@@ -248,11 +248,11 @@ public class QuerySqlExecutor extends WorkExecutor {
                 }
             } catch (WorkRunException | IsxAppException e) {
                 rollbackQuietly(connection);
-                throw errorLogException(logBuilder + "\n" + e.getMsg());
+                throw errorLogException(e.getMsg());
             } catch (Exception e) {
                 rollbackQuietly(connection);
                 log.error(e.getMessage(), e);
-                throw errorLogException(logBuilder + "\n" + e.getMessage());
+                throw errorLogException(e.getMessage());
             } finally {
                 closeQuietly(connection);
                 WORK_THREAD.remove(workEvent.getId());
