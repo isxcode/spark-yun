@@ -62,13 +62,13 @@ public class QuerySqlExecutor extends WorkExecutor {
     private final IsxAppProperties isxAppProperties;
 
     public QuerySqlExecutor(WorkInstanceRepository workInstanceRepository,
-        WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-        SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
-        AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-        WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
-        WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
-        IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService) {
+                            WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
+                            SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
+                            AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
+                            WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
+                            WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
+                            VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
+                            IsxAppProperties isxAppProperties, MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
@@ -90,7 +90,7 @@ public class QuerySqlExecutor extends WorkExecutor {
 
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
-        WorkEventEntity workEvent) {
+                             WorkEventEntity workEvent) {
 
         // 获取日志
         StringBuilder logBuilder = new StringBuilder(workInstance.getSubmitLog());
@@ -248,11 +248,11 @@ public class QuerySqlExecutor extends WorkExecutor {
                 }
             } catch (WorkRunException | IsxAppException e) {
                 rollbackQuietly(connection);
-                throw errorLogException(logBuilder + "\n" + e.getMsg());
+                throw errorLogException(e.getMsg());
             } catch (Exception e) {
                 rollbackQuietly(connection);
                 log.error(e.getMessage(), e);
-                throw errorLogException(logBuilder + "\n" + e.getMessage());
+                throw errorLogException(e.getMessage());
             } finally {
                 closeQuietly(connection);
                 WORK_THREAD.remove(workEvent.getId());
