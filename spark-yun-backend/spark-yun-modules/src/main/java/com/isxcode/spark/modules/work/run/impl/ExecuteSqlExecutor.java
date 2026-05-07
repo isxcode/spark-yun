@@ -66,14 +66,14 @@ public class ExecuteSqlExecutor extends WorkExecutor {
     private final ServerProperties serverProperties;
 
     public ExecuteSqlExecutor(WorkInstanceRepository workInstanceRepository,
-                              WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
-                              SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
-                              AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
-                              WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
-                              WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
-                              VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
-                              IsxAppProperties isxAppProperties, ServerProperties serverProperties,
-                              MetaColumnLineageService metaColumnLineageService) {
+        WorkflowInstanceRepository workflowInstanceRepository, DatasourceRepository datasourceRepository,
+        SqlCommentService sqlCommentService, SqlValueService sqlValueService, SqlFunctionService sqlFunctionService,
+        AlarmService alarmService, DataSourceFactory dataSourceFactory, DatasourceMapper datasourceMapper,
+        WorkEventRepository workEventRepository, Locker locker, WorkRepository workRepository,
+        WorkRunJobFactory workRunJobFactory, WorkConfigRepository workConfigRepository,
+        VipWorkVersionRepository vipWorkVersionRepository, WorkService workService, DatasourceService datasourceService,
+        IsxAppProperties isxAppProperties, ServerProperties serverProperties,
+        MetaColumnLineageService metaColumnLineageService) {
 
         super(alarmService, locker, workRepository, workInstanceRepository, workflowInstanceRepository,
             workEventRepository, workRunJobFactory, sqlFunctionService, workConfigRepository, vipWorkVersionRepository,
