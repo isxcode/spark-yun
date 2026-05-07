@@ -91,6 +91,7 @@
       >
         <el-input
           v-model="formData.feNodes"
+          maxlength="500"
           placeholder="请输入，如 127.0.0.1:8030"
         />
       </el-form-item>
@@ -111,7 +112,7 @@
         </el-tooltip>
         <el-input
           v-model="formData.metastoreUris"
-          maxlength="100"
+          maxlength="500"
           placeholder="请输入"
         />
       </el-form-item>
