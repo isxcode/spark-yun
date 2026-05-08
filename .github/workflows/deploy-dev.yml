@@ -263,10 +263,11 @@ jobs:
           host: ${{ env.DEV_SERVER_IP }}
           username: ${{ env.DEV_SERVER_USERNAME }}
           password: ${{ env.DEV_SERVER_PASSWORD }}
-          script_stop: true
           timeout: 1800s
+          command_timeout: 1800s
           script: |
-            jps | grep zhiqingyun.jar | awk '{print $1}' | xargs -r kill -9
+            set -e
+            jps | awk '/zhiqingyun.jar/ {print $1}' | xargs -r kill -9 || true
             rm -rf /data/zhiqingyun/${{ inputs.branch_number }}
 
       - name: Install java
@@ -275,8 +276,8 @@ jobs:
           host: ${{ env.DEV_SERVER_IP }}
           username: ${{ env.DEV_SERVER_USERNAME }}
           password: ${{ env.DEV_SERVER_PASSWORD }}
-          script_stop: true
           timeout: 1800s
+          command_timeout: 1800s
           script: |
             if ! yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y; then
               echo "java安装失败，请检查服务器本地是否有java1.8"
@@ -288,10 +289,11 @@ jobs:
           host: ${{ env.DEV_SERVER_IP }}
           username: ${{ env.DEV_SERVER_USERNAME }}
           password: ${{ env.DEV_SERVER_PASSWORD }}
-          script_stop: true
           timeout: 1800s
+          command_timeout: 1800s
           script: |
-            jps | grep zhiqingyun.jar | awk '{print $1}' | xargs -r kill -9
+            set -e
+            jps | awk '/zhiqingyun.jar/ {print $1}' | xargs -r kill -9 || true
             rm -rf /opt/zhiqingyun
             tar -vzxf /tmp/zhiqingyun.tar.gz -C /opt/
             rm -rf /tmp/zhiqingyun.tar.gz
@@ -304,7 +306,13 @@ jobs:
             cd /data/zhiqingyun/${{ inputs.branch_number }}
             nohup java -jar -Xmx2048m /opt/zhiqingyun/lib/zhiqingyun.jar --spring.profiles.active=local --spring.config.additional-location=/opt/zhiqingyun/conf/ --spring.datasource.url='jdbc:h2:file:/data/zhiqingyun/${{ inputs.branch_number }}/h2/data;AUTO_SERVER=TRUE' --isx-app.resources-path=/data/zhiqingyun/${{ inputs.branch_number }} > /dev/null 2>&1 &
             sleep 120
-            until curl -s http://${{ env.DEV_SERVER_IP }}:8080/tools/open/health | grep "UP"; do
+            end_time=$((SECONDS + 600))
+            until curl -fsS http://${{ env.DEV_SERVER_IP }}:8080/tools/open/health | grep -q "UP"; do
+              if [ "$SECONDS" -ge "$end_time" ]; then
+                echo "Health check timeout after 600s"
+                exit 1
+              fi
               echo "Waiting for service to be available..."
               sleep 1
             done
+            echo "Deploy dev completed and health check is UP"
