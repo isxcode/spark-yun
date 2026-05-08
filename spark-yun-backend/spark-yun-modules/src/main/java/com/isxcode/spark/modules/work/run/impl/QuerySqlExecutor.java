@@ -176,7 +176,8 @@ public class QuerySqlExecutor extends WorkExecutor {
 
                     // 清除脚本中的脏数据
                     List<String> sqls =
-                        Arrays.stream(script.split(";")).filter(Strings::isNotBlank).collect(Collectors.toList());
+                        Arrays.stream(script.split(";")).map(sql -> sql.replaceFirst("^(\\r\\n|\\n|\\r)", ""))
+                            .filter(Strings::isNotBlank).collect(Collectors.toList());
 
                     // 执行每条sql，除了最后一条
                     for (int i = 0; i < sqls.size() - 1; i++) {

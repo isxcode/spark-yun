@@ -27,10 +27,14 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script_stop: true
           timeout: 1800s
+          command_timeout: 1800s
           script: |
-            jps | grep zhiqingyun.jar | awk '{print $1}' | xargs -r kill -9
+            set -e
+
+            # jar 进程可能不存在，不应视为失败
+            jps | awk '/zhiqingyun.jar/ {print $1}' | xargs -r kill -9 || true
+
             if [ -d "/opt/zhiqingyun/resources_back" ]; then
               rm -rf /opt/zhiqingyun/resources/*
               cp -r /opt/zhiqingyun/resources_back/* /opt/zhiqingyun/resources/
@@ -42,9 +46,20 @@ jobs:
             rm -rf /tmp/libprql_*
             rm -rf /tmp/tomcat.8080.*
             rm -rf /tmp/tomcat-docbase.8080.*
-            bash /opt/zhiqingyun/bin/start.sh --print-log=false
+
+            # 某些启动脚本会在“已触发启动”后返回非 0，交由健康检查判定最终成功与否
+            bash /opt/zhiqingyun/bin/start.sh --print-log=false || true
+
             sleep 120
-            until curl -s https://zhiqingyun-demo.isxcode.com/tools/open/health | grep "UP"; do
+
+            end_time=$((SECONDS + 600))
+            until curl -fsS https://zhiqingyun-demo.isxcode.com/tools/open/health | grep -q "UP"; do
+              if [ "$SECONDS" -ge "$end_time" ]; then
+                echo "Health check timeout after 600s"
+                exit 1
+              fi
               echo "Waiting for service to be available..."
               sleep 1
             done
+
+            echo "Rollback completed and health check is UP"
