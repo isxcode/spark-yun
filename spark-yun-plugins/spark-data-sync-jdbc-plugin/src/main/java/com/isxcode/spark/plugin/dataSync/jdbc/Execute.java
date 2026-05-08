@@ -16,8 +16,6 @@ import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Execute {
 
@@ -221,14 +219,35 @@ public class Execute {
     }
 
     public static String parseHiveDatabase(String jdbcUrl) {
-
-        Pattern pattern = Pattern.compile("^jdbc:hive2://.*?/(.*?)$");
-        Matcher matcher = pattern.matcher(jdbcUrl);
-        if (matcher.find()) {
-            return matcher.group(1) + ".";
-        } else {
+        if (Strings.isEmpty(jdbcUrl)) {
             return "";
         }
+
+        final String prefix = "jdbc:hive2://";
+        if (!jdbcUrl.startsWith(prefix)) {
+            return "";
+        }
+
+        int slashIndex = jdbcUrl.indexOf('/', prefix.length());
+        if (slashIndex < 0 || slashIndex + 1 >= jdbcUrl.length()) {
+            return "";
+        }
+
+        // 兼容hive ha模式
+        String dbPart = jdbcUrl.substring(slashIndex + 1);
+        int endIndex = dbPart.length();
+        for (char delimiter : new char[] {';', '?', '#'}) {
+            int idx = dbPart.indexOf(delimiter);
+            if (idx >= 0 && idx < endIndex) {
+                endIndex = idx;
+            }
+        }
+
+        String database = dbPart.substring(0, endIndex).trim();
+        if (database.isEmpty()) {
+            return "";
+        }
+        return database + ".";
     }
 
     public static String getHashPredicate(String datasourceType, String PartitionColumn, Integer NumPartitions,
