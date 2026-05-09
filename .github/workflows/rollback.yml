@@ -1,12 +1,16 @@
 name: rollback
 
+#on:
+#  schedule:
+#    - cron: '59 15 * * *'
+
 on:
-  schedule:
-    - cron: '59 15 * * *'
+  workflow_dispatch:
 
 jobs:
 
   download:
+    if: false
     runs-on: ubuntu-latest
 
     permissions:
