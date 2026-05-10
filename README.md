@@ -95,6 +95,17 @@ docker run --rm \
   gradle package
 ```
 
+```bash
+# 系统环境: Windows
+# 安装包路径: C:\Users\isxcode\Downloads\spark-yun\spark-yun-dist\build\distributions\zhiqingyun.tar.gz
+cd Downloads
+git clone https://github.com/isxcode/spark-yun.git
+docker run --rm ^
+  -v C:\Users\isxcode\Downloads\spark-yun:/spark-yun ^
+  -it isxcode/zhiqingyun-build ^
+  gradle package
+```
+
 ### 产品展示
 
 <table>
