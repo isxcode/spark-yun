@@ -182,10 +182,10 @@ public class CurlExecutor extends WorkExecutor {
         // 清理缓存文件
         if (workEvent.getEventProcess() == 3) {
             try {
-                String clearWorkRunFile =
-                    "rm -f " + PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
+                String workRunFilePath =
+                    PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "work"
                         + File.separator + workRunContext.getTenantId() + File.separator + workInstance.getId() + ".sh";
-                RuntimeUtil.execForStr(clearWorkRunFile);
+                FileUtil.del(workRunFilePath);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
 
