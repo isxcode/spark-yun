@@ -9,6 +9,7 @@
 # 后端打包文件不提交
 **/build
 **/bin
+!spark-yun-dist/zhiqingyun/bin
 **/dist
 
 # .DS_Store不提交
