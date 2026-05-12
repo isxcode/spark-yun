@@ -22,14 +22,4 @@ DISK_IO_READ=$(sar -d 1 2 | tail -n 1 | awk '{print $4}')
 DISK_IO_WRITE=$(sar -d 1 2 | tail -n 1 | awk '{print $5}')
 
 # 返回json的日志
-echo "{ \
-  \"status\": \"SUCCESS\", \
-  \"log\": \"检测完成\", \
-  \"usedMemorySize\": \"$USED_MEMORY\", \
-  \"usedStorageSize\": \"$USED_STORAGE\", \
-  \"cpuPercent\": \"$CPU_PERCENT\", \
-  \"networkIoReadSpeed\": \"$NET_IO_READ\", \
-  \"networkIoWriteSpeed\": \"$NET_IO_WRITE\", \
-  \"diskIoReadSpeed\": \"$DISK_IO_READ\", \
-  \"diskIoWriteSpeed\": \"$DISK_IO_WRITE\" \
-}"
+echo "{ \"status\": \"SUCCESS\", \"log\": \"检测完成\", \"usedMemorySize\": \"$USED_MEMORY\", \"usedStorageSize\": \"$USED_STORAGE\", \"cpuPercent\": \"$CPU_PERCENT\", \"networkIoReadSpeed\": \"$NET_IO_READ\", \"networkIoWriteSpeed\": \"$NET_IO_WRITE\", \"diskIoReadSpeed\": \"$DISK_IO_READ\", \"diskIoWriteSpeed\": \"$DISK_IO_WRITE\" }"
