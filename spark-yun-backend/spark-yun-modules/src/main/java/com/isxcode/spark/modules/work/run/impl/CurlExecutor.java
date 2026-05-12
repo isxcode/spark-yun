@@ -77,6 +77,10 @@ public class CurlExecutor extends WorkExecutor {
         return script;
     }
 
+    private boolean isWindows() {
+        return System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("win");
+    }
+
     @Override
     protected String execute(WorkRunContext workRunContext, WorkInstanceEntity workInstance,
         WorkEventEntity workEvent) {
@@ -92,6 +96,10 @@ public class CurlExecutor extends WorkExecutor {
 
         // 检测Curl脚本
         if (workEvent.getEventProcess() == 1) {
+
+            if (isWindows()) {
+                throw errorLogException("检测Curl脚本异常 : 当前环境为Windows，暂不支持Curl作业");
+            }
 
             // 检测脚本是否为空
             String script = workRunContext.getScript();
