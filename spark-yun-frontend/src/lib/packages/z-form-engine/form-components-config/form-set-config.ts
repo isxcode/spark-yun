@@ -20,6 +20,11 @@ export default [
         formConfigValueCode: 'disabled'
     },
     {
+        formTypeCode: 'FILLABLE',
+        formInstanceName: 'FormFillable',
+        formConfigValueCode: 'fillable'
+    },
+    {
         formTypeCode: 'REQUIRED',
         formInstanceName: 'FormRequired',
         formConfigValueCode: 'required'

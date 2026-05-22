@@ -12,6 +12,7 @@ export default {
         label: '日期选择',
         placeholder: '请选择',
         disabled: false,
+        fillable: true,
         required: false,
         isColumn: true,
         width: 2,
@@ -28,6 +29,7 @@ export default {
         'DEFAULTVALUE_DATE',
         'PLACEHOLDER',
         'DISABLED',
+        'FILLABLE',
         'REQUIRED',
         'LIST_COLUMN'
     ]
