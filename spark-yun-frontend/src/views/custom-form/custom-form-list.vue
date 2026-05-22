@@ -92,7 +92,7 @@ interface formDataParam {
 const router = useRouter()
 const breadCrumbList = ref([
     {
-        name: '分享表单',
+        name: '表单管理',
         code: 'custom-form'
     }
 ])
