@@ -129,7 +129,7 @@ function getFormConfigById(tableLoading?: boolean) {
     authorization: shareFormConfig.value.formToken,
     tenant: shareFormConfig.value.tenantId
   }).then((res: any) => {
-    formConfigList.value = res.data?.components
+    formConfigList.value = (res.data?.components || []).filter((item: any) => item?.fillable !== false)
     loading.value = false
   }).catch(() => {
     loading.value = false

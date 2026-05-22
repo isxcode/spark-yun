@@ -12,6 +12,7 @@ export default {
         label: '多选框',
         placeholder: '请选择',
         disabled: false,
+        fillable: true,
         width: 4,
         multiple: true,
         componentType: 'FormInputCheckbox',
@@ -33,6 +34,7 @@ export default {
         // 'DEFAULTVALUE',
         'DEFAULTVALUE_MULTIPLE',
         'DISABLED',
+        'FILLABLE',
         'REQUIRED',
         'LIST_COLUMN'
     ]

@@ -12,6 +12,7 @@ export default {
         label: '邮箱输入',
         placeholder: '请输入',
         disabled: false,
+        fillable: true,
         required: false,
         isColumn: true,
         width: 2,
@@ -27,6 +28,7 @@ export default {
         'DEFAULTVALUE',
         'PLACEHOLDER',
         'DISABLED',
+        'FILLABLE',
         'REQUIRED',
         'LIST_COLUMN'
     ]

@@ -23,6 +23,8 @@ public class FormComponentDto {
 
     private Boolean disabled;
 
+    private Boolean fillable;
+
     private Boolean required;
 
     private Boolean isColumn;

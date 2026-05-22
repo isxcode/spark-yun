@@ -12,6 +12,7 @@ export default {
         label: '单选框',
         placeholder: '请选择',
         disabled: false,
+        fillable: true,
         width: 4,
         isColumn: true,
         componentType: 'FormInputRadio',
@@ -30,6 +31,7 @@ export default {
         'OPTIONS',
         'DEFAULTVALUE_MULTIPLE',
         'DISABLED',
+        'FILLABLE',
         'REQUIRED',
         'LIST_COLUMN'
     ]

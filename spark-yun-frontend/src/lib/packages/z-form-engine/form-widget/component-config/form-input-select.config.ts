@@ -12,6 +12,7 @@ export default {
         label: '下拉选择',
         placeholder: '请选择',
         disabled: false,
+        fillable: true,
         multiple: false,
         isColumn: true,
         width: 2,
@@ -34,6 +35,7 @@ export default {
         'DEFAULTVALUE_MULTIPLE',
         'PLACEHOLDER',
         'DISABLED',
+        'FILLABLE',
         'REQUIRED',
         'LIST_COLUMN'
     ]
