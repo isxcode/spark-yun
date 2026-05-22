@@ -60,6 +60,29 @@ const token = ref('')
 
 const formData = ref<Record<string, any>>({})
 
+function toMillisecondNumber(value: any): number | null {
+  if (typeof value === 'number' && !Number.isNaN(value)) {
+    return value
+  }
+  if (typeof value !== 'string' || !value) {
+    return null
+  }
+  if (/^\d+$/.test(value)) {
+    return Number(value)
+  }
+  if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
+    const [hour, minute, second] = value.split(':').map(Number)
+    return hour * 3600000 + minute * 60000 + second * 1000
+  }
+  if (value.includes('T')) {
+    const timestamp = Date.parse(value)
+    if (!Number.isNaN(timestamp)) {
+      return timestamp
+    }
+  }
+  return null
+}
+
 function normalizeTimeFieldData(data: Record<string, any>) {
   const result: Record<string, any> = {
     ...(data || {})
@@ -69,9 +92,9 @@ function normalizeTimeFieldData(data: Record<string, any>) {
     .map((item: any) => item?.uuid)
 
   timeFieldKeys.forEach((key: string) => {
-    const value = result[key]
-    if (typeof value === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(value)) {
-      result[key] = value.replaceAll(':', '')
+    const ms = toMillisecondNumber(result[key])
+    if (ms !== null) {
+      result[key] = String(ms)
     }
   })
   return result
