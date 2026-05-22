@@ -2,6 +2,7 @@ import FormInputTextConfig from './component-config/form-input-text.config'
 import FormInputSelectConfig from './component-config/form-input-select.config'
 import FormInputNumberConfig from './component-config/form-input-number.config'
 import FormInputDateConfig from './component-config/form-input-date.config'
+import FormInputTimeConfig from './component-config/form-input-time.config'
 import FormInputSwitchConfig from './component-config/form-input-switch.config'
 import FormInputRadioConfig from './component-config/form-input-radio.config'
 import FormInputCheckboxConfig from './component-config/form-input-checkbox.config'
@@ -18,6 +19,7 @@ const commonComponents = [
     FormInputNumberConfig,
     FormInputMoneyConfig,
     FormInputDateConfig,
+    FormInputTimeConfig,
     FormInputSwitchConfig,
     FormInputRadioConfig,
     FormInputCheckboxConfig,
