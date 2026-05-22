@@ -66,13 +66,6 @@
 账号密码：zhiyao123 [已禁用，联系管理员] </br>
 添加微信：wx_ispong
 
-### 相关文档
-
-- [快速体验](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
-- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
-- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/3)
-- [博客](https://ispong.isxcode.com)
-
 ### 快速部署
 
 ```bash
@@ -81,6 +74,13 @@
 # 管理员密码：admin123
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
+
+### 相关文档
+
+- [快速体验](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
+- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
+- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/3)
+- [博客](https://ispong.isxcode.com)
 
 ### 源码构建
 
