@@ -23,13 +23,13 @@ const breadOtherList = [
 
 const breadCrumbList = ref([
   {
-    name: '分享表单',
+    name: '表单管理',
     code: 'custom-form'
   }
 ])
 watch(() => route.name, (e) => {
   breadCrumbList.value = [{
-    name: '分享表单',
+    name: '表单管理',
     code: 'custom-form'
   }, ...breadOtherList.filter(r => r.code === e)]
 })

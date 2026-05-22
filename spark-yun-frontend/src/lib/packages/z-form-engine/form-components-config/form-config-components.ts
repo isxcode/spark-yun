@@ -2,6 +2,7 @@ import FormLabel from './form-config-list/form-label.vue'
 import FormWidth from './form-config-list/form-width.vue'
 import FormPlaceholder from './form-config-list/form-placeholder.vue'
 import FormDisabled from './form-config-list/form-disabled.vue'
+import FormFillable from './form-config-list/form-fillable.vue'
 import FormRequired from './form-config-list/form-required.vue'
 import FormMaxlength from './form-config-list/form-maxlength.vue'
 import FormDefaultValue from './form-config-list/form-default-value.vue'
@@ -10,6 +11,7 @@ import FormDefaultNumber from './form-config-list/form-default-number.vue'
 import FormCodeSelect from './form-config-list/form-code-select.vue'
 import FormDateType from './form-config-list/form-date-type.vue'
 import FormDefaultDate from './form-config-list/form-default-date.vue'
+import FormDefaultTime from './form-config-list/form-default-time.vue'
 import FormOptions from './form-config-list/form-options.vue'
 import FormSelectMultiple from './form-config-list/form-select-multiple.vue'
 import FormDefaultMultiple from './form-config-list/form-default-multiple.vue'
@@ -23,6 +25,7 @@ export default {
     FormWidth,
     FormPlaceholder,
     FormDisabled,
+    FormFillable,
     FormRequired,
     FormMaxlength,
     FormDefaultValue,
@@ -31,6 +34,7 @@ export default {
     FormDefaultNumber,
     FormDateType,
     FormDefaultDate,
+    FormDefaultTime,
     FormOptions,
     FormSelectMultiple,
     FormDefaultMultiple,

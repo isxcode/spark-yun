@@ -11,6 +11,7 @@ export default {
         codeType: 'custom',
         label: '开关组件',
         disabled: false,
+        fillable: true,
         required: false,
         width: 2,
         isColumn: true,
@@ -29,6 +30,7 @@ export default {
         'DEFAULTVALUE',
         'SWITCH_INFO',
         'DISABLED',
+        'FILLABLE',
         'LIST_COLUMN'
     ]
 }

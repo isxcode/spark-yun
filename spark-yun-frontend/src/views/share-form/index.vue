@@ -60,6 +60,46 @@ const token = ref('')
 
 const formData = ref<Record<string, any>>({})
 
+function toMillisecondNumber(value: any): number | null {
+  if (typeof value === 'number' && !Number.isNaN(value)) {
+    return value
+  }
+  if (typeof value !== 'string' || !value) {
+    return null
+  }
+  if (/^\d+$/.test(value)) {
+    return Number(value)
+  }
+  if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
+    const [hour, minute, second] = value.split(':').map(Number)
+    return hour * 3600000 + minute * 60000 + second * 1000
+  }
+  if (value.includes('T')) {
+    const timestamp = Date.parse(value)
+    if (!Number.isNaN(timestamp)) {
+      return timestamp
+    }
+  }
+  return null
+}
+
+function normalizeTimeFieldData(data: Record<string, any>) {
+  const result: Record<string, any> = {
+    ...(data || {})
+  }
+  const timeFieldKeys = (formConfigList.value || [])
+    .filter((item: any) => item?.componentType === 'FormInputTime')
+    .map((item: any) => item?.uuid)
+
+  timeFieldKeys.forEach((key: string) => {
+    const ms = toMillisecondNumber(result[key])
+    if (ms !== null) {
+      result[key] = String(ms)
+    }
+  })
+  return result
+}
+
 // watch(() => route.params, (e) => {
 //     console.log('路由', e)
 // }, {
@@ -89,7 +129,7 @@ function getFormConfigById(tableLoading?: boolean) {
     authorization: shareFormConfig.value.formToken,
     tenant: shareFormConfig.value.tenantId
   }).then((res: any) => {
-    formConfigList.value = res.data?.components
+    formConfigList.value = (res.data?.components || []).filter((item: any) => item?.fillable !== false)
     loading.value = false
   }).catch(() => {
     loading.value = false
@@ -104,7 +144,7 @@ function saveData() {
       AddFormData({
         formId: shareFormConfig.value.formId,
         formVersion: shareFormConfig.value.formVersion,
-        data: formData.value
+        data: normalizeTimeFieldData(formData.value)
       }, {
         authorization: shareFormConfig.value.formToken,
         tenant: shareFormConfig.value.tenantId

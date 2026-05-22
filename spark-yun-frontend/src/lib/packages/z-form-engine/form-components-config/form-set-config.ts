@@ -20,6 +20,11 @@ export default [
         formConfigValueCode: 'disabled'
     },
     {
+        formTypeCode: 'FILLABLE',
+        formInstanceName: 'FormFillable',
+        formConfigValueCode: 'fillable'
+    },
+    {
         formTypeCode: 'REQUIRED',
         formInstanceName: 'FormRequired',
         formConfigValueCode: 'required'
@@ -45,6 +50,12 @@ export default [
     {
         formTypeCode: 'DEFAULTVALUE_DATE',
         formInstanceName: 'FormDefaultDate',
+        formConfigValueCode: 'defaultValue'
+    },
+    // 默认值-时间
+    {
+        formTypeCode: 'DEFAULTVALUE_TIME',
+        formInstanceName: 'FormDefaultTime',
         formConfigValueCode: 'defaultValue'
     },
     // 默认值-多选

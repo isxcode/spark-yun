@@ -1,28 +1,31 @@
 <template>
     <BlockModal :model-config="modelConfig">
+        <template #customLeft>
+            <el-button class="footer-share-copy-btn" :disabled="!url" id="share-url" :data-clipboard-text="url" @click="copyUrlEvent('share-url')">一键复制</el-button>
+            <el-button class="footer-share-generate-btn" :loading="loading" type="primary" @click="getShareFormUrl">生成链接</el-button>
+        </template>
         <div class="share-form-container">
             <!-- <div class="img-code">
 
             </div> -->
             <div class="share-form">
-                <span class="label">链接：</span>
                 <span class="url">
-                    <EllipsisTooltip class="url-show" :label="url || '暂无链接'" />
+                    <a v-if="url" class="url-link" :href="url" target="_blank" rel="noopener noreferrer">
+                        <EllipsisTooltip class="url-show" :label="url" />
+                    </a>
+                    <EllipsisTooltip v-else class="url-show" label="暂无链接" />
                 </span>
-                <span v-if="url" class="copy-url" id="share-url" :data-clipboard-text="url"
-                    @click="copyUrlEvent('share-url')">复制</span>
             </div>
         </div>
         <div class="share-option-container">
             <div class="valid-day-input">
-                <span>生效时间（天）</span>
+                <span>有效时间（天）</span>
                 <el-input-number
                     v-model="validDay"
                     :min="1"
                     controls-position="right"
                 />
             </div>
-            <el-button :loading="loading" type="primary" @click="getShareFormUrl">生成分享链接</el-button>
         </div>
     </BlockModal>
 </template>
@@ -101,6 +104,14 @@ defineExpose({
 
 <style lang="scss">
 .share-form-setting__modal {
+    .footer-share-copy-btn {
+        margin-right: 8px;
+    }
+
+    .footer-share-generate-btn {
+        margin-right: 8px;
+    }
+
     .share-form-container {
         display: flex;
         justify-content: space-around;
@@ -116,36 +127,32 @@ defineExpose({
         }
     
         .share-form {
-            display: flex;
             width: 100%;
-    
-            .label {
-                color: getCssVar('color', 'primary');
-                margin-right: 12px;
-                font-size: 12px;
-                min-width: 40px;
-            }
-    
+            background: getCssVar('fill-color', 'light');
+            border: 1px dashed getCssVar('border-color');
+            border-radius: 6px;
+            padding: 10px 12px;
+            box-sizing: border-box;
+
             .url {
-                color: getCssVar('color', 'primary', 'light-5');
+                color: getCssVar('text-color', 'regular');
                 font-size: 12px;
-                max-width: 400px;
+                width: 100%;
     
                 .url-show {
                     max-width: 100%;
                 }
-            }
-    
-            .copy-url {
-                font-size: 12px;
-                color: getCssVar('color', 'primary');
-                cursor: pointer;
-    
-                &:hover {
+
+                .url-link {
+                    color: getCssVar('color', 'primary');
+                    text-decoration: none;
+                }
+
+                .url-link:hover {
                     text-decoration: underline;
                 }
-    
             }
+
         }
     }
     

@@ -59,6 +59,71 @@ const addModalRef = ref(null)
 const formConfigList = ref([])
 const status = ref('')
 
+function getTimeFieldKeys() {
+    return (formConfigList.value || [])
+        .filter((item: any) => item?.componentType === 'FormInputTime')
+        .map((item: any) => item?.uuid)
+}
+
+function toMillisecondNumber(value: any): number | null {
+    if (typeof value === 'number' && !Number.isNaN(value)) {
+        return value
+    }
+    if (typeof value !== 'string' || !value) {
+        return null
+    }
+    if (/^\d+$/.test(value)) {
+        return Number(value)
+    }
+    if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
+        const [hour, minute, second] = value.split(':').map(Number)
+        return hour * 3600000 + minute * 60000 + second * 1000
+    }
+    if (value.includes('T')) {
+        const timestamp = Date.parse(value)
+        if (!Number.isNaN(timestamp)) {
+            return timestamp
+        }
+    }
+    return null
+}
+
+function toDisplayTime(value: any): any {
+    const ms = toMillisecondNumber(value)
+    if (ms === null) {
+        return value
+    }
+    const totalSeconds = Math.floor(ms / 1000)
+    const hour = Math.floor(totalSeconds / 3600) % 24
+    const minute = Math.floor((totalSeconds % 3600) / 60)
+    const second = totalSeconds % 60
+    const hh = String(hour).padStart(2, '0')
+    const mm = String(minute).padStart(2, '0')
+    const ss = String(second).padStart(2, '0')
+    return `${hh}:${mm}:${ss}`
+}
+
+function toRequestTimeValue(value: any): any {
+    if (typeof value !== 'string' && typeof value !== 'number') {
+        return value
+    }
+    const ms = toMillisecondNumber(value)
+    if (ms === null) {
+        return value
+    }
+    return String(ms)
+}
+
+function normalizeTimeFieldData(data: Record<string, any>) {
+    const result = cloneDeep(data || {})
+    const timeFieldKeys = getTimeFieldKeys()
+
+    timeFieldKeys.forEach((key: string) => {
+        result[key] = toRequestTimeValue(result[key])
+    })
+    return result
+}
+
 function getFormConfigById(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
@@ -111,25 +176,36 @@ function initData(tableLoading?: boolean) {
         formId: route.query.id,
         formVersion: route.query.formVersion
     }).then((res: any) => {
+        const timeFieldKeySet = new Set(getTimeFieldKeys())
         tableConfig.tableData = (res.data.data || []).map((item: any) => {
             let columnData: any = {}
             let formDetailData: any = {}
+            let formRawDetailData: any = {}
             Object.keys(item).forEach((k: string) => {
                 if (item[k] && item[k] instanceof Array && item[k].length > 0) {
                     columnData[k] = item[k].map(d => d.label).join('，')
                     formDetailData[k] = item[k].map(d => d.value)
+                    formRawDetailData[k] = item[k].map(d => d.value)
                 } else if (item[k] && typeof item[k].booleanValue === 'boolean') {
                     formDetailData[k] = item[k].booleanValue
                     columnData[k] = item[k].label
+                    formRawDetailData[k] = item[k].booleanValue
                 } else if (item[k] && item[k] instanceof Object && item[k].value) {
                     columnData[k] = item[k].label
                     formDetailData[k] = item[k].value
+                    formRawDetailData[k] = item[k].value
                 } else {
                     columnData[k] = item[k]
                     formDetailData[k] = item[k]
+                    formRawDetailData[k] = item[k]
+                }
+                if (timeFieldKeySet.has(k)) {
+                    columnData[k] = toDisplayTime(columnData[k])
+                    formDetailData[k] = toDisplayTime(formDetailData[k])
                 }
             })
             columnData.formDetailData = formDetailData
+            columnData.formRawDetailData = formRawDetailData
             return columnData
         })
         tableConfig.pagination.total = res.data.count
@@ -151,7 +227,7 @@ function addData() {
             AddFormData({
                 formId: route.query.id,
                 formVersion: route.query.formVersion,
-                data: formData
+                data: normalizeTimeFieldData(formData)
             }).then((res: any) => {
                 ElMessage.success(res.msg)
                 handleCurrentChange(1)
@@ -164,14 +240,14 @@ function addData() {
 }
 
 function editData(data: any) {
-    const oldData = cloneDeep(data.formDetailData)
+    const oldData = normalizeTimeFieldData(data.formRawDetailData || data.formDetailData)
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateFormData({
                 formId: route.query.id,
                 formVersion: route.query.formVersion,
                 oldData: oldData,
-                newData: formData
+                newData: normalizeTimeFieldData(formData)
             }).then((res: any) => {
                 ElMessage.success(res.msg)
                 initData()

@@ -47,13 +47,15 @@
                     <el-radio label="CREATE_TABLE">创建新表</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="formData.createMode === 'EXIST_TABLE'" prop="mainTable" label="表（选择已有表名）">
+            <el-form-item v-if="isEdit" label="表名">
+                <el-input v-model="formData.mainTable" disabled />
+            </el-form-item>
+            <el-form-item v-else-if="formData.createMode === 'EXIST_TABLE'" prop="mainTable" label="表（选择已有表名）">
                 <el-select
                     v-model="formData.mainTable"
                     clearable
                     filterable
                     placeholder="请选择"
-                    :disabled="isEdit"
                     @visible-change="getDataSourceTable($event, formData.datasourceId)"
                 >
                     <el-option v-for="item in sourceTablesList" :key="item.value" :label="item.label"
@@ -61,7 +63,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item v-else-if="formData.createMode === 'CREATE_TABLE'" prop="mainTable" label="表（手动输入，生成新的表名）">
-                <el-input :disabled="isEdit" v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
+                <el-input v-model="formData.mainTable" maxlength="20" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="备注">
                 <el-input

@@ -14,52 +14,34 @@
                 <template v-if="formList?.length">
                     <el-scrollbar max-height="calc(100vh - 146px)" class="form-card-list">
                         <template v-for="card in formList">
-                            <div class="form-card-item">
-                                <div class="card-item">
-                                    <span class="name">名称：</span>
-                                    <EllipsisTooltip class="card-item-name" :label="card.name" />
-                                </div>
-                                <div class="card-item">
-                                    <span class="name name_3">数据源：</span>
-                                    <EllipsisTooltip class="card-item-name card-item-name_3" :label="card.datasourceName" />
-                                </div>
-                                <div class="card-item">
-                                    <span class="name">表名：</span>
-                                    <EllipsisTooltip class="card-item-name" :label="card.mainTable" />
-                                </div>
-                                <div class="card-item">
-                                    <span class="name name_4">创建时间：</span>
-                                    <EllipsisTooltip class="card-item-name card-item-name_4" :label="card.createDateTime" />
-                                </div>
-                                <div class="card-item">状态：{{card.status === 'UNPUBLISHED' ? '未发布' : '已发布'}}</div>
-                                <!-- <div class="card-item">版本：{{card.version}}</div> -->
-                                <div class="card-item">
-                                    <span class="name">备注：</span>
-                                    <EllipsisTooltip class="card-item-url" :label="card.remark" />
-                                </div>
-                                <!-- <div class="card-item">
-                                    <span class="url">备注：</span>
-                                    <EllipsisTooltip class="card-item-url" :label="card.remark" />
-                                </div> -->
-                                <span class="show-detail" @click="redirectQuery(card)">
-                                    <el-icon><View /></el-icon>
-                                </span>
-                                <el-dropdown trigger="click" popper-class="custom-form-popover">
-                                    <div class="card-button" @click.stop>
-                                        <el-icon><MoreFilled /></el-icon>
+                            <el-tooltip :disabled="!card.remark" :content="card.remark" placement="top" :show-after="600">
+                                <div class="form-card-item" @click="redirectQuery(card)">
+                                    <div class="card-title">
+                                        <EllipsisTooltip class="card-title-name" :label="card.name" />
                                     </div>
-                                    <template #dropdown>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item v-if="card.status === 'UNPUBLISHED'" @click="editData(card)">配置</el-dropdown-item>
-                                            <el-dropdown-item @click="updateData(card)">编辑</el-dropdown-item>
-                                            <el-dropdown-item v-if="card.status === 'UNPUBLISHED'" @click="deleteData(card)">删除</el-dropdown-item>
-                                            <el-dropdown-item @click="shareForm(card)">分享</el-dropdown-item>
-                                            <el-dropdown-item v-if="card.status !== 'UNPUBLISHED'"  @click="underlineForm(card)">下线</el-dropdown-item>
-                                            <el-dropdown-item v-else @click="publishForm(card)">发布</el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
-                            </div>
+                                    <div class="card-item">
+                                        <span class="name name_3">数据源：</span>
+                                        <EllipsisTooltip class="card-item-name card-item-name_3" :label="card.datasourceName" />
+                                    </div>
+                                    <div class="card-item">
+                                        <span class="name">表名：</span>
+                                        <EllipsisTooltip class="card-item-name" :label="card.mainTable" />
+                                    </div>
+                                    <div class="card-item">
+                                        <span class="name name_4">创建时间：</span>
+                                        <EllipsisTooltip class="card-item-name card-item-name_4" :label="card.createDateTime" />
+                                    </div>
+                                    <div class="card-item">状态：{{card.status === 'UNPUBLISHED' ? '未发布' : '已发布'}}</div>
+                                    <div class="card-actions">
+                                        <span v-if="card.status === 'UNPUBLISHED'" class="card-action" @click.stop="editData(card)">配置</span>
+                                        <span class="card-action" @click.stop="updateData(card)">编辑</span>
+                                        <span v-if="card.status === 'UNPUBLISHED'" class="card-action card-action__danger" @click.stop="deleteData(card)">删除</span>
+                                        <span v-if="card.status !== 'UNPUBLISHED'" class="card-action" @click.stop="shareForm(card)">分享</span>
+                                        <span v-if="card.status !== 'UNPUBLISHED'" class="card-action" @click.stop="underlineForm(card)">下线</span>
+                                        <span v-else class="card-action" @click.stop="publishForm(card)">发布</span>
+                                    </div>
+                                </div>
+                            </el-tooltip>
                         </template>
                         <template v-for="card in emptyBox">
                             <div class="form-card-item form-card-item__empty"></div>
@@ -110,7 +92,7 @@ interface formDataParam {
 const router = useRouter()
 const breadCrumbList = ref([
     {
-        name: '分享表单',
+        name: '表单管理',
         code: 'custom-form'
     }
 ])
@@ -305,7 +287,7 @@ onMounted(() => {
 
             .form-card-item {
                 width: 24%;
-                height: 150px;
+                min-height: 166px;
                 border: 1px solid getCssVar('border-color');
                 border-radius: 6px;
                 background-color: getCssVar('color', 'white');
@@ -318,7 +300,7 @@ onMounted(() => {
                 box-sizing: border-box;
                 font-size: getCssVar('font-size', 'extra-small');
                 // margin-top: 12px;
-                cursor: default;
+                cursor: pointer;
                 color: #666;
                 position: relative;
 
@@ -328,6 +310,9 @@ onMounted(() => {
                 &:hover {
                     transition: transform 0.15s linear;
                     transform: scale(1.03);
+                    .card-title {
+                        color: getCssVar('color', 'primary');
+                    }
                 }
 
                 .card-item {
@@ -359,24 +344,18 @@ onMounted(() => {
                         max-width: 60%;
                     }
                 }
-                .el-dropdown {
-                    position: absolute;
-                    right: 6px;
-                    bottom: 12px;
-                    .card-button {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        border: 1px solid getCssVar('color', 'info');
-                        border-radius: 50%;
-                        height: 16px;
-                        width: 16px;
-                        color: getCssVar('color', 'info');
-                        &:hover {
-                            cursor: pointer;
-                            color: getCssVar('color', 'primary');
-                            border-color: getCssVar('color', 'primary');
-                        }
+                .card-title {
+                    display: flex;
+                    align-items: center;
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: getCssVar('text-color', 'regular');
+                    transition: color 0.15s linear;
+                    margin-bottom: 6px;
+
+                    .card-title-name {
+                        display: inline-block;
+                        max-width: 100%;
                     }
                 }
                 &.form-card-item__empty {
@@ -385,18 +364,28 @@ onMounted(() => {
                     pointer-events: none;
                 }
 
-                .show-detail {
-                    position: absolute;
-                    right: 32px;
-                    bottom: 12px;
-                    cursor: pointer;
+                .card-actions {
                     display: flex;
                     align-items: center;
-                    height: 16px;
-                    font-size: 16px;
-                    color: getCssVar('color', 'info');
+                    flex-wrap: wrap;
+                    padding-top: 8px;
+                    margin-top: 4px;
+                    line-height: 16px;
+                }
+                .card-action {
+                    cursor: pointer;
+                    font-size: 12px;
+                    color: getCssVar('color', 'primary');
+                    padding: 0 8px;
+                    border-right: 1px solid getCssVar('border-color');
+                    &:first-child {
+                        padding-left: 0;
+                    }
+                    &:last-child {
+                        padding-right: 0;
+                        border-right: none;
+                    }
                     &:hover {
-                        color: getCssVar('color', 'primary');
                         text-decoration: underline;
                     }
                 }

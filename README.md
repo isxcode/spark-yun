@@ -66,13 +66,6 @@
 账号密码：zhiyao123 [已禁用，联系管理员] </br>
 添加微信：wx_ispong
 
-### 相关文档
-
-- [快速体验](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
-- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
-- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/3)
-- [博客](https://ispong.isxcode.com)
-
 ### 快速部署
 
 ```bash
@@ -82,10 +75,17 @@
 docker run -p 8080:8080 -d isxcode/zhiqingyun
 ```
 
+### 相关文档
+
+- [快速体验](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
+- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
+- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/3)
+- [博客](https://ispong.isxcode.com)
+
 ### 源码构建
 
 ```bash
-# 系统环境: Mac或Linux
+# 操作系统: Mac或Linux
 # 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
@@ -96,7 +96,7 @@ docker run --rm \
 ```
 
 ```bash
-# 系统环境: Windows
+# 操作系统: Windows
 # 安装包路径: C:\Users\isxcode\Downloads\spark-yun\spark-yun-dist\build\distributions\zhiqingyun.tar.gz
 cd Downloads
 git clone https://github.com/isxcode/spark-yun.git

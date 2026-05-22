@@ -23,6 +23,11 @@ public interface FormComponentType {
     String FORM_INPUT_DATE = "FormInputDate";
 
     /**
+     * 时间.
+     */
+    String FORM_INPUT_TIME = "FormInputTime";
+
+    /**
      * 开关.
      */
     String FORM_INPUT_SWITCH = "FormInputSwitch";

@@ -12,6 +12,7 @@ export default {
         label: '数字输入',
         placeholder: '请输入',
         disabled: false,
+        fillable: true,
         required: false,
         isColumn: true,
         precision: null,
@@ -28,6 +29,7 @@ export default {
         'DEFAULTVALUE_NUMBER',
         'PLACEHOLDER',
         'DISABLED',
+        'FILLABLE',
         'REQUIRED',
         'LIST_COLUMN'
     ]
