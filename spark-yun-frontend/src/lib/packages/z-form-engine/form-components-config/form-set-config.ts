@@ -47,6 +47,12 @@ export default [
         formInstanceName: 'FormDefaultDate',
         formConfigValueCode: 'defaultValue'
     },
+    // 默认值-时间
+    {
+        formTypeCode: 'DEFAULTVALUE_TIME',
+        formInstanceName: 'FormDefaultTime',
+        formConfigValueCode: 'defaultValue'
+    },
     // 默认值-多选
     {
         formTypeCode: 'DEFAULTVALUE_MULTIPLE',

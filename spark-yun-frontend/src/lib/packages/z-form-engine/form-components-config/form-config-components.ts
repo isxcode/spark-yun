@@ -10,6 +10,7 @@ import FormDefaultNumber from './form-config-list/form-default-number.vue'
 import FormCodeSelect from './form-config-list/form-code-select.vue'
 import FormDateType from './form-config-list/form-date-type.vue'
 import FormDefaultDate from './form-config-list/form-default-date.vue'
+import FormDefaultTime from './form-config-list/form-default-time.vue'
 import FormOptions from './form-config-list/form-options.vue'
 import FormSelectMultiple from './form-config-list/form-select-multiple.vue'
 import FormDefaultMultiple from './form-config-list/form-default-multiple.vue'
@@ -31,6 +32,7 @@ export default {
     FormDefaultNumber,
     FormDateType,
     FormDefaultDate,
+    FormDefaultTime,
     FormOptions,
     FormSelectMultiple,
     FormDefaultMultiple,

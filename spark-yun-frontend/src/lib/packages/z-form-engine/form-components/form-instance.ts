@@ -2,6 +2,7 @@ import FormInputText from './common/form-input-text/index.vue'
 import FormInputSelect from './common/form-input-select/index.vue'
 import FormInputNumber from './common/form-input-number/index.vue'
 import FormInputDate from './common/form-input-date/index.vue'
+import FormInputTime from './common/form-input-time/index.vue'
 import FormInputSwitch from './common/form-input-switch/index.vue'
 import FormInputRadio from './common/form-input-radio/index.vue'
 import FormInputCheckbox from './common/form-input-checkbox/index.vue'
@@ -17,6 +18,7 @@ const Common = {
     FormInputSelect,
     FormInputNumber,
     FormInputDate,
+    FormInputTime,
     FormInputSwitch,
     FormInputRadio,
     FormInputCheckbox,
