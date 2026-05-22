@@ -65,23 +65,53 @@ function getTimeFieldKeys() {
         .map((item: any) => item?.uuid)
 }
 
-function toDisplayTime(value: any): any {
-    if (typeof value !== 'string') {
+function toMillisecondNumber(value: any): number | null {
+    if (typeof value === 'number' && !Number.isNaN(value)) {
         return value
+    }
+    if (typeof value !== 'string' || !value) {
+        return null
+    }
+    if (/^\d+$/.test(value)) {
+        return Number(value)
     }
     if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
-        return value
+        const [hour, minute, second] = value.split(':').map(Number)
+        return hour * 3600000 + minute * 60000 + second * 1000
     }
-    if (/^\d{6}$/.test(value)) {
-        return `${value.slice(0, 2)}:${value.slice(2, 4)}:${value.slice(4, 6)}`
-    }
-    if (value.includes('T') && value.includes(':')) {
-        const timePart = value.split('T')[1]?.slice(0, 8)
-        if (timePart && /^\d{2}:\d{2}:\d{2}$/.test(timePart)) {
-            return timePart
+    if (value.includes('T')) {
+        const timestamp = Date.parse(value)
+        if (!Number.isNaN(timestamp)) {
+            return timestamp
         }
     }
-    return value
+    return null
+}
+
+function toDisplayTime(value: any): any {
+    const ms = toMillisecondNumber(value)
+    if (ms === null) {
+        return value
+    }
+    const totalSeconds = Math.floor(ms / 1000)
+    const hour = Math.floor(totalSeconds / 3600) % 24
+    const minute = Math.floor((totalSeconds % 3600) / 60)
+    const second = totalSeconds % 60
+    const hh = String(hour).padStart(2, '0')
+    const mm = String(minute).padStart(2, '0')
+    const ss = String(second).padStart(2, '0')
+    return `${hh}:${mm}:${ss}`
+}
+
+function toRequestTimeValue(value: any): any {
+    if (typeof value !== 'string' && typeof value !== 'number') {
+        return value
+    }
+    const ms = toMillisecondNumber(value)
+    if (ms === null) {
+        return value
+    }
+    return String(ms)
 }
 
 function normalizeTimeFieldData(data: Record<string, any>) {
@@ -89,10 +119,7 @@ function normalizeTimeFieldData(data: Record<string, any>) {
     const timeFieldKeys = getTimeFieldKeys()
 
     timeFieldKeys.forEach((key: string) => {
-        const value = result[key]
-        if (typeof value === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(value)) {
-            result[key] = value.replaceAll(':', '')
-        }
+        result[key] = toRequestTimeValue(result[key])
     })
     return result
 }
@@ -153,19 +180,24 @@ function initData(tableLoading?: boolean) {
         tableConfig.tableData = (res.data.data || []).map((item: any) => {
             let columnData: any = {}
             let formDetailData: any = {}
+            let formRawDetailData: any = {}
             Object.keys(item).forEach((k: string) => {
                 if (item[k] && item[k] instanceof Array && item[k].length > 0) {
                     columnData[k] = item[k].map(d => d.label).join('，')
                     formDetailData[k] = item[k].map(d => d.value)
+                    formRawDetailData[k] = item[k].map(d => d.value)
                 } else if (item[k] && typeof item[k].booleanValue === 'boolean') {
                     formDetailData[k] = item[k].booleanValue
                     columnData[k] = item[k].label
+                    formRawDetailData[k] = item[k].booleanValue
                 } else if (item[k] && item[k] instanceof Object && item[k].value) {
                     columnData[k] = item[k].label
                     formDetailData[k] = item[k].value
+                    formRawDetailData[k] = item[k].value
                 } else {
                     columnData[k] = item[k]
                     formDetailData[k] = item[k]
+                    formRawDetailData[k] = item[k]
                 }
                 if (timeFieldKeySet.has(k)) {
                     columnData[k] = toDisplayTime(columnData[k])
@@ -173,6 +205,7 @@ function initData(tableLoading?: boolean) {
                 }
             })
             columnData.formDetailData = formDetailData
+            columnData.formRawDetailData = formRawDetailData
             return columnData
         })
         tableConfig.pagination.total = res.data.count
@@ -207,7 +240,7 @@ function addData() {
 }
 
 function editData(data: any) {
-    const oldData = normalizeTimeFieldData(data.formDetailData)
+    const oldData = normalizeTimeFieldData(data.formRawDetailData || data.formDetailData)
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateFormData({
