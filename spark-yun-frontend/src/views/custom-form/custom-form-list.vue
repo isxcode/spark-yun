@@ -15,7 +15,7 @@
                     <el-scrollbar max-height="calc(100vh - 146px)" class="form-card-list">
                         <template v-for="card in formList">
                             <el-tooltip :disabled="!card.remark" :content="card.remark" placement="top" :show-after="600">
-                                <div class="form-card-item">
+                                <div class="form-card-item" @click="redirectQuery(card)">
                                     <div class="card-title">
                                         <EllipsisTooltip class="card-title-name" :label="card.name" />
                                     </div>
@@ -33,13 +33,12 @@
                                     </div>
                                     <div class="card-item">状态：{{card.status === 'UNPUBLISHED' ? '未发布' : '已发布'}}</div>
                                     <div class="card-actions">
-                                        <span class="card-action" @click="redirectQuery(card)">预览</span>
-                                        <span v-if="card.status === 'UNPUBLISHED'" class="card-action" @click="editData(card)">配置</span>
-                                        <span class="card-action" @click="updateData(card)">编辑</span>
-                                        <span v-if="card.status === 'UNPUBLISHED'" class="card-action card-action__danger" @click="deleteData(card)">删除</span>
-                                        <span v-if="card.status !== 'UNPUBLISHED'" class="card-action" @click="shareForm(card)">分享</span>
-                                        <span v-if="card.status !== 'UNPUBLISHED'" class="card-action" @click="underlineForm(card)">下线</span>
-                                        <span v-else class="card-action" @click="publishForm(card)">发布</span>
+                                        <span v-if="card.status === 'UNPUBLISHED'" class="card-action" @click.stop="editData(card)">配置</span>
+                                        <span class="card-action" @click.stop="updateData(card)">编辑</span>
+                                        <span v-if="card.status === 'UNPUBLISHED'" class="card-action card-action__danger" @click.stop="deleteData(card)">删除</span>
+                                        <span v-if="card.status !== 'UNPUBLISHED'" class="card-action" @click.stop="shareForm(card)">分享</span>
+                                        <span v-if="card.status !== 'UNPUBLISHED'" class="card-action" @click.stop="underlineForm(card)">下线</span>
+                                        <span v-else class="card-action" @click.stop="publishForm(card)">发布</span>
                                     </div>
                                 </div>
                             </el-tooltip>
@@ -301,7 +300,7 @@ onMounted(() => {
                 box-sizing: border-box;
                 font-size: getCssVar('font-size', 'extra-small');
                 // margin-top: 12px;
-                cursor: default;
+                cursor: pointer;
                 color: #666;
                 position: relative;
 
@@ -311,6 +310,9 @@ onMounted(() => {
                 &:hover {
                     transition: transform 0.15s linear;
                     transform: scale(1.03);
+                    .card-title {
+                        color: getCssVar('color', 'primary');
+                    }
                 }
 
                 .card-item {
@@ -347,7 +349,8 @@ onMounted(() => {
                     align-items: center;
                     font-size: 15px;
                     font-weight: 600;
-                    color: getCssVar('text-color', 'primary');
+                    color: getCssVar('text-color', 'regular');
+                    transition: color 0.15s linear;
                     margin-bottom: 6px;
 
                     .card-title-name {
