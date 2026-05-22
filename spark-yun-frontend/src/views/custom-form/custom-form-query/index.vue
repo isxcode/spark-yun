@@ -59,6 +59,44 @@ const addModalRef = ref(null)
 const formConfigList = ref([])
 const status = ref('')
 
+function getTimeFieldKeys() {
+    return (formConfigList.value || [])
+        .filter((item: any) => item?.componentType === 'FormInputTime')
+        .map((item: any) => item?.uuid)
+}
+
+function toDisplayTime(value: any): any {
+    if (typeof value !== 'string') {
+        return value
+    }
+    if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
+        return value
+    }
+    if (/^\d{6}$/.test(value)) {
+        return `${value.slice(0, 2)}:${value.slice(2, 4)}:${value.slice(4, 6)}`
+    }
+    if (value.includes('T') && value.includes(':')) {
+        const timePart = value.split('T')[1]?.slice(0, 8)
+        if (timePart && /^\d{2}:\d{2}:\d{2}$/.test(timePart)) {
+            return timePart
+        }
+    }
+    return value
+}
+
+function normalizeTimeFieldData(data: Record<string, any>) {
+    const result = cloneDeep(data || {})
+    const timeFieldKeys = getTimeFieldKeys()
+
+    timeFieldKeys.forEach((key: string) => {
+        const value = result[key]
+        if (typeof value === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(value)) {
+            result[key] = value.replaceAll(':', '')
+        }
+    })
+    return result
+}
+
 function getFormConfigById(tableLoading?: boolean) {
     loading.value = tableLoading ? false : true
     networkError.value = networkError.value || false
@@ -111,6 +149,7 @@ function initData(tableLoading?: boolean) {
         formId: route.query.id,
         formVersion: route.query.formVersion
     }).then((res: any) => {
+        const timeFieldKeySet = new Set(getTimeFieldKeys())
         tableConfig.tableData = (res.data.data || []).map((item: any) => {
             let columnData: any = {}
             let formDetailData: any = {}
@@ -127,6 +166,10 @@ function initData(tableLoading?: boolean) {
                 } else {
                     columnData[k] = item[k]
                     formDetailData[k] = item[k]
+                }
+                if (timeFieldKeySet.has(k)) {
+                    columnData[k] = toDisplayTime(columnData[k])
+                    formDetailData[k] = toDisplayTime(formDetailData[k])
                 }
             })
             columnData.formDetailData = formDetailData
@@ -151,7 +194,7 @@ function addData() {
             AddFormData({
                 formId: route.query.id,
                 formVersion: route.query.formVersion,
-                data: formData
+                data: normalizeTimeFieldData(formData)
             }).then((res: any) => {
                 ElMessage.success(res.msg)
                 handleCurrentChange(1)
@@ -164,14 +207,14 @@ function addData() {
 }
 
 function editData(data: any) {
-    const oldData = cloneDeep(data.formDetailData)
+    const oldData = normalizeTimeFieldData(data.formDetailData)
     addModalRef.value.showModal((formData: any) => {
         return new Promise((resolve: any, reject: any) => {
             UpdateFormData({
                 formId: route.query.id,
                 formVersion: route.query.formVersion,
                 oldData: oldData,
-                newData: formData
+                newData: normalizeTimeFieldData(formData)
             }).then((res: any) => {
                 ElMessage.success(res.msg)
                 initData()
