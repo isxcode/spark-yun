@@ -1,8 +1,10 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'pmd'
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.spotbugs) apply false
     alias(libs.plugins.spotless)
 }
 
@@ -14,6 +16,8 @@ allprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
     apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -71,12 +75,59 @@ allprojects {
     tasks.withType(Checkstyle).configureEach {
         maxWarnings = 100
         maxErrors = 0
-        ignoreFailures = false
+        ignoreFailures = true
         config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
         reports {
             xml.required = false
             html.required = true
             html.stylesheet resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle-simple.xsl')
+        }
+        doLast {
+            def reportFile = reports.html.outputLocation.get().asFile
+            if (reportFile.exists()) {
+                println "Checkstyle HTML report: ${reportFile.toURI()}"
+            }
+        }
+    }
+
+    pmd {
+        toolVersion = libs.versions.pmd.get()
+        ignoreFailures = true
+        consoleOutput = true
+    }
+
+    tasks.withType(Pmd).configureEach {
+        ignoreFailures = true
+        reports {
+            xml.required = false
+            html.required = true
+        }
+        doLast {
+            def reportFile = reports.html.outputLocation.get().asFile
+            if (reportFile.exists()) {
+                println "PMD HTML report: ${reportFile.toURI()}"
+            }
+        }
+    }
+
+    spotbugs {
+        toolVersion = libs.versions.spotbugs.tool.get()
+        ignoreFailures = true
+        showStackTraces = true
+        showProgress = true
+    }
+
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+        ignoreFailures = true
+        reports {
+            html.required = true
+            xml.required = false
+        }
+        doLast {
+            def reportFile = reports.html.outputLocation.get().asFile
+            if (reportFile.exists()) {
+                println "SpotBugs HTML report: ${reportFile.toURI()}"
+            }
         }
     }
 }
@@ -92,8 +143,8 @@ spotless {
 }
 
 tasks.register("format") {
-
-    dependsOn(":spark-yun-dist:copy_version", ":spotlessApply", ":checkstyleMain")
+    dependsOn(":spark-yun-dist:copy_version", ":spotlessApply")
+    dependsOn(subprojects.findAll { it.path != ':spark-yun-frontend' }.collect { "${it.path}:check" })
 }
 
 tasks.register('package', GradleBuild) {

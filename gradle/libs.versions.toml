@@ -42,6 +42,7 @@ mongodb-bson = "5.2.1"
 mysql-connector = "8.1.0"
 openapi = "1.7.0"
 poi = "5.2.5"
+pmd = "6.55.0"
 prql = "0.5.2"
 pull-parser = "2.1.10"
 spark = "3.4.1"
@@ -50,6 +51,8 @@ sparkjava = "2.9.4"
 spring-boot = "2.7.9"
 spring-dependency-management = "1.0.15.RELEASE"
 spring-framework = "5.3.25"
+spotbugs-tool = "4.7.3"
+spotbugs-plugin = "5.2.5"
 spotless = "6.11.0"
 stax2-api = "3.1.1"
 truelicense = "4.0.3"
@@ -151,4 +154,5 @@ xmlbeans = { module = "org.apache.xmlbeans:xmlbeans", version.ref = "xmlbeans" }
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs-plugin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
