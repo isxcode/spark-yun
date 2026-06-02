@@ -33,7 +33,7 @@ public class DatasourceService {
 
     private final DataSourceFactory dataSourceFactory;
 
-    public final static Map<String, DriverShim> ALL_EXIST_DRIVER = new ConcurrentHashMap<>();
+    public static final Map<String, DriverShim> ALL_EXIST_DRIVER = new ConcurrentHashMap<>();
     private final DatabaseDriverRepository databaseDriverRepository;
 
     public String getDriverClass(String datasourceType) {

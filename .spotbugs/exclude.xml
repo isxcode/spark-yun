@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.isxcode.spark.vip.modules.form.service.FormBizService"/>
+        <Or>
+            <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+            <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
+        </Or>
+    </Match>
+</FindBugsFilter>

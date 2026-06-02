@@ -66,8 +66,8 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         } else {
             flinkConfig.set(PipelineOptions.JARS, singletonList(submitWorkReq.getAgentHomePath() + File.separator
                 + "plugins" + File.separator + submitWorkReq.getFlinkSubmit().getAppResource()));
-            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, singletonList(
-                Base64.getEncoder().encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes())));
+            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, singletonList(Base64.getEncoder()
+                .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8))));
         }
 
         flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName());

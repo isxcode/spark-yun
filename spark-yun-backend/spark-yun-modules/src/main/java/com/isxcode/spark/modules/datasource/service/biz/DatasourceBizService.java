@@ -557,7 +557,7 @@ public class DatasourceBizService {
             if (datasourceMap.get(metaDatabase.getDatasourceId()) == null) {
                 metaDatabase.setStatus(MetaDatabaseStatus.DELETED);
                 deleteAllMetaDatasource.add(metaDatabase);
-            } ;
+            }
         });
         metaDatabaseRepository.saveAll(deleteAllMetaDatasource);
     }

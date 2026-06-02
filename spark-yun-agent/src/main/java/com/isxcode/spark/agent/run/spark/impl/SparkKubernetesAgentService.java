@@ -266,9 +266,9 @@ public class SparkKubernetesAgentService implements SparkAgentService {
         if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
             sparkLauncher.addAppArgs(submitWorkReq.getArgs());
         } else {
-            sparkLauncher.addAppArgs(Base64.getEncoder()
-                .encodeToString(submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes()
-                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
+            sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(
+                submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes(StandardCharsets.UTF_8)
+                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8)));
         }
 
         // 把提交的spark配置，塞到sparkLauncher中，必须以spark. 为前缀

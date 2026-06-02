@@ -29,11 +29,11 @@ public class SparkYarnAgentService implements SparkAgentService {
 
     private final SparkYunAgentProperties sparkYunAgentProperties;
 
-    public static String YARN_LOG_STDOUT_REGEX = "\nLogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout";
+    public static final String YARN_LOG_STDOUT_REGEX = "\nLogType:stdout\\s*([\\s\\S]*?)\\s*End of LogType:stdout";
 
-    public static String YARN_LOG_STDERR_REGEX = "\nLogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr";
+    public static final String YARN_LOG_STDERR_REGEX = "\nLogType:stderr\\s*([\\s\\S]*?)\\s*End of LogType:stderr";
 
-    public static String YARN_LOG_RESULT_REGEX = "LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun";
+    public static final String YARN_LOG_RESULT_REGEX = "LogType:spark-yun\\s*([\\s\\S]*?)\\s*End of LogType:spark-yun";
 
     @Override
     public String getAgentType() {
@@ -115,9 +115,9 @@ public class SparkYarnAgentService implements SparkAgentService {
         if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
             sparkLauncher.addAppArgs(submitWorkReq.getArgs());
         } else {
-            sparkLauncher.addAppArgs(Base64.getEncoder()
-                .encodeToString(submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes()
-                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
+            sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(
+                submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes(StandardCharsets.UTF_8)
+                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8)));
         }
 
         String hiveUsername = submitWorkReq.getSparkSubmit().getConf().get("qing.hive.username");

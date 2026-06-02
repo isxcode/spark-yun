@@ -25,5 +25,5 @@ public interface AuthMapper {
     @Mapping(target = "id", source = "authEntity.id")
     AuthEntity updateSsoAuthReqToAuthEntity(UpdateSsoAuthReq updateSsoAuthReq, AuthEntity authEntity);
 
-    PageSsoAuthRes AuthEntityToPageSsoAuthRes(AuthEntity authEntity);
+    PageSsoAuthRes authEntityToPageSsoAuthRes(AuthEntity authEntity);
 }

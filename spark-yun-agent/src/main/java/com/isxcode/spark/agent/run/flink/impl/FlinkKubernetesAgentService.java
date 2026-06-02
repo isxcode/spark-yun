@@ -87,7 +87,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         Files.setPosixFilePermissions(k8sLog, perms);
 
         // 创建pod文件
-        try (InputStream inputStream = new ByteArrayInputStream(podTemplateContent.getBytes())) {
+        try (InputStream inputStream = new ByteArrayInputStream(podTemplateContent.getBytes(StandardCharsets.UTF_8))) {
             Files.copy(inputStream, Paths.get(agentHomePath + File.separator + "pod").resolve(workInstanceId + ".yaml"),
                 StandardCopyOption.REPLACE_EXISTING);
         }
@@ -103,8 +103,8 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS,
                 Arrays.asList(submitWorkReq.getPluginReq().getArgs()));
         } else {
-            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, Collections.singletonList(
-                Base64.getEncoder().encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes())));
+            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, Collections.singletonList(Base64.getEncoder()
+                .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8))));
         }
 
         // 配置名称
@@ -302,7 +302,8 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         if (logFiles != null) {
             for (File logFile : logFiles) {
                 if (logFile.getName().contains("application") || logFile.getName().contains("taskmanager")) {
-                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(logFile))) {
+                    try (BufferedReader bufferedReader =
+                        Files.newBufferedReader(logFile.toPath(), StandardCharsets.UTF_8)) {
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
                             logBuilder.append(line).append("\n");
