@@ -1,9 +1,9 @@
 dependencies {
     // dbutils
-    implementation 'commons-dbutils:commons-dbutils:1.7'
+    implementation libs.commons.dbutils
 
     // hadoop-hdfs-client
-    implementation("org.apache.hadoop:hadoop-hdfs-client:${HADOOP_VERSION}") {
+    implementation(libs.hadoop.hdfs.client) {
         isForce()
     }
 }
@@ -172,7 +172,7 @@ tasks.register('make', GradleBuild) {
 // 添加依赖
 dependencies {
 
-    implementation 'com.sparkjava:spark-core:2.9.4'
+    implementation libs.sparkjava.core
 
-    implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.51.v20230217'
+    implementation libs.jetty.server
 }

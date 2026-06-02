@@ -5,10 +5,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-    implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
+    implementation libs.druid.spring.boot.starter
 
-    implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
-    implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
+    implementation libs.flyway.core
+    implementation libs.flyway.mysql
 }
 
 bootJar {

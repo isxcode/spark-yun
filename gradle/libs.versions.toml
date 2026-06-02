@@ -1,0 +1,154 @@
+[versions]
+aliyun-sms = "3.0.0"
+bouncycastle = "1.78.1"
+c3p0 = "0.9.5.5"
+calcite = "1.27.0"
+commons-dbutils = "1.7"
+druid = "1.2.16"
+fastjson = "2.0.16"
+flink = "1.18.1"
+flink-connector-jdbc = "3.1.2-1.18"
+flink-scala = "2.12"
+flyway = "9.16.3"
+groovy = "4.0.15"
+hadoop = "3.3.5"
+hikaricp = "4.0.3"
+hive = "3.1.3"
+httpclient5 = "5.2.1"
+httpcore5 = "5.2.1"
+hutool = "5.8.16"
+jackson-210 = "2.10.0"
+jackson-2135 = "2.13.5"
+janino-308 = "3.0.8"
+janino-311 = "3.1.10"
+jasypt = "3.0.5"
+jersey = "2.27"
+jetty = "9.4.51.v20230217"
+jsch = "0.2.11"
+jsoup = "1.15.3"
+json4s = "3.5.3"
+jsqlparser = "4.8"
+jgrapht = "1.4.0"
+jwt = "0.11.5"
+junit-jupiter = "5.9.1"
+kafka = "3.1.2"
+log4j = "1.2.17"
+lombok = "1.18.24"
+lucene = "8.11.2"
+lucene-analyzers = "3.6.2"
+lz4 = "1.5.0"
+mapstruct = "1.5.3.Final"
+mongodb-bson = "5.2.1"
+mysql-connector = "8.1.0"
+openapi = "1.7.0"
+poi = "5.2.5"
+prql = "0.5.2"
+pull-parser = "2.1.10"
+spark = "3.4.1"
+spark-scala = "2.12"
+sparkjava = "2.9.4"
+spring-boot = "2.7.9"
+spring-dependency-management = "1.0.15.RELEASE"
+spring-framework = "5.3.25"
+spotless = "6.11.0"
+stax2-api = "3.1.1"
+truelicense = "4.0.3"
+univocity = "2.8.2"
+xbean = "4.8"
+xmlbeans = "5.2.0"
+
+[libraries]
+aliyun-sms = { module = "com.aliyun:dysmsapi20170525", version.ref = "aliyun-sms" }
+bouncycastle-bcpkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+bouncycastle-bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+c3p0 = { module = "com.mchange:c3p0", version.ref = "c3p0" }
+calcite-core = { module = "org.apache.calcite:calcite-core", version.ref = "calcite" }
+commons-dbutils = { module = "commons-dbutils:commons-dbutils", version.ref = "commons-dbutils" }
+druid-spring-boot-starter = { module = "com.alibaba:druid-spring-boot-starter", version.ref = "druid" }
+fastjson = { module = "com.alibaba:fastjson", version.ref = "fastjson" }
+flink-clients = { module = "org.apache.flink:flink-clients", version.ref = "flink" }
+flink-connector-base = { module = "org.apache.flink:flink-connector-base", version.ref = "flink" }
+flink-connector-jdbc = { module = "org.apache.flink:flink-connector-jdbc", version.ref = "flink-connector-jdbc" }
+flink-java = { module = "org.apache.flink:flink-java", version.ref = "flink" }
+flink-kubernetes = { module = "org.apache.flink:flink-kubernetes", version.ref = "flink" }
+flink-streaming-java = { module = "org.apache.flink:flink-streaming-java", version.ref = "flink" }
+flink-table-api-java-bridge = { module = "org.apache.flink:flink-table-api-java-bridge", version.ref = "flink" }
+flink-table-planner = { module = "org.apache.flink:flink-table-planner_2.12", version.ref = "flink" }
+flink-yarn = { module = "org.apache.flink:flink-yarn", version.ref = "flink" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+groovy-all = { module = "org.apache.groovy:groovy-all", version.ref = "groovy" }
+hadoop-common = { module = "org.apache.hadoop:hadoop-common", version.ref = "hadoop" }
+hadoop-hdfs = { module = "org.apache.hadoop:hadoop-hdfs", version.ref = "hadoop" }
+hadoop-hdfs-client = { module = "org.apache.hadoop:hadoop-hdfs-client", version.ref = "hadoop" }
+hadoop-mapreduce-client-core = { module = "org.apache.hadoop:hadoop-mapreduce-client-core", version.ref = "hadoop" }
+hadoop-yarn-client = { module = "org.apache.hadoop:hadoop-yarn-client", version.ref = "hadoop" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+hive-common = { module = "org.apache.hive:hive-common", version.ref = "hive" }
+httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient5" }
+httpcore5 = { module = "org.apache.httpcomponents.core5:httpcore5", version.ref = "httpcore5" }
+hutool-all = { module = "cn.hutool:hutool-all", version.ref = "hutool" }
+jackson-core2135 = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson-2135" }
+jackson-databind210 = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-210" }
+jackson-databind2135 = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-2135" }
+jackson-module-scala210 = { module = "com.fasterxml.jackson.module:jackson-module-scala_2.12", version.ref = "jackson-210" }
+jackson-module-scala2135 = { module = "com.fasterxml.jackson.module:jackson-module-scala_2.12", version.ref = "jackson-2135" }
+janino308 = { module = "org.codehaus.janino:janino", version.ref = "janino-308" }
+janino311 = { module = "org.codehaus.janino:janino", version.ref = "janino-311" }
+janino-commons-compiler308 = { module = "org.codehaus.janino:commons-compiler", version.ref = "janino-308" }
+janino-commons-compiler311 = { module = "org.codehaus.janino:commons-compiler", version.ref = "janino-311" }
+jasypt-spring-boot-starter = { module = "com.github.ulisesbocchio:jasypt-spring-boot-starter", version.ref = "jasypt" }
+jersey-container-servlet-core = { module = "org.glassfish.jersey.containers:jersey-container-servlet-core", version.ref = "jersey" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
+jsch = { module = "com.github.mwiede:jsch", version.ref = "jsch" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jwt" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+json4s-core = { module = "org.json4s:json4s-core_2.12", version.ref = "json4s" }
+json4s-jackson = { module = "org.json4s:json4s-jackson_2.12", version.ref = "json4s" }
+jsqlparser = { module = "com.github.jsqlparser:jsqlparser", version.ref = "jsqlparser" }
+jgrapht-core = { module = "org.jgrapht:jgrapht-core", version.ref = "jgrapht" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
+kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
+log4j = { module = "log4j:log4j", version.ref = "log4j" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+lucene-analyzers = { module = "org.apache.lucene:lucene-analyzers", version.ref = "lucene-analyzers" }
+lucene-analyzers-common = { module = "org.apache.lucene:lucene-analyzers-common", version.ref = "lucene" }
+lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene" }
+lucene-highlighter = { module = "org.apache.lucene:lucene-highlighter", version.ref = "lucene" }
+lucene-queryparser = { module = "org.apache.lucene:lucene-queryparser", version.ref = "lucene" }
+lz4-java = { module = "org.lz4:lz4-java", version.ref = "lz4" }
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+mongodb-bson = { module = "org.mongodb:bson", version.ref = "mongodb-bson" }
+mysql-connector = { module = "com.mysql:mysql-connector-j", version.ref = "mysql-connector" }
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
+pull-parser = { module = "pull-parser:pull-parser", version.ref = "pull-parser" }
+spark-catalyst = { module = "org.apache.spark:spark-catalyst_2.12", version.ref = "spark" }
+spark-core = { module = "org.apache.spark:spark-core_2.12", version.ref = "spark" }
+spark-hive = { module = "org.apache.spark:spark-hive_2.12", version.ref = "spark" }
+spark-kvstore = { module = "org.apache.spark:spark-kvstore_2.12", version.ref = "spark" }
+spark-launcher = { module = "org.apache.spark:spark-launcher_2.12", version.ref = "spark" }
+spark-network-common = { module = "org.apache.spark:spark-network-common_2.12", version.ref = "spark" }
+spark-network-shuffle = { module = "org.apache.spark:spark-network-shuffle_2.12", version.ref = "spark" }
+spark-sql = { module = "org.apache.spark:spark-sql_2.12", version.ref = "spark" }
+spark-sql-kafka010 = { module = "org.apache.spark:spark-sql-kafka-0-10_2.12", version.ref = "spark" }
+spark-streaming = { module = "org.apache.spark:spark-streaming_2.12", version.ref = "spark" }
+spark-streaming-kafka010 = { module = "org.apache.spark:spark-streaming-kafka-0-10_2.12", version.ref = "spark" }
+spark-yarn = { module = "org.apache.spark:spark-yarn_2.12", version.ref = "spark" }
+sparkjava-core = { module = "com.sparkjava:spark-core", version.ref = "sparkjava" }
+spring-orm = { module = "org.springframework:spring-orm", version.ref = "spring-framework" }
+spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring-framework" }
+springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-ui", version.ref = "openapi" }
+stax2-api = { module = "org.codehaus.woodstox:stax2-api", version.ref = "stax2-api" }
+truelicense-v4 = { module = "global.namespace.truelicense:truelicense-v4", version.ref = "truelicense" }
+univocity-parsers = { module = "com.univocity:univocity-parsers", version.ref = "univocity" }
+xbean-asm6-shaded = { module = "org.apache.xbean:xbean-asm6-shaded", version.ref = "xbean" }
+xmlbeans = { module = "org.apache.xmlbeans:xmlbeans", version.ref = "xmlbeans" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

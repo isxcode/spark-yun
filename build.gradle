@@ -1,9 +1,9 @@
 plugins {
     id 'java'
     id 'checkstyle'
-    id 'org.springframework.boot' version "${SPRING_VERSION}"
-    id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
-    id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.spotless)
 }
 
 def version_number = new File(rootDir.getAbsolutePath(), 'spark-yun-backend/spark-yun-main/src/main/resources/VERSION').readLines()[0].trim()
@@ -46,20 +46,20 @@ allprojects {
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-        implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
+        implementation libs.springdoc.openapi.ui
 
-        compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
-        annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
+        compileOnly libs.lombok
+        annotationProcessor libs.lombok
 
-        implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+        implementation libs.fastjson
 
-        implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
-        testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+        implementation libs.junit.jupiter
+        testImplementation libs.junit.jupiter.api
 
-        implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
-        implementation "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-        annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-        testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+        implementation libs.mapstruct
+        implementation libs.mapstruct.processor
+        annotationProcessor libs.mapstruct.processor
+        testAnnotationProcessor libs.mapstruct.processor
     }
 
     configurations {
