@@ -38,7 +38,7 @@ public interface DatasourceMapper {
     @Mapping(target = "kafkaConfig", ignore = true)
     @Mapping(target = "connectConfig", ignore = true)
     DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(UpdateDatasourceReq dasUpdateDatasourceReq,
-                                                              DatasourceEntity datasourceEntity);
+        DatasourceEntity datasourceEntity);
 
     @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "kafkaConfigStr", source = "kafkaConfig")

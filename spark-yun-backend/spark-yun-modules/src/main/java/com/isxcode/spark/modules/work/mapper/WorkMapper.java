@@ -14,7 +14,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.Map;
 
-@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface WorkMapper {
 
     WorkEntity addWorkReqToWorkEntity(AddWorkReq addWorkReq);
