@@ -74,6 +74,10 @@ allprojects {
         }
     }
 
+    checkstyle {
+        toolVersion = libs.versions.checkstyle.get()
+    }
+
     tasks.withType(Checkstyle).configureEach {
         maxWarnings = 0
         maxErrors = 0
@@ -100,6 +104,28 @@ allprojects {
         ruleSetFiles = files(rootDir.getAbsolutePath() + '/.pmd/ruleset.xml')
     }
 
+    configurations.named('pmd') {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.commons' && details.requested.name == 'commons-lang3') {
+                details.useVersion '3.20.0'
+            }
+            if (details.requested.group == 'com.google.code.gson' && details.requested.name == 'gson') {
+                details.useVersion '2.14.0'
+            }
+        }
+    }
+
+    configurations.named('spotbugs') {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.commons' && details.requested.name == 'commons-lang3') {
+                details.useVersion '3.19.0'
+            }
+            if (details.requested.group == 'com.google.code.gson' && details.requested.name == 'gson') {
+                details.useVersion '2.13.2'
+            }
+        }
+    }
+
     tasks.withType(Pmd).configureEach {
         ignoreFailures = false
         reports {
@@ -117,9 +143,9 @@ allprojects {
     spotbugs {
         toolVersion = libs.versions.spotbugs.tool.get()
         ignoreFailures = false
-        effort = 'max'
+        effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
         excludeFilter = file(rootDir.getAbsolutePath() + '/.spotbugs/exclude.xml')
-        reportLevel = 'high'
+        reportLevel = com.github.spotbugs.snom.Confidence.valueOf('HIGH')
         showStackTraces = true
         showProgress = true
     }
@@ -141,9 +167,13 @@ allprojects {
 
 spotless {
     java {
-        target '*/**/*.java'
-        targetExclude('*/build/**/*.java')
-        targetExclude('flink-yun-dist/**/*.java')
+        target fileTree(rootDir) {
+            include 'spark-yun-agent/**/*.java'
+            include 'spark-yun-backend/**/*.java'
+            include 'spark-yun-plugins/**/*.java'
+            include 'spark-yun-vip/**/*.java'
+            exclude '**/build/**/*.java'
+        }
         eclipse().configFile(rootDir.getAbsolutePath() + '/.spotless/eclipse-java-google-style.xml')
         removeUnusedImports()
     }
