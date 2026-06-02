@@ -6,8 +6,9 @@ import com.isxcode.spark.api.secret.res.PageSecretRes;
 import com.isxcode.spark.modules.secret.entity.SecretKeyEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SecretMapper {
 
     SecretKeyEntity addSecretReqToSecretKeyEntity(AddSecretReq addSecretReq);

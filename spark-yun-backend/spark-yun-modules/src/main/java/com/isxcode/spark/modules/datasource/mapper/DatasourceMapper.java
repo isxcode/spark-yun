@@ -12,8 +12,9 @@ import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DatasourceMapper {
 
     @Mapping(target = "kafkaConfig", ignore = true)
@@ -37,7 +38,7 @@ public interface DatasourceMapper {
     @Mapping(target = "kafkaConfig", ignore = true)
     @Mapping(target = "connectConfig", ignore = true)
     DatasourceEntity dasUpdateDatasourceReqToDatasourceEntity(UpdateDatasourceReq dasUpdateDatasourceReq,
-        DatasourceEntity datasourceEntity);
+                                                              DatasourceEntity datasourceEntity);
 
     @Mapping(target = "checkDateTime", dateFormat = "yyyy-MM-dd HH:mm:ss")
     @Mapping(target = "kafkaConfigStr", source = "kafkaConfig")

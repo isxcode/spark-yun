@@ -12,8 +12,9 @@ import com.isxcode.spark.modules.view.entity.ViewEntity;
 import com.isxcode.spark.modules.view.entity.ViewLinkEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ViewMapper {
 
     ViewCardEntity addViewCardReqToViewCardEntity(AddViewCardReq addViewCardReq);
