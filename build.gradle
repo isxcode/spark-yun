@@ -73,9 +73,9 @@ allprojects {
     }
 
     tasks.withType(Checkstyle).configureEach {
-        maxWarnings = 100
+        maxWarnings = 0
         maxErrors = 0
-        ignoreFailures = true
+        ignoreFailures = false
         config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
         reports {
             xml.required = false
@@ -92,12 +92,12 @@ allprojects {
 
     pmd {
         toolVersion = libs.versions.pmd.get()
-        ignoreFailures = true
+        ignoreFailures = false
         consoleOutput = true
     }
 
     tasks.withType(Pmd).configureEach {
-        ignoreFailures = true
+        ignoreFailures = false
         reports {
             xml.required = false
             html.required = true
@@ -112,13 +112,15 @@ allprojects {
 
     spotbugs {
         toolVersion = libs.versions.spotbugs.tool.get()
-        ignoreFailures = true
+        ignoreFailures = false
+        effort = 'max'
+        reportLevel = 'low'
         showStackTraces = true
         showProgress = true
     }
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
-        ignoreFailures = true
+        ignoreFailures = false
         reports {
             html.required = true
             xml.required = false
