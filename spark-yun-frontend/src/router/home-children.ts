@@ -1,149 +1,95 @@
-// 开源免费部分
-import HomeOverview from '@/views/home-overview/index.vue'
-import ComputerGroup from '@/views/computer-group/index.vue'
-import ComputerPointer from '@/views/computer-group/computer-pointer/index.vue'
-import DataSource from '@/views/datasource/index.vue'
-import Workflow from '@/views/workflow/index.vue'
-import WorkflowDetail from '@/views/workflow/workflow-detail/index.vue'
-import GlobalVariables from '@/views/global-variables/index.vue'
-import WorkflowPage from '@/views/workflow/workflow-page/index.vue'
-import WorkItem from '@/views/workflow/work-item/index.vue'
-import Schedule from '@/views/schedule/index.vue'
-
-import UserCenter from '@/views/user-center/index.vue'
-import TenantList from '@/views/tenant-list/index.vue'
-import License from '@/views/license/index.vue'
-import TenantUser from '@/views/tenant-user/index.vue'
-import PersonalInfo from '@/views/personal-info/index.vue'
-import OauthManagement from '@/views/oauth-management/index.vue'
-
-import DriverManagement from '@/views/driver-management/index.vue'
-import CustomForm from '@/views/custom-form/index.vue'
-import CustomFormList from '@/views/custom-form/custom-form-list.vue'
-import CustomFormQuery from '@/views/custom-form/custom-form-query/index.vue'
-import CustomFormSetting from '@/views/custom-form/form-setting/index.vue'
-import AccessRule from '@/views/access-rule/index.vue'
-import CustomApi from '@/views/custom-api/index.vue'
-import SparkContainer from '@/views/spark-container/index.vue'
-import RealtimeComputing from '@/views/realtime-computing/index.vue'
-import ComputingDetail from '@/views/realtime-computing/computing-detail/index.vue'
-
-import fileCenter from '@/views/file-center/index.vue'
-import CustomFunc from '@/views/custom-func/index.vue'
-import LibPackage from '@/views/lib-package/index.vue'
-
-import ReportComponents from '@/views/report-components/index.vue'
-import ReportItem from '@/views/report-components/report-item/index.vue'
-import ReportViews from '@/views/report-views/index.vue'
-import ReportViewsDetail from '@/views/report-views/report-views-detail/index.vue'
-
-// 消息告警
-import MessageNotifications from '@/views/message-center/message-notification/index.vue'
-import WarningConfig from '@/views/message-center/warning-config/index.vue'
-import WarningSchedule from '@/views/message-center/warning-schedule/index.vue'
-
-// 元数据
-import AcquisitionTask from '@/views/metadata-page/acquisition-task/index.vue'
-import AcquisitionInstance from '@/views/metadata-page/acquisition-instance/index.vue'
-import MetadataManagement from '@/views/metadata-page/metadata-management/index.vue'
-
-// 数据分层
-import DataLayer from '@/views/data-planning/data-layer/index.vue'
-import LayerArea from '@/views/data-planning/data-layer/layer-area/index.vue'
-import FieldFormat from '@/views/data-planning/field-format/index.vue'
-import DataModel from '@/views/data-planning/data-model/index.vue'
-import ModelField from '@/views/data-planning/data-model/model-field/index.vue'
+import type { RouteRecordRaw } from 'vue-router'
 
 export default [
   {
     path: 'index',
     name: 'index',
-    component: HomeOverview
+    component: () => import('@/views/home-overview/index.vue')
   },
   {
     path: 'computer-group',
     name: 'computer-group',
-    component: ComputerGroup
+    component: () => import('@/views/computer-group/index.vue')
   },
   {
     path: 'computer-pointer',
     name: 'computer-pointer',
-    component: ComputerPointer
+    component: () => import('@/views/computer-group/computer-pointer/index.vue')
   },
   {
     path: 'datasource',
     name: 'datasource',
-    component: DataSource
+    component: () => import('@/views/datasource/index.vue')
   },
   {
     path: 'workflow',
     name: 'workflow',
-    component: Workflow
+    component: () => import('@/views/workflow/index.vue')
   },
   {
     path: 'workflow-detail',
     name: 'workflow-detail',
-    component: WorkflowDetail
+    component: () => import('@/views/workflow/workflow-detail/index.vue')
   },
   {
     path: 'workflow-page',
     name: 'workflow-page',
-    component: WorkflowPage
+    component: () => import('@/views/workflow/workflow-page/index.vue')
   },
   {
     path: 'driver-management',
     name: 'driver-management',
-    component: DriverManagement
+    component: () => import('@/views/driver-management/index.vue')
   },
   {
     path: 'work-item',
     name: 'work-item',
-    component: WorkItem
+    component: () => import('@/views/workflow/work-item/index.vue')
   },
   {
     path: 'tenant-user',
     name: 'tenant-user',
-    component: TenantUser
+    component: () => import('@/views/tenant-user/index.vue')
   },
   {
     path: 'user-center',
     name: 'user-center',
-    component: UserCenter
+    component: () => import('@/views/user-center/index.vue')
   },
   {
     path: 'tenant-list',
     name: 'tenant-list',
-    component: TenantList
+    component: () => import('@/views/tenant-list/index.vue')
   },
   {
     path: 'oauth-management',
     name: 'oauth-management',
-    component: OauthManagement
+    component: () => import('@/views/oauth-management/index.vue')
   },
   {
     path: 'license',
     name: 'license',
-    component: License
+    component: () => import('@/views/license/index.vue')
   },
   {
     path: 'file-center',
     name: 'file-center',
-    component: fileCenter
+    component: () => import('@/views/file-center/index.vue')
   },
   {
     path: 'schedule',
     name: 'schedule',
-    component: Schedule
+    component: () => import('@/views/schedule/index.vue')
   },
   {
     path: 'personal-info',
     name: 'personalInfo',
-    component: PersonalInfo
+    component: () => import('@/views/personal-info/index.vue')
   },
   {
     path: 'custom-form',
     name: 'custom-form',
-    component: CustomForm,
+    component: () => import('@/views/custom-form/index.vue'),
     redirect: {
       name: 'form-list'
     },
@@ -151,134 +97,133 @@ export default [
       {
         path: 'form-list',
         name: 'form-list',
-        component: CustomFormList
+        component: () => import('@/views/custom-form/custom-form-list.vue')
       },
       {
         path: 'form-query',
         name: 'form-query',
-        component: CustomFormQuery
+        component: () => import('@/views/custom-form/custom-form-query/index.vue')
       },
       {
         path: 'form-setting',
         name: 'form-setting',
-        component: CustomFormSetting
+        component: () => import('@/views/custom-form/form-setting/index.vue')
       }
     ]
   },
   {
     path: 'access-rule',
     name: 'access-rule',
-    component: AccessRule
+    component: () => import('@/views/access-rule/index.vue')
   },
   {
     path: 'custom-api',
     name: 'custom-api',
-    component: CustomApi
+    component: () => import('@/views/custom-api/index.vue')
   },
   {
     path: 'spark-container',
     name: 'spark-container',
-    component: SparkContainer
+    component: () => import('@/views/spark-container/index.vue')
   },
   {
     path: 'custom-func',
     name: 'custom-func',
-    component: CustomFunc
+    component: () => import('@/views/custom-func/index.vue')
   },
   {
     path: 'lib-package',
     name: 'lib-package',
-    component: LibPackage
+    component: () => import('@/views/lib-package/index.vue')
   },
   {
     path: 'realtime-computing',
     name: 'realtime-computing',
-    component: RealtimeComputing
+    component: () => import('@/views/realtime-computing/index.vue')
   },
   {
     path: 'computing-detail',
     name: 'computing-detail',
-    component: ComputingDetail
+    component: () => import('@/views/realtime-computing/computing-detail/index.vue')
   },
   {
     path: 'report-components',
     name: 'report-components',
-    component: ReportComponents,
+    component: () => import('@/views/report-components/index.vue')
   },
   {
     path: 'report-item',
     name: 'report-item',
-    component: ReportItem
+    component: () => import('@/views/report-components/report-item/index.vue')
   },
   {
     path: 'report-views',
     name: 'report-views',
-    component: ReportViews
+    component: () => import('@/views/report-views/index.vue')
   },
   {
     path: 'report-views-detail',
     name: 'report-views-detail',
-    component: ReportViewsDetail
+    component: () => import('@/views/report-views/report-views-detail/index.vue')
   },
   {
     path: 'message-notifications',
     name: 'message-notifications',
-    component: MessageNotifications
+    component: () => import('@/views/message-center/message-notification/index.vue')
   },
   {
     path: 'warning-config',
     name: 'warning-config',
-    component: WarningConfig
+    component: () => import('@/views/message-center/warning-config/index.vue')
   },
   {
     path: 'warning-schedule',
     name: 'warning-schedule',
-    component: WarningSchedule
+    component: () => import('@/views/message-center/warning-schedule/index.vue')
   },
   {
     path: 'acquisition-task',
     name: 'acquisition-task',
-    component: AcquisitionTask
+    component: () => import('@/views/metadata-page/acquisition-task/index.vue')
   },
   {
     path: 'acquisition-instance',
     name: 'acquisition-instance',
-    component: AcquisitionInstance
+    component: () => import('@/views/metadata-page/acquisition-instance/index.vue')
   },
   {
     path: 'metadata-management',
     name: 'metadata-management',
-    component: MetadataManagement
+    component: () => import('@/views/metadata-page/metadata-management/index.vue')
   },
-
   {
     path: 'data-layer',
     name: 'data-layer',
-    component: DataLayer
+    component: () => import('@/views/data-planning/data-layer/index.vue')
   },
   {
     path: 'layer-area',
     name: 'layer-area',
-    component: LayerArea
+    component: () => import('@/views/data-planning/data-layer/layer-area/index.vue')
   },
   {
     path: 'field-format',
     name: 'field-format',
-    component: FieldFormat
+    component: () => import('@/views/data-planning/field-format/index.vue')
   },
   {
     path: 'data-model',
     name: 'data-model',
-    component: DataModel
+    component: () => import('@/views/data-planning/data-model/index.vue')
   },
   {
     path: 'model-field',
     name: 'model-field',
-    component: ModelField
+    component: () => import('@/views/data-planning/data-model/model-field/index.vue')
   },
   {
     path: 'global-variables',
     name: 'global-variables',
-    component: GlobalVariables
+    component: () => import('@/views/global-variables/index.vue')
   }
-]
+] satisfies RouteRecordRaw[]
