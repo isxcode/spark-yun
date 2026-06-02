@@ -7,8 +7,9 @@ import com.isxcode.spark.modules.file.entity.FileEntity;
 import com.isxcode.spark.modules.file.entity.LibPackageEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FileMapper {
 
     PageFileRes fileEntityToPageFileRes(FileEntity fileEntity);

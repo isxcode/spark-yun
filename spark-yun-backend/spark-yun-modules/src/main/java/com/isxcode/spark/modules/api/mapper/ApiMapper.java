@@ -7,8 +7,9 @@ import com.isxcode.spark.api.api.res.PageApiRes;
 import com.isxcode.spark.modules.api.entity.ApiEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ApiMapper {
 
     @Mapping(target = "reqHeader", ignore = true)

@@ -8,8 +8,9 @@ import com.isxcode.spark.api.cluster.res.GetClusterNodeRes;
 import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ClusterNodeMapper {
 
     @Mapping(target = "usedMemory", expression = "java(0.0)")
