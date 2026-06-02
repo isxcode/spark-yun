@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-def version_number = new File(rootDir.getAbsolutePath(), 'spark-yun-backend/spark-yun-main/src/main/resources/VERSION').readLines()[0].trim()
+def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
 
 allprojects {
 
