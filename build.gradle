@@ -23,8 +23,9 @@ allprojects {
     version = version_number
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
     }
 
     repositories {
@@ -94,6 +95,10 @@ allprojects {
                 println "Checkstyle HTML report: ${reportFile.toURI()}"
             }
         }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
     }
 
     pmd {
@@ -228,11 +233,11 @@ tasks.register('install', Exec) {
     if (!System.properties['os.name'].toString().contains('Mac OS X')) {
         doFirst {
             exec {
-                commandLine 'sh', '-c', "sed -i 's/\\r\$//' download.sh && sed -i 's/\\r\$//' install.sh"
+                commandLine 'sh', '-c', "sed -i 's/\\r\$//' install.sh"
             }
         }
     }
-    commandLine 'sh', '-c', 'bash download.sh && bash install.sh'
+    commandLine 'sh', '-c', 'bash install.sh'
 }
 
 tasks.register('docker', Exec) {
