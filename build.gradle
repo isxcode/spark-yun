@@ -209,7 +209,7 @@ tasks.register('website', Exec) {
     commandLine 'sh', '-c', '''
       cd docs
       rm -rf node_modules
-      pnpm install --force
+      pnpm install
       pnpm run dev
      '''
 }
@@ -219,7 +219,7 @@ tasks.register('frontend', Exec) {
     commandLine 'sh', '-c', '''
       cd spark-yun-frontend
       rm -rf node_modules
-      pnpm install --force
+      pnpm install
       pnpm run dev --host
     '''
 }

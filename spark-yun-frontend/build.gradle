@@ -12,7 +12,7 @@ tasks.register('npm_build', Exec) {
 
     commandLine 'sh', '-c', '''
       rm -rf node_modules
-      pnpm install --force
+      pnpm install
       pnpm run build
     '''
 }
