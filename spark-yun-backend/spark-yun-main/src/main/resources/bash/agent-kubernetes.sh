@@ -68,7 +68,7 @@ fi
 # 判断是否有java命令
 if ! command -v java &>/dev/null; then
   if [ ! -n "$JAVA_HOME" ]; then
-    echo "{ \"status\": \"INSTALL_ERROR\",\"log\": \"未检测到java1.8.x环境,节点请安装java 推荐命令: sudo yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y,或者配置 ${agent_path}/conf/agent-env.sh文件中的JAVA_HOME变量\" }"
+    echo "{ \"status\": \"INSTALL_ERROR\",\"log\": \"未检测到Java 17环境,节点请安装Java 17 推荐命令: sudo yum install java-17-openjdk-devel java-17-openjdk -y,或者配置 ${agent_path}/conf/agent-env.sh文件中的JAVA_HOME变量\" }"
     rm "${BASE_PATH}"/agent-kubernetes.sh
     exit 0
   fi
