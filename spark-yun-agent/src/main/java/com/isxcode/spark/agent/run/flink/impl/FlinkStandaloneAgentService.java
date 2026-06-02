@@ -34,6 +34,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -135,8 +136,8 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
                 .setJarFile(new File((submitWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
                     + submitWorkReq.getFlinkSubmit().getAppResource())))
                 .setEntryPointClassName(submitWorkReq.getFlinkSubmit().getEntryClass()).setConfiguration(configuration)
-                .setArguments(
-                    Base64.getEncoder().encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()))
+                .setArguments(Base64.getEncoder()
+                    .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8)))
                 .setUserClassPaths(userClassPaths);
             if (configuration.get(SavepointConfigOptions.SAVEPOINT_PATH) != null) {
                 program = builder.setSavepointRestoreSettings(

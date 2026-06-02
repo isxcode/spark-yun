@@ -72,7 +72,7 @@ public class WorkRunJob implements Job {
             try {
                 locker.unlock(lockerKey);
             } catch (Exception ignored) {
-
+                log.warn("解锁失败，LockerKey: {}", lockerKey);
             }
 
         }

@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 
@@ -79,7 +80,8 @@ public class ClusterNodeService {
         JSch jsch = new JSch();
 
         if (engineNode.getPasswd().length() > 1000) {
-            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(StandardCharsets.UTF_8), null,
+                null);
         }
 
         Session session =

@@ -3,6 +3,7 @@ package com.isxcode.spark.common.utils.aes;
 import cn.hutool.crypto.SecureUtil;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,8 @@ public class AesUtils {
             return "";
         }
 
-        return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5)).encryptBase64(data);
+        return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(StandardCharsets.UTF_8), 1 << 5))
+            .encryptBase64(data);
     }
 
     /**
@@ -49,6 +51,7 @@ public class AesUtils {
             return "";
         }
 
-        return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(), 1 << 5)).decryptStr(data);
+        return SecureUtil.aes(Arrays.copyOf(isxAppProperties.getAesSlat().getBytes(StandardCharsets.UTF_8), 1 << 5))
+            .decryptStr(data);
     }
 }

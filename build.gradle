@@ -94,6 +94,8 @@ allprojects {
         toolVersion = libs.versions.pmd.get()
         ignoreFailures = false
         consoleOutput = true
+        ruleSets = []
+        ruleSetFiles = files(rootDir.getAbsolutePath() + '/.pmd/ruleset.xml')
     }
 
     tasks.withType(Pmd).configureEach {
@@ -114,7 +116,8 @@ allprojects {
         toolVersion = libs.versions.spotbugs.tool.get()
         ignoreFailures = false
         effort = 'max'
-        reportLevel = 'low'
+        excludeFilter = file(rootDir.getAbsolutePath() + '/.spotbugs/exclude.xml')
+        reportLevel = 'high'
         showStackTraces = true
         showProgress = true
     }

@@ -19,6 +19,7 @@ import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import com.isxcode.spark.modules.workflow.entity.WorkflowInstanceEntity;
 import com.isxcode.spark.modules.workflow.repository.WorkflowInstanceRepository;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,7 +114,7 @@ public abstract class WorkExecutor {
         for (WorkInstanceEntity e : allWorkflowInstance) {
             if (InstanceStatus.SUCCESS.equals(e.getStatus()) && e.getResultData() != null) {
                 value = value.replace("${qing." + e.getWorkId() + ".result_data}",
-                    Base64.getEncoder().encodeToString(e.getResultData().getBytes()));
+                    Base64.getEncoder().encodeToString(e.getResultData().getBytes(StandardCharsets.UTF_8)));
             }
         }
 

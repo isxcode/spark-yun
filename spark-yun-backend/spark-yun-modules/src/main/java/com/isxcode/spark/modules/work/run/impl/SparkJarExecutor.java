@@ -44,6 +44,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
 
@@ -126,7 +127,7 @@ public class SparkJarExecutor extends WorkExecutor {
             }
 
             // 随机选择一个节点，解析请求节点信息
-            ClusterNodeEntity agentNode = clusterNodes.get(new Random().nextInt(clusterNodes.size()));
+            ClusterNodeEntity agentNode = clusterNodes.get(ThreadLocalRandom.current().nextInt(clusterNodes.size()));
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
             scpNode.setPasswd(aesUtils.decrypt(scpNode.getPasswd()));
 

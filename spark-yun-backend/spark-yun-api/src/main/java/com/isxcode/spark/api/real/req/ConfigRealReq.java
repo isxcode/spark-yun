@@ -1,6 +1,7 @@
 package com.isxcode.spark.api.real.req;
 
 import com.isxcode.spark.api.work.dto.SyncWorkConfig;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -21,7 +22,8 @@ public class ConfigRealReq {
     private List<String> funcList;
 
     @Schema(title = "依赖选择")
-    private List<String> LibList;
+    @JsonProperty("LibList")
+    private List<String> libList;
 
     @Schema(title = "spark配置字符串")
     private String sparkConfigJson;

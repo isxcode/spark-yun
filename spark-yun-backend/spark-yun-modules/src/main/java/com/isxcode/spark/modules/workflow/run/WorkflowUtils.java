@@ -23,7 +23,7 @@ import org.apache.logging.log4j.util.Strings;
 public class WorkflowUtils {
 
     /**
-     * 将数据库字段flowStr转成List<List<String>>结构.
+     * 将数据库字段flowStr转成 {@code List<List<String>>} 结构.
      */
     public static List<List<String>> translateFlow(String flowStr) {
 

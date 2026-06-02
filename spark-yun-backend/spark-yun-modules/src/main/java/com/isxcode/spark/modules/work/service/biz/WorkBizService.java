@@ -41,6 +41,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -606,8 +607,9 @@ public class WorkBizService {
             GetWorkInstanceValuePathRes metaWorkInstance = new GetWorkInstanceValuePathRes();
             metaWorkInstance.setJsonPath(k);
             metaWorkInstance.setValue(String.valueOf(v));
-            metaWorkInstance.setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k
-                + "','" + Base64.getEncoder().encodeToString(String.valueOf(v).getBytes()) + "')]]");
+            metaWorkInstance
+                .setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k + "','"
+                    + Base64.getEncoder().encodeToString(String.valueOf(v).getBytes(StandardCharsets.UTF_8)) + "')]]");
             result.add(metaWorkInstance);
         });
         return result;
@@ -641,8 +643,9 @@ public class WorkBizService {
             result.setValue("");
         }
         result.setCopyValue("#[[get_regex_value('${qing." + workEntity.getId() + ".result_data}','"
-            + Base64.getEncoder().encodeToString(getWorkInstanceRegexPathReq.getRegexStr().getBytes()) + "','"
-            + Base64.getEncoder().encodeToString(result.getValue().getBytes()) + "')]]");
+            + Base64.getEncoder()
+                .encodeToString(getWorkInstanceRegexPathReq.getRegexStr().getBytes(StandardCharsets.UTF_8))
+            + "','" + Base64.getEncoder().encodeToString(result.getValue().getBytes(StandardCharsets.UTF_8)) + "')]]");
         return result;
     }
 
@@ -686,7 +689,7 @@ public class WorkBizService {
 
         result.setCopyValue("#[[get_table_value('${qing." + workEntity.getId() + ".result_data}',"
             + getWorkInstanceTablePathReq.getTableRow() + "," + getWorkInstanceTablePathReq.getTableCol() + ",'"
-            + Base64.getEncoder().encodeToString(result.getValue().getBytes()) + "')]]");
+            + Base64.getEncoder().encodeToString(result.getValue().getBytes(StandardCharsets.UTF_8)) + "')]]");
 
         return result;
     }

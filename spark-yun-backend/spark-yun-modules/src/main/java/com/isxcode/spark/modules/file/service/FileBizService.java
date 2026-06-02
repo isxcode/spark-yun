@@ -211,8 +211,8 @@ public class FileBizService {
     public AddLibPackageRes addLibPackage(AddLibPackageReq addLibPackageReq) {
 
         // 判断依赖包名称重复
-        Optional<LibPackageEntity> LibPackageOptional = libPackageRepository.findByName(addLibPackageReq.getName());
-        if (LibPackageOptional.isPresent()) {
+        Optional<LibPackageEntity> libPackageOptional = libPackageRepository.findByName(addLibPackageReq.getName());
+        if (libPackageOptional.isPresent()) {
             throw new IsxAppException("名称重复");
         }
 

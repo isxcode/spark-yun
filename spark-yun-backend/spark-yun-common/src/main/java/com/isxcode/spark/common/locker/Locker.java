@@ -52,6 +52,7 @@ public class Locker {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
             }
         } while (!Objects.equals(id, minId));
 
