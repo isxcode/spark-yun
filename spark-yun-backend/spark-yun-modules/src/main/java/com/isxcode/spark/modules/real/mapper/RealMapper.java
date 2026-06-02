@@ -7,7 +7,7 @@ import com.isxcode.spark.modules.real.entity.RealEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RealMapper {
 
     RealEntity addRealReqToRealEntity(AddRealReq addRealReq);
