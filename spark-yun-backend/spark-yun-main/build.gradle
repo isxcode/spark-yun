@@ -15,6 +15,12 @@ bootJar {
     archiveFileName = 'zhiqingyun.jar'
 }
 
+processResources {
+    from(rootDir.getAbsolutePath() + '/VERSION') {
+        into '.'
+    }
+}
+
 bootRun {
     workingDir(rootDir.getAbsolutePath())
 }
