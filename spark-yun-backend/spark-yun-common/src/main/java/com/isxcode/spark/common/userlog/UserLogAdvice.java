@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.isxcode.spark.backend.api.base.exceptions.SuccessResponseException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;

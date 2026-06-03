@@ -1,6 +1,6 @@
 package com.isxcode.spark.common.locker;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

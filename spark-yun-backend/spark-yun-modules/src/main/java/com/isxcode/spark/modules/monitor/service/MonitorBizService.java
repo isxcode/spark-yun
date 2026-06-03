@@ -55,7 +55,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.isxcode.spark.api.monitor.constants.TimeType;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import java.io.File;
 import java.io.IOException;

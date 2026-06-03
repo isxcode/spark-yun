@@ -14,9 +14,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,7 +32,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
     private final IsxAppProperties isxAppProperties;
@@ -64,33 +66,23 @@ public class WebSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.cors(Customizer.withDefaults());
-        http.csrf().disable();
-        http.headers().cacheControl();
-        http.headers().frameOptions().disable();
-        http.sessionManagement().disable();
-
-        // 访问h2,swagger，druid界面需要的权限
-        http.authorizeRequests().antMatchers(isxAppProperties.getAdminUrl().toArray(new String[0])).hasRole("ADMIN");
-
-        // 匿名者才可以访问的指定接口
-        http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousRoleUrl().toArray(new String[0]))
-            .hasRole("ANONYMOUS");
-
-        // 任何人都可以访问的权限
-        http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0])).permitAll();
-
         // 需要token才可以访问的地址
         List<String> excludePaths = new ArrayList<>();
         excludePaths.addAll(isxAppProperties.getAdminUrl());
         excludePaths.addAll(isxAppProperties.getAnonymousUrl());
 
-        // token
+        http.cors(Customizer.withDefaults());
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+        http.sessionManagement(AbstractHttpConfigurer::disable);
+        http.authorizeHttpRequests(
+            authorize -> authorize.requestMatchers(isxAppProperties.getAdminUrl().toArray(new String[0]))
+                .hasRole("ADMIN").requestMatchers(isxAppProperties.getAnonymousRoleUrl().toArray(new String[0]))
+                .hasRole("ANONYMOUS").requestMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0]))
+                .permitAll().anyRequest().authenticated());
         http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
             UsernamePasswordAuthenticationFilter.class);
-        http.authorizeRequests().antMatchers("/**").authenticated();
-
-        http.formLogin();
+        http.formLogin(Customizer.withDefaults());
         return http.build();
     }
 

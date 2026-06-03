@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.isxcode.spark.api.work.dto.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
