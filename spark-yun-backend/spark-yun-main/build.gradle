@@ -9,9 +9,13 @@ dependencies {
 
     implementation libs.flyway.core
     implementation libs.flyway.mysql
+
+    runtimeOnly 'com.h2database:h2'
 }
 
 bootJar {
+    enabled = true
+    mainClass = 'com.isxcode.spark.SparkYunApplication'
     archiveFileName = 'zhiqingyun.jar'
 }
 

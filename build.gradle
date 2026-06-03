@@ -39,6 +39,12 @@ allprojects {
     configurations.configureEach {
         exclude group: "org.apache.logging.log4j", module: "log4j-slf4j-impl"
         exclude group: "org.slf4j", module: "slf4j-reload4j"
+        exclude group: "com.sun.xml.bind", module: "jaxb-core"
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.kafka' && details.requested.name == 'kafka-clients') {
+                details.useVersion libs.versions.kafka.get()
+            }
+        }
     }
 
     dependencies {
@@ -53,7 +59,7 @@ allprojects {
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-        implementation libs.springdoc.openapi.ui
+        implementation libs.springdoc.openapi.starter.webmvc.ui
 
         compileOnly libs.lombok
         annotationProcessor libs.lombok
@@ -73,6 +79,14 @@ allprojects {
         compileOnly {
             extendsFrom annotationProcessor
         }
+    }
+
+    tasks.named('bootJar') {
+        enabled = false
+    }
+
+    tasks.named('jar') {
+        enabled = true
     }
 
     checkstyle {
