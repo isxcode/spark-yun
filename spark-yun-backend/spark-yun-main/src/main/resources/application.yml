@@ -129,7 +129,7 @@ jasypt:
       prefix: ENC(
     password: zhiqingyun
 
-isx-app:
+app:
   admin-url:
     - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
     - /v3/** # swagger地址

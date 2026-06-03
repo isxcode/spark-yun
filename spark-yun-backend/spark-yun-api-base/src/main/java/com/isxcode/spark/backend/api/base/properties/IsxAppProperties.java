@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "app")
+@ConfigurationProperties(prefix = "isx-app")
 @EnableConfigurationProperties(IsxAppProperties.class)
 public class IsxAppProperties {
 
