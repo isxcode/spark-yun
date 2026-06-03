@@ -222,7 +222,7 @@ tasks.register('start', Exec) {
 tasks.register('website', Exec) {
 
     commandLine 'sh', '-c', '''
-      cd docs
+      cd spark-yun-vip/docs
       rm -rf node_modules
       pnpm install
       pnpm run dev
