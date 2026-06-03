@@ -75,7 +75,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<BaseResponse<Object>> accessDeniedException(AccessDeniedException accessDeniedException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("401");
         baseResponse.setMsg("当前用户没有权限");
         baseResponse.setErr(accessDeniedException.getMessage());
@@ -87,7 +87,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> accessDeniedException(
         org.springframework.security.access.AccessDeniedException accessDeniedException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("401");
         baseResponse.setMsg("当前用户没有权限");
         baseResponse.setErr(accessDeniedException.getMessage());
@@ -99,7 +99,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> emptyResultDataAccessException(
         EmptyResultDataAccessException emptyResultDataAccessException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("55500");
         baseResponse.setMsg("请稍后再试");
         baseResponse.setErr(emptyResultDataAccessException.getMessage());
@@ -111,7 +111,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> objectOptimisticLockingFailureException(
         ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("55500");
         baseResponse.setMsg("请稍后再试");
         baseResponse.setErr(objectOptimisticLockingFailureException.getMessage());

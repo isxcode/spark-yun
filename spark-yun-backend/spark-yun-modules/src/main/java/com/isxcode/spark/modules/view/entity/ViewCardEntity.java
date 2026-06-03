@@ -2,9 +2,9 @@ package com.isxcode.spark.modules.view.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import com.isxcode.spark.common.jpa.SyId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -19,15 +19,14 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 @Data
 @Entity
 @SQLDelete(sql = "UPDATE SY_VIEW_CARD SET deleted = 1 WHERE id = ? and version_number = ?")
-@Where(clause = "deleted = 0 ${TENANT_FILTER} ")
+@SQLRestriction("deleted = 0 ${TENANT_FILTER} ")
 @Table(name = "SY_VIEW_CARD")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class ViewCardEntity {
 
     @Id
-    @GeneratedValue(generator = "sy-id-generator")
-    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
+    @SyId
     private String id;
 
     private String name;

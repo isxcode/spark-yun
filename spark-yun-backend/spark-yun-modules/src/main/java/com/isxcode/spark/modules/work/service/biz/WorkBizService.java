@@ -348,7 +348,9 @@ public class WorkBizService {
 
         if (WorkType.QUERY_JDBC_SQL.equals(workEntity.getWorkType())
             || WorkType.PRQL.equals(workEntity.getWorkType())) {
-            return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
+            List<List<String>> data =
+                JSON.parseObject(workInstanceEntity.getResultData(), new TypeReference<List<List<String>>>() {});
+            return new GetDataRes(data, null, null);
         }
 
         return JSON.parseObject(workInstanceEntity.getResultData(), GetDataRes.class);
