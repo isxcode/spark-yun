@@ -127,6 +127,7 @@ jasypt:
     property:
       suffix: )
       prefix: ENC(
+    password: zhiqingyun
 
 isx-app:
   admin-url:
