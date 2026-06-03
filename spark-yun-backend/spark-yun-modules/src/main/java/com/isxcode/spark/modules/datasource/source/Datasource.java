@@ -145,8 +145,8 @@ public abstract class Datasource {
                 throw new IsxAppException(e.getMessage());
             }
             try {
-                driver = new DriverShim((Driver) driverClass.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
+                driver = new DriverShim((Driver) driverClass.getDeclaredConstructor().newInstance());
+            } catch (ReflectiveOperationException e) {
                 log.error(e.getMessage(), e);
                 throw new IsxAppException(e.getMessage());
             }
