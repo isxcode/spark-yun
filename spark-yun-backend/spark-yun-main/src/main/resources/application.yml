@@ -44,7 +44,7 @@ spring:
       max-wait: 30000
       test-while-idle: true
       validation-query: select 1
-      filters: stat,wall,log4j2
+      filters: stat,log4j2
       stat-view-servlet:
         enabled: true
         allow:
@@ -134,7 +134,7 @@ isx-app:
     - /v3/** # swagger地址
     - /h2-console/** # http://localhost:8080/h2-console
     - /druid/** # http://localhost:8080/druid/index.html
-    - /**/developer/** # 开发者接口
+    - /*/developer/** # 开发者接口
   anonymous-url:
     - / # 让页面可以访问前端
     - /static/** # 放行前端资源文件
@@ -144,11 +144,11 @@ isx-app:
     - /auth # 放行登录接口
     - /share/** # 分享表单
     - /dashboard/** # 分享大屏
-    - /**/open/** # 放行所有的开放接口
-    - /vip/**/open/** # 放行所有的开放接口
-    - /**/api/** # 放行所有自定义接口
-    - /**/api/**/** # 放行所有自定义接口
-    - /**/api/**/**/** # 放行所有自定义接口
+    - /*/open/** # 放行所有的开放接口
+    - /vip/*/open/** # 放行所有的开放接口
+    - /{tenantId}/api/{path1} # 放行所有自定义接口
+    - /{tenantId}/api/{path1}/{path2} # 放行所有自定义接口
+    - /{tenantId}/api/{path1}/{path2}/{path3} # 放行所有自定义接口
     - /home/** # 放行全部前端的刷新访问路径
   anonymous-role-url:
     - /vip/form/getFormConfigForAnonymous # 匿名者获取表单配置

@@ -82,7 +82,7 @@ public class WebSecurityConfig {
                 .permitAll().anyRequest().authenticated());
         http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
             UsernamePasswordAuthenticationFilter.class);
-        http.formLogin(Customizer.withDefaults());
+        http.formLogin(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
