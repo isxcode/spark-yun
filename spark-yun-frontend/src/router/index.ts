@@ -8,6 +8,11 @@
  */
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import Home from '../views/home/home'
+import Login from '../views/login/login'
+import Ssoauth from '../views/login/ssoauth'
+import ShareForm from '../views/share-form/index.vue'
+import ShareReport from '../views/report-views/share-report/index.vue'
 import { getVipLicenseEnabled, isVipMenuCode } from '@/utils/vip-license'
 
 import HomeChildren from './home-children'
@@ -22,28 +27,28 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/ssoauth',
     name: 'ssoauth',
-    component: () => import('../views/login/ssoauth')
+    component: Ssoauth
   },
   {
     path: '/auth',
     name: 'login',
-    component: () => import('../views/login/login')
+    component: Login
   },
   {
     path: '/home',
     name: 'home',
-    component: () => import('../views/home/home'),
+    component: Home,
     children: HomeChildren
   },
   {
     path: '/share/:shareParam',
     name: 'share',
-    component: () => import('../views/share-form/index.vue')
+    component: ShareForm
   },
   {
     path: '/dashboard/:shareParam',
     name: 'share-report',
-    component: () => import('../views/report-views/share-report/index.vue')
+    component: ShareReport
   }
   // {
   //   path: '/about',
