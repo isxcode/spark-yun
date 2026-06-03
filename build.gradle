@@ -91,18 +91,18 @@ allprojects {
 
     checkstyle {
         toolVersion = libs.versions.checkstyle.get()
-        configDirectory = rootProject.layout.projectDirectory.dir('check/checkstyle')
+        configDirectory = rootProject.layout.projectDirectory.dir('format/checkstyle')
     }
 
     tasks.withType(Checkstyle).configureEach {
         maxWarnings = 0
         maxErrors = 0
         ignoreFailures = false
-        config resources.text.fromFile(rootProject.file('check/checkstyle/checkstyle.xml'))
+        config resources.text.fromFile(rootProject.file('format/checkstyle/checkstyle.xml'))
         reports {
             xml.required = false
             html.required = true
-            html.stylesheet resources.text.fromFile(rootProject.file('check/checkstyle/checkstyle-simple.xsl'))
+            html.stylesheet resources.text.fromFile(rootProject.file('format/checkstyle/checkstyle-simple.xsl'))
         }
         doLast {
             def reportFile = reports.html.outputLocation.get().asFile
@@ -121,7 +121,7 @@ allprojects {
         ignoreFailures = false
         consoleOutput = true
         ruleSets = []
-        ruleSetFiles = files(rootProject.file('check/pmd/ruleset.xml'))
+        ruleSetFiles = files(rootProject.file('format/pmd/ruleset.xml'))
     }
 
     configurations.named('pmd') {
@@ -164,7 +164,7 @@ allprojects {
         toolVersion = libs.versions.spotbugs.tool.get()
         ignoreFailures = false
         effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
-        excludeFilter = rootProject.file('check/spotbugs/exclude.xml')
+        excludeFilter = rootProject.file('format/spotbugs/exclude.xml')
         reportLevel = com.github.spotbugs.snom.Confidence.valueOf('HIGH')
         showStackTraces = true
         showProgress = true
@@ -194,7 +194,7 @@ spotless {
             include 'spark-yun-vip/**/*.java'
             exclude '**/build/**/*.java'
         }
-        eclipse().configFile(rootProject.file('check/spotless/eclipse-java-google-style.xml'))
+        eclipse().configFile(rootProject.file('format/spotless/eclipse-java-google-style.xml'))
         removeUnusedImports()
     }
 }
