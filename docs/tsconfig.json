@@ -1,6 +1,0 @@
-{
-  "extends": "./.nuxt/tsconfig.json",
-  "compilerOptions": {
-    "types": ["@nuxt/types", "@nuxt/content", "vite-plugin-svg-icons/client"]
-  }
-}
