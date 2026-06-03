@@ -91,17 +91,18 @@ allprojects {
 
     checkstyle {
         toolVersion = libs.versions.checkstyle.get()
+        configDirectory = rootProject.layout.projectDirectory.dir('check/checkstyle')
     }
 
     tasks.withType(Checkstyle).configureEach {
         maxWarnings = 0
         maxErrors = 0
         ignoreFailures = false
-        config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
+        config resources.text.fromFile(rootProject.file('check/checkstyle/checkstyle.xml'))
         reports {
             xml.required = false
             html.required = true
-            html.stylesheet resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle-simple.xsl')
+            html.stylesheet resources.text.fromFile(rootProject.file('check/checkstyle/checkstyle-simple.xsl'))
         }
         doLast {
             def reportFile = reports.html.outputLocation.get().asFile
@@ -120,7 +121,7 @@ allprojects {
         ignoreFailures = false
         consoleOutput = true
         ruleSets = []
-        ruleSetFiles = files(rootDir.getAbsolutePath() + '/.pmd/ruleset.xml')
+        ruleSetFiles = files(rootProject.file('check/pmd/ruleset.xml'))
     }
 
     configurations.named('pmd') {
@@ -163,7 +164,7 @@ allprojects {
         toolVersion = libs.versions.spotbugs.tool.get()
         ignoreFailures = false
         effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
-        excludeFilter = file(rootDir.getAbsolutePath() + '/.spotbugs/exclude.xml')
+        excludeFilter = rootProject.file('check/spotbugs/exclude.xml')
         reportLevel = com.github.spotbugs.snom.Confidence.valueOf('HIGH')
         showStackTraces = true
         showProgress = true
@@ -193,7 +194,7 @@ spotless {
             include 'spark-yun-vip/**/*.java'
             exclude '**/build/**/*.java'
         }
-        eclipse().configFile(rootDir.getAbsolutePath() + '/.spotless/eclipse-java-google-style.xml')
+        eclipse().configFile(rootProject.file('check/spotless/eclipse-java-google-style.xml'))
         removeUnusedImports()
     }
 }
