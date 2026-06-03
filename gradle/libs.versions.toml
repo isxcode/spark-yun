@@ -4,12 +4,11 @@ bouncycastle = "1.78.1"
 c3p0 = "0.9.5.5"
 calcite = "1.27.0"
 commons-dbutils = "1.7"
-druid = "1.2.16"
+druid = "1.2.28"
 fastjson = "2.0.16"
 flink = "1.18.1"
 flink-connector-jdbc = "3.1.2-1.18"
 flink-scala = "2.12"
-flyway = "9.16.3"
 groovy = "4.0.15"
 hadoop = "3.3.5"
 hikaricp = "4.0.3"
@@ -40,7 +39,7 @@ lz4 = "1.5.0"
 mapstruct = "1.5.3.Final"
 mongodb-bson = "5.2.1"
 mysql-connector = "8.1.0"
-openapi = "1.7.0"
+openapi = "2.8.8"
 poi = "5.2.5"
 pmd = "7.25.0"
 prql = "0.5.2"
@@ -48,9 +47,9 @@ pull-parser = "2.1.10"
 spark = "3.4.1"
 spark-scala = "2.12"
 sparkjava = "2.9.4"
-spring-boot = "2.7.18"
-spring-dependency-management = "1.0.15.RELEASE"
-spring-framework = "5.3.25"
+spring-boot = "3.5.14"
+spring-dependency-management = "1.1.7"
+spring-framework = "6.2.15"
 checkstyle = "12.3.1"
 spotbugs-tool = "4.9.8"
 spotbugs-plugin = "6.5.5"
@@ -68,7 +67,7 @@ bouncycastle-bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref 
 c3p0 = { module = "com.mchange:c3p0", version.ref = "c3p0" }
 calcite-core = { module = "org.apache.calcite:calcite-core", version.ref = "calcite" }
 commons-dbutils = { module = "commons-dbutils:commons-dbutils", version.ref = "commons-dbutils" }
-druid-spring-boot-starter = { module = "com.alibaba:druid-spring-boot-starter", version.ref = "druid" }
+druid-spring-boot-starter = { module = "com.alibaba:druid-spring-boot-3-starter", version.ref = "druid" }
 fastjson = { module = "com.alibaba:fastjson", version.ref = "fastjson" }
 flink-clients = { module = "org.apache.flink:flink-clients", version.ref = "flink" }
 flink-connector-base = { module = "org.apache.flink:flink-connector-base", version.ref = "flink" }
@@ -79,8 +78,8 @@ flink-streaming-java = { module = "org.apache.flink:flink-streaming-java", versi
 flink-table-api-java-bridge = { module = "org.apache.flink:flink-table-api-java-bridge", version.ref = "flink" }
 flink-table-planner = { module = "org.apache.flink:flink-table-planner_2.12", version.ref = "flink" }
 flink-yarn = { module = "org.apache.flink:flink-yarn", version.ref = "flink" }
-flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
-flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
+flyway-core = { module = "org.flywaydb:flyway-core" }
+flyway-mysql = { module = "org.flywaydb:flyway-mysql" }
 groovy-all = { module = "org.apache.groovy:groovy-all", version.ref = "groovy" }
 hadoop-common = { module = "org.apache.hadoop:hadoop-common", version.ref = "hadoop" }
 hadoop-hdfs = { module = "org.apache.hadoop:hadoop-hdfs", version.ref = "hadoop" }
@@ -145,7 +144,7 @@ spark-yarn = { module = "org.apache.spark:spark-yarn_2.12", version.ref = "spark
 sparkjava-core = { module = "com.sparkjava:spark-core", version.ref = "sparkjava" }
 spring-orm = { module = "org.springframework:spring-orm", version.ref = "spring-framework" }
 spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring-framework" }
-springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-ui", version.ref = "openapi" }
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "openapi" }
 stax2-api = { module = "org.codehaus.woodstox:stax2-api", version.ref = "stax2-api" }
 truelicense-v4 = { module = "global.namespace.truelicense:truelicense-v4", version.ref = "truelicense" }
 univocity-parsers = { module = "com.univocity:univocity-parsers", version.ref = "univocity" }

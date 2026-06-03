@@ -37,15 +37,14 @@ spring:
     location: classpath:logo.txt
 
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 10
       max-active: 200
       min-idle: 10
       max-wait: 30000
       test-while-idle: true
+      validation-query: select 1
       filters: stat,wall,log4j2
-      validationQuery: select 'x'
       stat-view-servlet:
         enabled: true
         allow:

@@ -47,5 +47,7 @@ dependencies {
 }
 
 bootJar {
+    enabled = true
+    mainClass = 'com.isxcode.spark.agent.SparkYunAgentApplication'
     archiveFileName = 'zhiqingyun-agent.jar'
 }
