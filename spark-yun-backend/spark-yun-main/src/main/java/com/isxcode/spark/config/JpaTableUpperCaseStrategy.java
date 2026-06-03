@@ -1,9 +1,9 @@
 package com.isxcode.spark.config;
 
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
-import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
+import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 
-public class JpaTableUpperCaseStrategy extends SpringPhysicalNamingStrategy {
+public class JpaTableUpperCaseStrategy extends CamelCaseToUnderscoresNamingStrategy {
 
     @Override
     protected boolean isCaseInsensitive(JdbcEnvironment jdbcEnvironment) {

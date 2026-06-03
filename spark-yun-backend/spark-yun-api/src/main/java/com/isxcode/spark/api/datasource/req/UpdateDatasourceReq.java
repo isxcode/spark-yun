@@ -3,7 +3,7 @@ package com.isxcode.spark.api.datasource.req;
 import com.isxcode.spark.api.datasource.dto.KafkaConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.Map;
 
 import lombok.Data;

@@ -26,7 +26,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Map;
 import java.util.Optional;
 

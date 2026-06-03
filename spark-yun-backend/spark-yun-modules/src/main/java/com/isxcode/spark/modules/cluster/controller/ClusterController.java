@@ -9,7 +9,7 @@ import com.isxcode.spark.common.annotations.successResponse.SuccessResponse;
 import com.isxcode.spark.modules.cluster.service.biz.ClusterBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;

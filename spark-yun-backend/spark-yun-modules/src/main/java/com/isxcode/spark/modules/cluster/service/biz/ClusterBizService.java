@@ -17,7 +17,7 @@ import com.isxcode.spark.modules.cluster.service.ClusterService;
 
 import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

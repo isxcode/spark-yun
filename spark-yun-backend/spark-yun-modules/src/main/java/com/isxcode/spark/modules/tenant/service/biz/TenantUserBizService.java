@@ -18,7 +18,7 @@ import com.isxcode.spark.security.user.UserEntity;
 import com.isxcode.spark.security.user.UserRepository;
 
 import java.util.Optional;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
