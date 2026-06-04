@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import com.isxcode.spark.common.jpa.SyId;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,7 +19,8 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 @Data
 @Entity
 @SQLDelete(sql = "UPDATE SY_ALARM_INSTANCE SET deleted = 1 WHERE id = ?")
-@SQLRestriction("deleted = 0 ${TENANT_FILTER} ")
+@SQLRestriction("deleted = 0")
+@Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Table(name = "SY_ALARM_INSTANCE")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)

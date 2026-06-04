@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import com.isxcode.spark.common.jpa.SyId;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,7 +20,8 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 @Data
 @Entity
 @SQLDelete(sql = "UPDATE SY_FORM SET deleted = 1 WHERE id = ? and version_number = ?")
-@SQLRestriction("deleted = 0 ${TENANT_FILTER} ")
+@SQLRestriction("deleted = 0")
+@Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Table(name = "SY_FORM")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)

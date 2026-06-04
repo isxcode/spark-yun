@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.isxcode.spark.common.jpa.SyId;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
@@ -25,7 +28,9 @@ import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE SY_DATABASE_DRIVER SET deleted = 1 WHERE id = ? and version_number = ?")
-@SQLRestriction("deleted = 0 ${TENANT_FILTER} ")
+@SQLRestriction("deleted = 0")
+@Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantIds", type = String.class))
 @Table(name = "SY_DATABASE_DRIVER")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)

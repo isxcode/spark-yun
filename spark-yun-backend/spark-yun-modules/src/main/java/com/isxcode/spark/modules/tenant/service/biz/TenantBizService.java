@@ -1,6 +1,5 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
@@ -10,6 +9,7 @@ import com.isxcode.spark.api.tenant.res.PageTenantRes;
 import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
 import com.isxcode.spark.security.user.*;
 import com.isxcode.spark.modules.tenant.mapper.TenantMapper;
@@ -159,12 +159,10 @@ public class TenantBizService {
             PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
         Page<PageTenantRes> result = tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
-        JPA_TENANT_MODE.set(false);
-        result.getContent().forEach(e -> {
+        JpaTenantContext.joinAllData(() -> result.getContent().forEach(e -> {
             e.setUsedWorkflowNum(String.valueOf(workflowRepository.countByTenantId(e.getId())));
             e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
-        });
-        JPA_TENANT_MODE.set(true);
+        }));
         return result;
     }
 
@@ -277,10 +275,9 @@ public class TenantBizService {
         TenantEntity tenantEntity = tenantEntityOptional.get();
 
         // 统计作业流数量
-        JPA_TENANT_MODE.set(false);
-        long usedWorkflowNum = workflowRepository.countByTenantId(checkTenantReq.getTenantId());
+        long usedWorkflowNum =
+            JpaTenantContext.joinAllData(() -> workflowRepository.countByTenantId(checkTenantReq.getTenantId()));
         tenantEntity.setUsedWorkflowNum(usedWorkflowNum);
-        JPA_TENANT_MODE.set(true);
 
         // 统计成员数量
         long memberNum = tenantUserRepository.countByTenantId(checkTenantReq.getTenantId());

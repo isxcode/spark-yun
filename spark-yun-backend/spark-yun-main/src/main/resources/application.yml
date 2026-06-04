@@ -56,10 +56,6 @@ spring:
       ddl-auto: none
       naming:
         physical-strategy: com.isxcode.spark.config.JpaTableUpperCaseStrategy
-    properties:
-      hibernate:
-        session_factory:
-          statement_inspector: com.isxcode.spark.config.JpaTenantInterceptor
 
   mvc:
     view:
@@ -141,6 +137,8 @@ app:
   open-url:
     - /
     - /static/**
+    - /home/**
+    - /home*/**
     - /favicon.ico
     - /login
     - /ssoauth

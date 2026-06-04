@@ -16,6 +16,7 @@ import com.isxcode.spark.api.work.dto.*;
 import com.isxcode.spark.api.work.req.*;
 import com.isxcode.spark.api.work.res.*;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.modules.cluster.repository.ClusterNodeRepository;
 import com.isxcode.spark.modules.work.entity.WorkConfigEntity;
 import com.isxcode.spark.modules.work.entity.WorkEntity;
@@ -556,11 +557,9 @@ public class WorkBizService {
 
     public Page<QueryInstanceRes> queryInstance(QueryInstanceReq woiQueryInstanceReq) {
 
-        JPA_TENANT_MODE.set(false);
-        Page<Map> instancePage = workInstanceRepository.searchAll(TENANT_ID.get(),
+        Page<Map> instancePage = JpaTenantContext.joinAllData(() -> workInstanceRepository.searchAll(TENANT_ID.get(),
             woiQueryInstanceReq.getSearchKeyWord(), woiQueryInstanceReq.getExecuteStatus(),
-            PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+            PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize())));
 
         return instancePage.map(workMapper::mapToWoiQueryInstanceRes);
     }
