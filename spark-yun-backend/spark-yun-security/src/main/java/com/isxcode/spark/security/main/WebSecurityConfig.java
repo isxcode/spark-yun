@@ -88,11 +88,12 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD,
-            DispatcherType.ERROR).permitAll().requestMatchers(toPatterns(openUrlPatterns())).permitAll()
-            .requestMatchers(toPatterns(isxAppProperties.getAdminRoleUrl())).hasAuthority(RoleType.SYS_ADMIN)
-            .requestMatchers(toPatterns(isxAppProperties.getAnonymousRoleUrl())).hasAuthority(RoleType.ROLE_ANONYMOUS)
-            .anyRequest().authenticated());
+        http.authorizeHttpRequests(
+            authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                .requestMatchers(toPatterns(openUrlPatterns())).permitAll()
+                .requestMatchers(toPatterns(isxAppProperties.getAdminRoleUrl())).hasAuthority(RoleType.SYS_ADMIN)
+                .requestMatchers(toPatterns(isxAppProperties.getAnonymousRoleUrl()))
+                .hasAuthority(RoleType.ROLE_ANONYMOUS).anyRequest().authenticated());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
