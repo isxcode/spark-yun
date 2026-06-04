@@ -50,7 +50,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.isxcode.spark.common.config.CommonConfig.*;
 import static com.isxcode.spark.modules.workflow.run.WorkflowUtils.genWorkRunContext;
 
 @Service

@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class MetaColumnLineageService {
 
         // 异步环境
         ContextHolder.setTenantId(workRunContext.getTenantId());
-        USER_ID.set(workRunContext.getUserId());
+        ContextHolder.setUserId(workRunContext.getUserId());
 
         // 同步血缘
         SyncWorkConfig syncWorkConfig = workRunContext.getSyncWorkConfig();

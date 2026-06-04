@@ -1,7 +1,5 @@
 package com.isxcode.spark.common.security;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +16,7 @@ public final class ContextHolder {
             return currentUser.userId();
         }
 
-        return USER_ID.get();
+        return null;
     }
 
     public static String getTenantId() {
@@ -30,9 +28,10 @@ public final class ContextHolder {
     public static void setCurrentUser(String userId, String tenantId) {
 
         Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            new CurrentUser(userId, tenantId), oldAuthentication == null ? null : oldAuthentication.getCredentials(),
-            oldAuthentication == null ? null : oldAuthentication.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication = oldAuthentication == null
+            ? new UsernamePasswordAuthenticationToken(new CurrentUser(userId, tenantId), null)
+            : new UsernamePasswordAuthenticationToken(new CurrentUser(userId, tenantId),
+                oldAuthentication.getCredentials(), oldAuthentication.getAuthorities());
         if (oldAuthentication != null) {
             authentication.setDetails(oldAuthentication.getDetails());
         }
@@ -42,6 +41,11 @@ public final class ContextHolder {
     public static void setTenantId(String tenantId) {
 
         setCurrentUser(getUserId(), tenantId);
+    }
+
+    public static void setUserId(String userId) {
+
+        setCurrentUser(userId, getTenantId());
     }
 
     public static void clear() {

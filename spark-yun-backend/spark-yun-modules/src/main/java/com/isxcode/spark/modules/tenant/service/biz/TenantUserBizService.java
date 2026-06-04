@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import cn.hutool.core.util.DesensitizedUtil;
 import com.isxcode.spark.api.tenant.req.*;
@@ -134,7 +133,7 @@ public class TenantUserBizService {
         }
 
         // 不可以删除自己
-        if (USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
+        if (ContextHolder.getUserId().equals(tenantUserEntityOptional.get().getUserId())) {
             throw new IsxAppException("不可以移除自己");
         }
 
@@ -170,7 +169,7 @@ public class TenantUserBizService {
 
         // 管理员不可以移除自己
         if (RoleType.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())
-            && USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
+            && ContextHolder.getUserId().equals(tenantUserEntityOptional.get().getUserId())) {
             throw new IsxAppException("不可以取消自己的管理员权限");
         }
 

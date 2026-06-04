@@ -1,6 +1,7 @@
 package com.isxcode.spark.security.main;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
+
 
 import com.isxcode.spark.backend.api.base.constants.SecurityConstants;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
@@ -62,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 userUuid = JwtUtils.decrypt(isxAppProperties.getJwtKey(), authorization, isxAppProperties.getAesSlat(),
                     String.class);
-                USER_ID.set(userUuid);
+                ContextHolder.setUserId(userUuid);
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
                 request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
@@ -87,7 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             SecurityContextHolder.clearContext();
-            USER_ID.remove();
+            ContextHolder.clear();
         }
     }
 

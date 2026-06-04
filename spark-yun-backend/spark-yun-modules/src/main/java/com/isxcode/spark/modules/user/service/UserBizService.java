@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.user.service;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
+
 
 import cn.hutool.crypto.SecureUtil;
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
@@ -138,7 +139,7 @@ public class UserBizService {
     public GetUserRes getUser() {
 
         // 判断用户是否存在
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("账号或者密码不正确");
         }
@@ -332,7 +333,7 @@ public class UserBizService {
     public void updateUserInfo(UpdateUserInfoReq updateUserInfoReq) {
 
         // 获取当前信息
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -360,7 +361,7 @@ public class UserBizService {
     public void updateMyPassword(UpdateMyPasswordReq updateMyPasswordReq) {
 
         // 获取当前用户
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }

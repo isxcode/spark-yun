@@ -4,7 +4,6 @@ import com.isxcode.spark.common.security.ContextHolder;
 
 import static com.isxcode.spark.api.workflow.constants.WorkflowExternalCallStatus.OFF;
 import static com.isxcode.spark.api.workflow.constants.WorkflowExternalCallStatus.ON;
-import static com.isxcode.spark.common.config.CommonConfig.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -490,7 +489,7 @@ public class WorkflowBizService {
         // 异步参数
         Map<String, String> result = new HashMap<>();
         result.put("tenantId", ContextHolder.getTenantId());
-        result.put("userId", USER_ID.get());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -502,7 +501,7 @@ public class WorkflowBizService {
         }).whenComplete((exeStatus, exception) -> {
 
             ContextHolder.setTenantId(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 中止成功，修改作业流状态
             WorkflowInstanceEntity workflowInstanceNew =
@@ -550,7 +549,7 @@ public class WorkflowBizService {
         // 异步参数
         Map<String, String> result = new HashMap<>();
         result.put("tenantId", ContextHolder.getTenantId());
-        result.put("userId", USER_ID.get());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -563,7 +562,7 @@ public class WorkflowBizService {
         }).whenComplete((exeStatus, exception) -> {
 
             ContextHolder.setTenantId(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 初始化工作流实例状态
             workflowInstance.setStatus(InstanceStatus.RUNNING);
@@ -654,7 +653,7 @@ public class WorkflowBizService {
         // 异步参数
         Map<String, String> result = new HashMap<>();
         result.put("tenantId", ContextHolder.getTenantId());
-        result.put("userId", USER_ID.get());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -663,7 +662,7 @@ public class WorkflowBizService {
         }).whenComplete((exeStatus, exception) -> {
 
             ContextHolder.setTenantId(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 获取作业
             WorkEntity work = workService.getWorkEntity(workInstance.getWorkId());
@@ -741,7 +740,7 @@ public class WorkflowBizService {
         // 异步参数
         Map<String, String> result = new HashMap<>();
         result.put("tenantId", ContextHolder.getTenantId());
-        result.put("userId", USER_ID.get());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -750,7 +749,7 @@ public class WorkflowBizService {
         }).whenComplete((exeStatus, exception) -> {
 
             ContextHolder.setTenantId(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 修改作业流状态
             workflowInstance.setStatus(InstanceStatus.RUNNING);
@@ -870,7 +869,7 @@ public class WorkflowBizService {
         }
 
         // 赋予userId和租户id
-        USER_ID.set(workflowToken.getUserId());
+        ContextHolder.setUserId(workflowToken.getUserId());
         ContextHolder.setTenantId(workflowToken.getTenantId());
 
         // 调用作业流执行
