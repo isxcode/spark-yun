@@ -68,17 +68,17 @@ public class WebSecurityConfig {
 
         // 需要token才可以访问的地址
         List<String> excludePaths = new ArrayList<>();
-        excludePaths.addAll(isxAppProperties.getAdminUrl());
-        excludePaths.addAll(isxAppProperties.getAnonymousUrl());
+        excludePaths.addAll(isxAppProperties.getAdminRoleUrl());
+        excludePaths.addAll(isxAppProperties.getAnonymousRoleUrl());
 
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         http.sessionManagement(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
-            authorize -> authorize.requestMatchers(isxAppProperties.getAdminUrl().toArray(new String[0]))
+            authorize -> authorize.requestMatchers(isxAppProperties.getAdminRoleUrl().toArray(new String[0]))
                 .hasRole("ADMIN").requestMatchers(isxAppProperties.getAnonymousRoleUrl().toArray(new String[0]))
-                .hasRole("ANONYMOUS").requestMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0]))
+                .hasRole("ANONYMOUS").requestMatchers(isxAppProperties.getAnonymousRoleUrl().toArray(new String[0]))
                 .permitAll().anyRequest().authenticated());
         http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
             UsernamePasswordAuthenticationFilter.class);
