@@ -65,7 +65,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 
@@ -288,7 +288,7 @@ public class MonitorBizService {
         }
 
         Page<WorkflowMonitorAo> workflowMonitorAos = JpaTenantContext.joinAllData(() ->
-            workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(), pageInstancesReq.getSearchKeyWord(),
+            workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(), pageInstancesReq.getSearchKeyWord(),
                 PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize())));
 
         return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);

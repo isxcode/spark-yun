@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.work.service.biz;
 
+import com.isxcode.spark.common.security.ContextHolder;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONPath;
@@ -557,7 +559,7 @@ public class WorkBizService {
 
     public Page<QueryInstanceRes> queryInstance(QueryInstanceReq woiQueryInstanceReq) {
 
-        Page<Map> instancePage = JpaTenantContext.joinAllData(() -> workInstanceRepository.searchAll(TENANT_ID.get(),
+        Page<Map> instancePage = JpaTenantContext.joinAllData(() -> workInstanceRepository.searchAll(ContextHolder.getTenantId(),
             woiQueryInstanceReq.getSearchKeyWord(), woiQueryInstanceReq.getExecuteStatus(),
             PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize())));
 

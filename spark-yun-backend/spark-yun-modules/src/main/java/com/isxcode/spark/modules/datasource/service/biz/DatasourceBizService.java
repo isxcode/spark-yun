@@ -51,7 +51,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
 
 @Service
@@ -332,7 +332,7 @@ public class DatasourceBizService {
 
         // 判断驱动文件夹是否存在，没有则创建
         String driverDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "jdbc"
-            + File.separator + TENANT_ID.get();
+            + File.separator + ContextHolder.getTenantId();
         if (!new File(driverDirPath).exists()) {
             try {
                 Files.createDirectories(Paths.get(driverDirPath));
@@ -374,7 +374,7 @@ public class DatasourceBizService {
     public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
 
         Page<DatabaseDriverEntity> pageDatabaseDriver = JpaTenantContext.joinShareData(() ->
-            databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
+            databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), ContextHolder.getTenantId(),
                 PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize())));
 
         Page<PageDatabaseDriverRes> map =
@@ -407,7 +407,7 @@ public class DatasourceBizService {
         // 将文件名改名字 xxx.jar ${driverId}_xxx.jar_bak
         try {
             String jdbcDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-                + "jdbc" + File.separator + TENANT_ID.get();
+                + "jdbc" + File.separator + ContextHolder.getTenantId();
             Files.copy(Paths.get(jdbcDirPath).resolve(driver.getFileName()),
                 Paths.get(jdbcDirPath).resolve(driver.getId() + "_" + driver.getFileName() + "_bak"),
                 StandardCopyOption.REPLACE_EXISTING);

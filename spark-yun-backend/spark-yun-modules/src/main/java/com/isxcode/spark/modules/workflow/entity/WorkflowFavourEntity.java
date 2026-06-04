@@ -1,6 +1,6 @@
 package com.isxcode.spark.modules.workflow.entity;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
@@ -64,6 +64,6 @@ public class WorkflowFavourEntity {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TENANT_ID.get();
+        this.tenantId = ContextHolder.getTenantId();
     }
 }

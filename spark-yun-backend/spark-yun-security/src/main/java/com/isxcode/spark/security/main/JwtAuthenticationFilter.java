@@ -1,6 +1,5 @@
 package com.isxcode.spark.security.main;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.spark.backend.api.base.constants.SecurityConstants;
@@ -56,11 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 获取用户的租户id
             String tenantId = request.getHeader(SecurityConstants.HEADER_TENANT_ID);
-            if (tenantId != null) {
-                TENANT_ID.set(tenantId);
-            }
 
             // 验证jwt, 获取用户id
             String userUuid;
@@ -93,7 +88,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } finally {
             SecurityContextHolder.clearContext();
             USER_ID.remove();
-            TENANT_ID.remove();
         }
     }
 

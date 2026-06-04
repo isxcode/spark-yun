@@ -1,6 +1,6 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import cn.hutool.core.util.DesensitizedUtil;
@@ -45,7 +45,7 @@ public class TenantUserBizService {
 
         // 已req中的tenantId为主
         String tenantId =
-            Strings.isEmpty(turAddTenantUserReq.getTenantId()) ? TENANT_ID.get() : turAddTenantUserReq.getTenantId();
+            Strings.isEmpty(turAddTenantUserReq.getTenantId()) ? ContextHolder.getTenantId() : turAddTenantUserReq.getTenantId();
 
         // 判断是否到租户的人员上限
         TenantEntity tenant = tenantService.getTenant(tenantId);
@@ -69,7 +69,7 @@ public class TenantUserBizService {
         UserEntity userEntity = userEntityOptional.get();
 
         // 如果租户id为空
-        if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
+        if (Strings.isEmpty(ContextHolder.getTenantId()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
             throw new IsxAppException("请指定租户id");
         }
 
@@ -108,7 +108,7 @@ public class TenantUserBizService {
         if (!Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
             tenantId = turAddTenantUserReq.getTenantId();
         } else {
-            tenantId = TENANT_ID.get();
+            tenantId = ContextHolder.getTenantId();
         }
 
         Page<PageTenantUserRes> tenantUserPage =

@@ -1,6 +1,6 @@
 package com.isxcode.spark.modules.cluster.service.biz;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.isxcode.spark.api.agent.constants.AgentType;
@@ -220,7 +220,7 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+        runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), USER_ID.get());
     }
 
     public TestAgentRes testAgent(TestAgentReq testAgentReq) {
@@ -273,7 +273,7 @@ public class ClusterNodeBizService {
 
         // 异步调用
         runAgentInstallService.run(installAgentReq.getEngineNodeId(), cluster.getClusterType(), scpFileEngineNodeDto,
-            TENANT_ID.get(), USER_ID.get());
+            ContextHolder.getTenantId(), USER_ID.get());
     }
 
     public void removeAgent(RemoveAgentReq removeAgentReq) {
@@ -300,7 +300,7 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentRemoveService.run(removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(),
+        runAgentRemoveService.run(removeAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(),
             USER_ID.get());
     }
 
@@ -323,7 +323,7 @@ public class ClusterNodeBizService {
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
         // 同步调用
-        runAgentCleanService.run(cleanAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+        runAgentCleanService.run(cleanAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), USER_ID.get());
     }
 
     /**
@@ -355,7 +355,7 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+        runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), USER_ID.get());
     }
 
     /**
@@ -387,7 +387,7 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, TENANT_ID.get(), USER_ID.get());
+        runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), USER_ID.get());
     }
 
     public GetClusterNodeRes getClusterNode(GetClusterNodeReq getClusterNodeReq) {

@@ -1,7 +1,6 @@
 package com.isxcode.spark.config;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
-
+import com.isxcode.spark.common.security.ContextHolder;
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
@@ -12,6 +11,6 @@ public class JpaAuditorConfig implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
 
-        return Optional.ofNullable(USER_ID.get());
+        return Optional.ofNullable(ContextHolder.getUserId());
     }
 }

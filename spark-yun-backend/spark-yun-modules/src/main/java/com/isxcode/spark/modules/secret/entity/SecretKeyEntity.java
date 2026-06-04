@@ -22,7 +22,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Data
 @Entity
@@ -66,6 +66,6 @@ public class SecretKeyEntity {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TENANT_ID.get();
+        this.tenantId = ContextHolder.getTenantId();
     }
 }

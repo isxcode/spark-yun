@@ -4,7 +4,7 @@ import com.isxcode.spark.api.alarm.constants.AlarmSendStatus;
 import com.isxcode.spark.modules.alarm.entity.AlarmInstanceEntity;
 import com.isxcode.spark.modules.alarm.repository.AlarmInstanceRepository;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 public abstract class MessageRunner implements MessageAction {
 
@@ -16,7 +16,7 @@ public abstract class MessageRunner implements MessageAction {
 
     public void send(MessageContext messageContext) {
 
-        TENANT_ID.set(messageContext.getTenantId());
+        ContextHolder.setTenantId(messageContext.getTenantId());
 
         try {
             Object sendResponse = sendMessage(messageContext);

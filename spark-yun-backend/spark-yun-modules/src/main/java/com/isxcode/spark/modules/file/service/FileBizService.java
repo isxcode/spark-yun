@@ -36,7 +36,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class FileBizService {
 
         // 判断文件夹是否存在，不存在则创建
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get();
+            + File.separator + ContextHolder.getTenantId();
         if (!new File(fileDir).exists()) {
             try {
                 Files.createDirectories(Paths.get(fileDir));
@@ -127,7 +127,7 @@ public class FileBizService {
 
             // 将原有的文件，加一个update_${timestamp}的后缀
             String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-                + File.separator + TENANT_ID.get();
+                + File.separator + ContextHolder.getTenantId();
             try {
                 File localFile = PathUtils.createFile(fileDir + File.separator + fileEntity.getId());
                 localFile
@@ -159,7 +159,7 @@ public class FileBizService {
         // 获取文件信息
         FileEntity file = fileService.getFile(downloadFileReq.getFileId());
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get();
+            + File.separator + ContextHolder.getTenantId();
 
         try {
             InputStreamResource resource =
@@ -183,7 +183,7 @@ public class FileBizService {
 
         // 将原有的文件，加一个deleted的后缀
         String fileDir = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get();
+            + File.separator + ContextHolder.getTenantId();
         try {
             File localFile = PathUtils.createFile(fileDir + File.separator + file.getId());
             localFile.renameTo(new File(fileDir + File.separator + file.getId() + ".deleted"));
