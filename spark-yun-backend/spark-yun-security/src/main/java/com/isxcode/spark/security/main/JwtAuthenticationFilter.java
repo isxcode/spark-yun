@@ -1,11 +1,10 @@
 package com.isxcode.spark.security.main;
 
-import com.isxcode.spark.common.security.ContextHolder;
-
-
 import com.isxcode.spark.backend.api.base.constants.SecurityConstants;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.common.security.ContextHolder;
+import com.isxcode.spark.common.security.CurrentUser;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,14 +55,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String tenantId = request.getHeader(SecurityConstants.HEADER_TENANT_ID);
-
-            // 验证jwt, 获取用户id
-            String userUuid;
+            // 验证jwt, 获取用户id和租户id
+            CurrentUser currentUser;
             try {
-                userUuid = JwtUtils.decrypt(isxAppProperties.getJwtKey(), authorization, isxAppProperties.getAesSlat(),
-                    String.class);
-                ContextHolder.setUserId(userUuid);
+                currentUser = JwtUtils.decrypt(isxAppProperties.getJwtKey(), authorization,
+                    isxAppProperties.getAesSlat(), CurrentUser.class);
+                ContextHolder.setCurrentUser(currentUser.userId(), currentUser.tenantId());
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
                 request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
@@ -73,7 +70,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 通过用户id，给用户授权
             try {
                 Authentication authentication =
-                    authenticationManager.authenticate(new AuthenticationToken(userUuid, tenantId));
+                    authenticationManager
+                        .authenticate(new AuthenticationToken(currentUser.userId(), currentUser.tenantId()));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (IsxAppException isxAppException) {
                 log.debug(isxAppException.getMessage(), isxAppException);
@@ -87,7 +85,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } finally {
-            SecurityContextHolder.clearContext();
             ContextHolder.clear();
         }
     }

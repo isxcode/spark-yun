@@ -1,16 +1,20 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
 import com.isxcode.spark.common.security.ContextHolder;
+import com.isxcode.spark.common.security.CurrentUser;
 
 
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
 import com.isxcode.spark.api.tenant.req.*;
+import com.isxcode.spark.api.tenant.res.ChooseTenantRes;
 import com.isxcode.spark.api.tenant.res.GetTenantRes;
 import com.isxcode.spark.api.tenant.res.PageTenantRes;
 import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.common.jpa.JpaTenantContext;
+import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
 import com.isxcode.spark.security.user.*;
 import com.isxcode.spark.modules.tenant.mapper.TenantMapper;
@@ -46,6 +50,8 @@ public class TenantBizService {
     private final WorkflowRepository workflowRepository;
 
     private final LicenseStore licenseStore;
+
+    private final IsxAppProperties isxAppProperties;
 
     public void addTenant(AddTenantReq tetAddTenantReq) {
 
@@ -289,7 +295,7 @@ public class TenantBizService {
         tenantRepository.save(tenantEntity);
     }
 
-    public void chooseTenant(ChooseTenantReq chooseTenantReq) {
+    public ChooseTenantRes chooseTenant(ChooseTenantReq chooseTenantReq) {
 
         Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(chooseTenantReq.getTenantId());
         if (!tenantEntityOptional.isPresent()) {
@@ -318,6 +324,20 @@ public class TenantBizService {
         UserEntity userEntity = userEntityOptional.get();
         userEntity.setCurrentTenantId(chooseTenantReq.getTenantId());
         userRepository.save(userEntity);
+
+        String role = userEntity.getRoleCode();
+        if (!RoleType.SYS_ADMIN.equals(role)) {
+            TenantUserEntity tenantUser = tenantUserRepository
+                .findByTenantIdAndUserId(chooseTenantReq.getTenantId(), userEntity.getId())
+                .orElseThrow(() -> new IsxAppException("用户不在租户中"));
+            role = tenantUser.getRoleCode();
+        }
+
+        String token = JwtUtils.encrypt(isxAppProperties.getAesSlat(),
+            new CurrentUser(userEntity.getId(), chooseTenantReq.getTenantId()), isxAppProperties.getJwtKey(),
+            isxAppProperties.getExpirationMin());
+
+        return ChooseTenantRes.builder().token(token).tenantId(chooseTenantReq.getTenantId()).role(role).build();
     }
 
     public GetTenantRes getTenant(GetTenantReq getTenantReq) {

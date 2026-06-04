@@ -118,9 +118,13 @@ function tenantChange(e: string): void {
   ChangeTenantData({
     tenantId: e
   })
-    .then(() => {
+    .then((res: any) => {
       console.log('切换成功')
-      authStore.setTenantId(e)
+      authStore.setToken(res.data?.token || authStore.token)
+      authStore.setTenantId(res.data?.tenantId || e)
+      if (res.data?.role) {
+        authStore.setRole(res.data.role)
+      }
 
       // 这里发送eventbus，刷新当前打开的页面
       eventBus.emit('tenantChange')

@@ -200,8 +200,7 @@ function deleteData(data: any) {
     type: 'warning'
   }).then(() => {
     DeleteWorkflowData({
-      workflowId: data.id,
-      Tenant: authStore.tenantId
+      workflowId: data.id
     })
       .then((res: any) => {
         ElMessage.success(res.msg)
