@@ -29,15 +29,14 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         String tenantId = authentication.getCredentials() == null ? null : authentication.getCredentials().toString();
         UserDetails userDetail;
         if (userDetailsService instanceof UserDetailsServiceImpl userDetailsServiceImpl) {
-            userDetail =
-                userDetailsServiceImpl.loadUserByUsername(authentication.getPrincipal().toString(), tenantId);
+            userDetail = userDetailsServiceImpl.loadUserByUsername(authentication.getPrincipal().toString(), tenantId);
         } else {
             userDetail = userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
         }
 
         // 用户赋权
-        AuthenticationToken authenticationToken = new AuthenticationToken(new CurrentUser(userDetail.getUsername(),
-            tenantId), userDetail.getPassword(), userDetail.getAuthorities());
+        AuthenticationToken authenticationToken = new AuthenticationToken(
+            new CurrentUser(userDetail.getUsername(), tenantId), userDetail.getPassword(), userDetail.getAuthorities());
         authenticationToken.setDetails(userDetail);
 
         return authenticationToken;

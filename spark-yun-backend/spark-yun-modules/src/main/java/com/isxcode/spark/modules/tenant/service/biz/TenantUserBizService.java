@@ -43,8 +43,8 @@ public class TenantUserBizService {
     public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
         // 已req中的tenantId为主
-        String tenantId =
-            Strings.isEmpty(turAddTenantUserReq.getTenantId()) ? ContextHolder.getTenantId() : turAddTenantUserReq.getTenantId();
+        String tenantId = Strings.isEmpty(turAddTenantUserReq.getTenantId()) ? ContextHolder.getTenantId()
+            : turAddTenantUserReq.getTenantId();
 
         // 判断是否到租户的人员上限
         TenantEntity tenant = tenantService.getTenant(tenantId);

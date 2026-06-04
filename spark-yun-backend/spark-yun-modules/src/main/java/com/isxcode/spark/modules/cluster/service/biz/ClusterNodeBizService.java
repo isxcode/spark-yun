@@ -219,7 +219,8 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), ContextHolder.getUserId());
+        runAgentCheckService.run(checkAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(),
+            ContextHolder.getUserId());
     }
 
     public TestAgentRes testAgent(TestAgentReq testAgentReq) {
@@ -322,7 +323,8 @@ public class ClusterNodeBizService {
         scpFileEngineNodeDto.setPasswd(aesUtils.decrypt(scpFileEngineNodeDto.getPasswd()));
 
         // 同步调用
-        runAgentCleanService.run(cleanAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), ContextHolder.getUserId());
+        runAgentCleanService.run(cleanAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(),
+            ContextHolder.getUserId());
     }
 
     /**
@@ -354,7 +356,8 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), ContextHolder.getUserId());
+        runAgentStopService.run(stopAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(),
+            ContextHolder.getUserId());
     }
 
     /**
@@ -386,7 +389,8 @@ public class ClusterNodeBizService {
         clusterNodeRepository.saveAndFlush(engineNode);
 
         // 异步调用
-        runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(), ContextHolder.getUserId());
+        runAgentStartService.run(startAgentReq.getEngineNodeId(), scpFileEngineNodeDto, ContextHolder.getTenantId(),
+            ContextHolder.getUserId());
     }
 
     public GetClusterNodeRes getClusterNode(GetClusterNodeReq getClusterNodeReq) {

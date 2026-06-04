@@ -6,8 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public final class ContextHolder {
 
-    private ContextHolder() {
-    }
+    private ContextHolder() {}
 
     public static String getUserId() {
 
@@ -28,10 +27,10 @@ public final class ContextHolder {
     public static void setCurrentUser(String userId, String tenantId) {
 
         Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
-        UsernamePasswordAuthenticationToken authentication = oldAuthentication == null
-            ? new UsernamePasswordAuthenticationToken(new CurrentUser(userId, tenantId), null)
-            : new UsernamePasswordAuthenticationToken(new CurrentUser(userId, tenantId),
-                oldAuthentication.getCredentials(), oldAuthentication.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication =
+            oldAuthentication == null ? new UsernamePasswordAuthenticationToken(new CurrentUser(userId, tenantId), null)
+                : new UsernamePasswordAuthenticationToken(new CurrentUser(userId, tenantId),
+                    oldAuthentication.getCredentials(), oldAuthentication.getAuthorities());
         if (oldAuthentication != null) {
             authentication.setDetails(oldAuthentication.getDetails());
         }

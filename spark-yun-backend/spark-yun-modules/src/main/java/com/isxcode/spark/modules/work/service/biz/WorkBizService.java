@@ -558,9 +558,10 @@ public class WorkBizService {
 
     public Page<QueryInstanceRes> queryInstance(QueryInstanceReq woiQueryInstanceReq) {
 
-        Page<Map> instancePage = JpaTenantContext.joinAllData(() -> workInstanceRepository.searchAll(ContextHolder.getTenantId(),
-            woiQueryInstanceReq.getSearchKeyWord(), woiQueryInstanceReq.getExecuteStatus(),
-            PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize())));
+        Page<Map> instancePage =
+            JpaTenantContext.joinAllData(() -> workInstanceRepository.searchAll(ContextHolder.getTenantId(),
+                woiQueryInstanceReq.getSearchKeyWord(), woiQueryInstanceReq.getExecuteStatus(),
+                PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize())));
 
         return instancePage.map(workMapper::mapToWoiQueryInstanceRes);
     }

@@ -151,8 +151,8 @@ public class WorkflowUtils {
             .syncFlinkConfig(JSON.parseObject(workConfig.getSyncFlinkConfig(), SyncFlinkConfig.class))
             .queryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class))
             .containerId(workConfig.getContainerId()).eventType(eventType).workName(work.getName())
-            .libPackageConfig(JSON.parseArray(workConfig.getLibPackageConfig(), String.class)).userId(ContextHolder.getUserId())
-            .build();
+            .libPackageConfig(JSON.parseArray(workConfig.getLibPackageConfig(), String.class))
+            .userId(ContextHolder.getUserId()).build();
     }
 
     /**
