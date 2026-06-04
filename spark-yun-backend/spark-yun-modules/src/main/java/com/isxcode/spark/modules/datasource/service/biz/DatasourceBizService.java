@@ -11,6 +11,7 @@ import com.isxcode.spark.api.datasource.res.*;
 import com.isxcode.spark.api.meta.constant.MetaDatabaseStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
@@ -50,7 +51,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
 
@@ -373,11 +373,9 @@ public class DatasourceBizService {
 
     public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
 
-        JPA_TENANT_MODE.set(false);
-        Page<DatabaseDriverEntity> pageDatabaseDriver =
+        Page<DatabaseDriverEntity> pageDatabaseDriver = JpaTenantContext.joinShareData(() ->
             databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
-                PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+                PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize())));
 
         Page<PageDatabaseDriverRes> map =
             pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
@@ -389,10 +387,8 @@ public class DatasourceBizService {
 
     public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
-        // 支持查询所有的数据
-        JPA_TENANT_MODE.set(false);
-        DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
-        JPA_TENANT_MODE.set(true);
+        // 支持查询租户和系统共享的数据
+        DatabaseDriverEntity driver = databaseDriverService.getShareVisibleDriver(deleteDatabaseDriverReq.getDriverId());
 
         // 系统驱动无法删除
         if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
@@ -427,10 +423,8 @@ public class DatasourceBizService {
 
     public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-        JPA_TENANT_MODE.set(false);
-        Optional<DatabaseDriverEntity> databaseDriverEntityOptional =
-            databaseDriverRepository.findById(settingDefaultDatabaseDriverReq.getDriverId());
-        JPA_TENANT_MODE.set(true);
+        Optional<DatabaseDriverEntity> databaseDriverEntityOptional = JpaTenantContext
+            .joinShareData(() -> databaseDriverRepository.findById(settingDefaultDatabaseDriverReq.getDriverId()));
 
         if (!databaseDriverEntityOptional.isPresent()) {
             throw new IsxAppException("数据源驱动不存在");
@@ -465,11 +459,9 @@ public class DatasourceBizService {
         }
 
         // 查询系统默认的返回
-        JPA_TENANT_MODE.set(false);
-        Optional<DatabaseDriverEntity> systemDriver =
+        Optional<DatabaseDriverEntity> systemDriver = JpaTenantContext.joinShareData(() ->
             databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
-                getDefaultDatabaseDriverReq.getDbType(), true);
-        JPA_TENANT_MODE.set(true);
+                getDefaultDatabaseDriverReq.getDbType(), true));
 
         return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
     }

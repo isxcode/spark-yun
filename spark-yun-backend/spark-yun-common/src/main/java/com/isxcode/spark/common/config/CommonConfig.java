@@ -8,6 +8,4 @@ public class CommonConfig {
     public static final ThreadLocal<String> TENANT_ID = new ThreadLocal<>();
 
     public static final ThreadLocal<String> USER_ID = new ThreadLocal<>();
-
-    public static final ThreadLocal<Boolean> JPA_TENANT_MODE = ThreadLocal.withInitial(() -> true);
 }

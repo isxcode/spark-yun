@@ -29,6 +29,7 @@ import com.isxcode.spark.api.monitor.res.GetSystemMonitorRes;
 import com.isxcode.spark.api.monitor.res.PageInstancesRes;
 import com.isxcode.spark.api.workflow.constants.WorkflowStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.modules.api.repository.ApiRepository;
 import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
@@ -64,7 +65,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
@@ -287,11 +287,9 @@ public class MonitorBizService {
             pageInstancesReq.setSearchKeyWord("");
         }
 
-        JPA_TENANT_MODE.set(false);
-        Page<WorkflowMonitorAo> workflowMonitorAos =
+        Page<WorkflowMonitorAo> workflowMonitorAos = JpaTenantContext.joinAllData(() ->
             workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(), pageInstancesReq.getSearchKeyWord(),
-                PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+                PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize())));
 
         return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
     }
@@ -302,9 +300,8 @@ public class MonitorBizService {
         LocalDateTime now = LocalDateTime.now();
 
         // 获取所有的节点
-        JPA_TENANT_MODE.set(false);
-        List<ClusterNodeEntity> allNode = clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING);
-        JPA_TENANT_MODE.set(true);
+        List<ClusterNodeEntity> allNode =
+            JpaTenantContext.joinAllData(() -> clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING));
 
         allNode.forEach(e -> {
             CompletableFuture.supplyAsync(() -> {
