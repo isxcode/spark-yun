@@ -1,7 +1,6 @@
 package com.isxcode.spark.common.userlog;
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -46,10 +45,10 @@ public class UserLogAdvice {
 
         userActionEntity = new UserActionEntity();
         userActionEntity.setStartTimestamp(System.currentTimeMillis());
-        if (Strings.isEmpty(USER_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getUserId())) {
             userActionEntity.setUserId("anonymous");
         } else {
-            userActionEntity.setUserId(USER_ID.get());
+            userActionEntity.setUserId(ContextHolder.getUserId());
         }
 
         if (Strings.isEmpty(ContextHolder.getTenantId())) {
@@ -92,7 +91,7 @@ public class UserLogAdvice {
             return;
         }
 
-        if (Strings.isEmpty(USER_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getUserId())) {
             userActionEntity.setCreateBy("anonymous");
         }
         userActionEntity.setEndTimestamp(System.currentTimeMillis());

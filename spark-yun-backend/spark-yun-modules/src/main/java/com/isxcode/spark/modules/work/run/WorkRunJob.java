@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Slf4j
 @Component
@@ -38,7 +37,7 @@ public class WorkRunJob implements Job {
         Integer lockerKey = locker.lockOnly(LockerPrefix.WORK_EVENT_THREAD + workEventId);
 
         // 刷新异步环境变量
-        USER_ID.set(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.USER_ID)));
+        ContextHolder.setUserId(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.USER_ID)));
         ContextHolder.setTenantId(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.TENANT_ID)));
 
         // 获取当前作业运行状态

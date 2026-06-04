@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
+
 
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
 import com.isxcode.spark.api.tenant.req.*;
@@ -117,11 +118,11 @@ public class TenantBizService {
     public List<QueryUserTenantRes> queryUserTenant() {
 
         List<String> tenantIds;
-        if ("admin_id".equals(USER_ID.get())) {
+        if ("admin_id".equals(ContextHolder.getUserId())) {
             List<TenantEntity> allTenantList = tenantRepository.findAll();
             tenantIds = allTenantList.stream().map(TenantEntity::getId).collect(Collectors.toList());
         } else {
-            List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(USER_ID.get());
+            List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(ContextHolder.getUserId());
             tenantIds = tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
             if (tenantUserEntities.isEmpty()) {
                 throw new IsxAppException("请管理员添加进入租户");
@@ -129,7 +130,7 @@ public class TenantBizService {
         }
 
         // 查询用户最近一次租户
-        UserEntity userEntity = userRepository.findById(USER_ID.get()).get();
+        UserEntity userEntity = userRepository.findById(ContextHolder.getUserId()).get();
         if (!tenantIds.isEmpty() && !tenantIds.contains(userEntity.getCurrentTenantId())) {
             userEntity.setCurrentTenantId(tenantIds.get(0));
             // 更新用户最近一次租户
@@ -304,7 +305,7 @@ public class TenantBizService {
             }
         }
 
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -327,7 +328,7 @@ public class TenantBizService {
         }
         TenantEntity tenantEntity = tenantEntityOptional.get();
 
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -340,7 +341,7 @@ public class TenantBizService {
 
         // 判断用户是否在租户中
         Optional<TenantUserEntity> tenantUserEntityOptional =
-            tenantUserRepository.findByTenantIdAndUserId(getTenantReq.getTenantId(), USER_ID.get());
+            tenantUserRepository.findByTenantIdAndUserId(getTenantReq.getTenantId(), ContextHolder.getUserId());
         if (!tenantUserEntityOptional.isPresent()) {
             throw new IsxAppException("不在租户中");
         }

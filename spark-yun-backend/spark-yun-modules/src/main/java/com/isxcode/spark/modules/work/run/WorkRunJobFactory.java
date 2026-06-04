@@ -11,7 +11,6 @@ import org.quartz.*;
 import org.springframework.stereotype.Component;
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 
 @Slf4j
@@ -25,7 +24,7 @@ public class WorkRunJobFactory {
 
     public void run(WorkRunContext workRunContext) {
 
-        USER_ID.set(workRunContext.getUserId());
+        ContextHolder.setUserId(workRunContext.getUserId());
         ContextHolder.setTenantId(workRunContext.getTenantId());
 
         // 初始化作业运行事件

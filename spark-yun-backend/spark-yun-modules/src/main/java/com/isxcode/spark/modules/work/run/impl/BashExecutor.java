@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.work.run.impl;
 
+import com.isxcode.spark.common.security.ContextHolder;
+
 import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.cluster.constants.ClusterNodeStatus;
 import com.isxcode.spark.api.cluster.dto.ScpFileEngineNodeDto;
@@ -36,7 +38,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.*;
 
 @Service
@@ -160,7 +161,7 @@ public class BashExecutor extends WorkExecutor {
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                 if (script.contains(secretName)) {
-                    if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                    if (!secretKeyEntity.getCreateBy().equals(ContextHolder.getUserId())) {
                         throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
                     }
                     script = script.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));

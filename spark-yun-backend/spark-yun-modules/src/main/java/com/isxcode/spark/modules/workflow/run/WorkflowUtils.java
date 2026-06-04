@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.workflow.run;
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -152,7 +151,7 @@ public class WorkflowUtils {
             .syncFlinkConfig(JSON.parseObject(workConfig.getSyncFlinkConfig(), SyncFlinkConfig.class))
             .queryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class))
             .containerId(workConfig.getContainerId()).eventType(eventType).workName(work.getName())
-            .libPackageConfig(JSON.parseArray(workConfig.getLibPackageConfig(), String.class)).userId(USER_ID.get())
+            .libPackageConfig(JSON.parseArray(workConfig.getLibPackageConfig(), String.class)).userId(ContextHolder.getUserId())
             .build();
     }
 
@@ -163,7 +162,7 @@ public class WorkflowUtils {
         VipWorkVersionEntity workVersion) {
 
         return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
-            .instanceId(instanceId).tenantId(ContextHolder.getTenantId()).userId(USER_ID.get())
+            .instanceId(instanceId).tenantId(ContextHolder.getTenantId()).userId(ContextHolder.getUserId())
             .syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
             .excelSyncConfig(JSON.parseObject(workVersion.getExcelSyncConfig(), ExcelSyncConfig.class))
             .syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class))
