@@ -69,9 +69,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 通过用户id，给用户授权
             try {
-                Authentication authentication =
-                    authenticationManager
-                        .authenticate(new AuthenticationToken(currentUser.userId(), currentUser.tenantId()));
+                Authentication authentication = authenticationManager
+                    .authenticate(new AuthenticationToken(currentUser.userId(), currentUser.tenantId()));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (IsxAppException isxAppException) {
                 log.debug(isxAppException.getMessage(), isxAppException);

@@ -373,8 +373,9 @@ public class DatasourceBizService {
 
     public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
 
-        Page<DatabaseDriverEntity> pageDatabaseDriver = JpaTenantContext.joinShareData(() ->
-            databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), ContextHolder.getTenantId(),
+        Page<DatabaseDriverEntity> pageDatabaseDriver = JpaTenantContext
+            .joinShareData(() -> databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(),
+                ContextHolder.getTenantId(),
                 PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize())));
 
         Page<PageDatabaseDriverRes> map =
@@ -388,7 +389,8 @@ public class DatasourceBizService {
     public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
         // 支持查询租户和系统共享的数据
-        DatabaseDriverEntity driver = databaseDriverService.getShareVisibleDriver(deleteDatabaseDriverReq.getDriverId());
+        DatabaseDriverEntity driver =
+            databaseDriverService.getShareVisibleDriver(deleteDatabaseDriverReq.getDriverId());
 
         // 系统驱动无法删除
         if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
@@ -459,8 +461,8 @@ public class DatasourceBizService {
         }
 
         // 查询系统默认的返回
-        Optional<DatabaseDriverEntity> systemDriver = JpaTenantContext.joinShareData(() ->
-            databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
+        Optional<DatabaseDriverEntity> systemDriver = JpaTenantContext
+            .joinShareData(() -> databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
                 getDefaultDatabaseDriverReq.getDbType(), true));
 
         return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());

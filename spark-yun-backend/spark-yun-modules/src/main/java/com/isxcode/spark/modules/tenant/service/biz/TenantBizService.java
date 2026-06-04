@@ -327,9 +327,9 @@ public class TenantBizService {
 
         String role = userEntity.getRoleCode();
         if (!RoleType.SYS_ADMIN.equals(role)) {
-            TenantUserEntity tenantUser = tenantUserRepository
-                .findByTenantIdAndUserId(chooseTenantReq.getTenantId(), userEntity.getId())
-                .orElseThrow(() -> new IsxAppException("用户不在租户中"));
+            TenantUserEntity tenantUser =
+                tenantUserRepository.findByTenantIdAndUserId(chooseTenantReq.getTenantId(), userEntity.getId())
+                    .orElseThrow(() -> new IsxAppException("用户不在租户中"));
             role = tenantUser.getRoleCode();
         }
 

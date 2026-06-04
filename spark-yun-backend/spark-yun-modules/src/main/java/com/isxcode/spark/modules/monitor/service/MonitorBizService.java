@@ -287,8 +287,9 @@ public class MonitorBizService {
             pageInstancesReq.setSearchKeyWord("");
         }
 
-        Page<WorkflowMonitorAo> workflowMonitorAos = JpaTenantContext.joinAllData(() ->
-            workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(), pageInstancesReq.getSearchKeyWord(),
+        Page<WorkflowMonitorAo> workflowMonitorAos = JpaTenantContext
+            .joinAllData(() -> workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(),
+                pageInstancesReq.getSearchKeyWord(),
                 PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize())));
 
         return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);

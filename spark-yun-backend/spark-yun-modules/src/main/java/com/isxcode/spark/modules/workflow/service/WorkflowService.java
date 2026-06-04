@@ -93,8 +93,9 @@ public class WorkflowService {
         String httpProtocol = isxAppProperties.isUseSsl() ? "https://" : "http://";
         String httpUrlBuilder = httpProtocol + getInvokeUrlReq.getOuterAddress() + "/workflow/open/invokeWorkflow";
 
-        WorkflowToken workflowToken = WorkflowToken.builder().userId(ContextHolder.getUserId()).tenantId(ContextHolder.getTenantId())
-            .workflowId(getInvokeUrlReq.getWorkflowId()).type("WORKFLOW_INVOKE").build();
+        WorkflowToken workflowToken =
+            WorkflowToken.builder().userId(ContextHolder.getUserId()).tenantId(ContextHolder.getTenantId())
+                .workflowId(getInvokeUrlReq.getWorkflowId()).type("WORKFLOW_INVOKE").build();
         String token =
             JwtUtils.encrypt(isxAppProperties.getAesSlat(), workflowToken, isxAppProperties.getJwtKey(), 365 * 24 * 60);
 

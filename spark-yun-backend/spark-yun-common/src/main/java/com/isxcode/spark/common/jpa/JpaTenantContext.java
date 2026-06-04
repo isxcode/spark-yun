@@ -19,8 +19,7 @@ public final class JpaTenantContext {
 
     private static final ThreadLocal<Boolean> ALL_DATA = ThreadLocal.withInitial(() -> false);
 
-    private JpaTenantContext() {
-    }
+    private JpaTenantContext() {}
 
     public static List<String> getVisibleTenantIds() {
 
