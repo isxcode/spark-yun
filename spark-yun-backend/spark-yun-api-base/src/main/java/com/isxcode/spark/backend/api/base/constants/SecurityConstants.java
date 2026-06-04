@@ -6,9 +6,6 @@ public interface SecurityConstants {
     /** token的请求头名称. */
     String HEADER_AUTHORIZATION = "Authorization";
 
-    /** tenantId的请求头名称. */
-    String HEADER_TENANT_ID = "Tenant";
-
     /** token为null异常抛出. */
     String TOKEN_IS_NULL_PATH = "/exception/tokenIsNull";
 

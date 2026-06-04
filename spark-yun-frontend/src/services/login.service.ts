@@ -27,16 +27,11 @@ export function QueryTenantList(): Promise<any> {
 }
 
 // 切换租户
-export function ChangeTenantData(params: TenantParams, tenantHeader?: string): Promise<any> {
+export function ChangeTenantData(params: TenantParams): Promise<any> {
   return http.request({
     method: 'post',
     url: '/tenant/chooseTenant',
-    params: params,
-    headers: tenantHeader
-      ? {
-        tenant: tenantHeader
-      }
-      : undefined
+    params: params
   })
 }
 

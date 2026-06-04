@@ -34,8 +34,7 @@ async function refreshLicenseAndReload(): Promise<void> {
     await fetch(`${urlPrefix}/vip/license/open/checkLicense`, {
       method: 'GET',
       headers: {
-        authorization: authStore.token || '',
-        tenant: authStore.tenantId || ''
+        authorization: authStore.token || ''
       }
     })
   } catch (error) {
@@ -50,7 +49,6 @@ export const httpOption = {
     requestInterceptors: (config: any) => {
       const authStore = useAuthStore()
       config.headers['authorization'] = config.headers['authorization'] || authStore.token
-      config.headers['tenant'] = config.headers['tenant'] || authStore.tenantId
 
       return config
     },

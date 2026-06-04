@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.user.service;
 
 import com.isxcode.spark.common.security.ContextHolder;
+import com.isxcode.spark.common.security.CurrentUser;
 
 
 import cn.hutool.crypto.SecureUtil;
@@ -78,12 +79,9 @@ public class UserBizService {
             throw new IsxAppException("账号或者密码不正确");
         }
 
-        // 生成token
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), userEntity.getId(),
-            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
-
         // 如果是系统管理员直接返回
         if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+            String jwtToken = generateUserToken(userEntity.getId(), userEntity.getCurrentTenantId());
             return LoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
                 .account(userEntity.getAccount()).phone(userEntity.getPhone()).email(userEntity.getEmail())
                 .remark(userEntity.getRemark()).token(jwtToken).role(userEntity.getRoleCode()).build();
@@ -131,6 +129,7 @@ public class UserBizService {
         }
 
         // 生成token并返回
+        String jwtToken = generateUserToken(userEntity.getId(), currentTenantId);
         return LoginRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
             .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark()).token(jwtToken)
             .tenantId(currentTenantId).role(tenantUserEntityOptional.get().getRoleCode()).build();
@@ -150,12 +149,9 @@ public class UserBizService {
             throw new IsxAppException("账号已被禁用，请联系管理员");
         }
 
-        // 生成token
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), userEntity.getId(),
-            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
-
         // 如果是系统管理员直接返回
         if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+            String jwtToken = generateUserToken(userEntity.getId(), userEntity.getCurrentTenantId());
             return GetUserRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
                 .account(userEntity.getAccount()).token(jwtToken).role(userEntity.getRoleCode()).build();
         }
@@ -188,6 +184,7 @@ public class UserBizService {
         }
 
         // 生成token并返回
+        String jwtToken = generateUserToken(userEntity.getId(), currentTenantId);
         return GetUserRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
             .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark()).token(jwtToken)
             .tenantId(currentTenantId).role(tenantUserEntityOptional.get().getRoleCode()).build();
@@ -392,5 +389,11 @@ public class UserBizService {
             getAnonymousTokenReq.getValidDay() * 24 * 60);
 
         return GetAnonymousTokenRes.builder().token(jwtToken).build();
+    }
+
+    private String generateUserToken(String userId, String tenantId) {
+
+        return JwtUtils.encrypt(isxAppProperties.getAesSlat(), new CurrentUser(userId, tenantId),
+            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
     }
 }
