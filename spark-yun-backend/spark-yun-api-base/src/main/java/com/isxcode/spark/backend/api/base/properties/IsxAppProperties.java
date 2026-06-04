@@ -17,12 +17,12 @@ public class IsxAppProperties {
     /**
      * 需要ADMIN权限访问路径.
      */
-    private List<String> adminUrl;
+    private List<String> adminRoleUrl;
 
     /**
      * 任何人都可以访问路径.
      */
-    private List<String> anonymousUrl;
+    private List<String> openUrl;
 
     /**
      * 匿名者权限都可以访问路径.
