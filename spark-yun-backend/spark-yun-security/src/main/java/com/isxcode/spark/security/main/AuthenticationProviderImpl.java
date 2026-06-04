@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -33,15 +32,12 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             new AuthenticationToken(userDetail.getUsername(), userDetail.getPassword(), userDetail.getAuthorities());
         authenticationToken.setDetails(userDetail);
 
-        // 上下文保存用户信息
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
         return authenticationToken;
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
 
-        return false;
+        return AuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
