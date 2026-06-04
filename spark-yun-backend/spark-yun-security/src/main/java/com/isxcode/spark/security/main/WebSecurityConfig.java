@@ -1,12 +1,15 @@
 package com.isxcode.spark.security.main;
 
 import com.isxcode.spark.api.user.constants.RoleType;
+import com.isxcode.spark.backend.api.base.constants.SecurityConstants;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.security.user.TenantRepository;
 import com.isxcode.spark.security.user.TenantUserRepository;
 import com.isxcode.spark.security.user.UserRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -66,7 +69,7 @@ public class WebSecurityConfig {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
 
-        return new JwtAuthenticationFilter(authenticationManager, isxAppProperties.getOpenUrl(), isxAppProperties);
+        return new JwtAuthenticationFilter(authenticationManager, openUrlPatterns(), isxAppProperties);
     }
 
     @Bean
@@ -85,8 +88,9 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authorizeHttpRequests(authorize -> authorize.requestMatchers(toPatterns(isxAppProperties.getOpenUrl()))
-            .permitAll().requestMatchers(toPatterns(isxAppProperties.getAdminRoleUrl())).hasAuthority(RoleType.SYS_ADMIN)
+        http.authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD,
+            DispatcherType.ERROR).permitAll().requestMatchers(toPatterns(openUrlPatterns())).permitAll()
+            .requestMatchers(toPatterns(isxAppProperties.getAdminRoleUrl())).hasAuthority(RoleType.SYS_ADMIN)
             .requestMatchers(toPatterns(isxAppProperties.getAnonymousRoleUrl())).hasAuthority(RoleType.ROLE_ANONYMOUS)
             .anyRequest().authenticated());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -113,5 +117,17 @@ public class WebSecurityConfig {
     private String[] toPatterns(List<String> patterns) {
 
         return patterns == null ? new String[0] : patterns.toArray(new String[0]);
+    }
+
+    private List<String> openUrlPatterns() {
+
+        List<String> patterns = new ArrayList<>();
+        if (isxAppProperties.getOpenUrl() != null) {
+            patterns.addAll(isxAppProperties.getOpenUrl());
+        }
+        patterns.add(SecurityConstants.TOKEN_IS_NULL_PATH);
+        patterns.add(SecurityConstants.TOKEN_IS_INVALID_PATH);
+        patterns.add(SecurityConstants.AUTH_ERROR_PATH);
+        return List.copyOf(patterns);
     }
 }
