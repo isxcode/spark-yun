@@ -15,7 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Data
 @Entity
@@ -67,6 +67,6 @@ public class DataModelColumnEntity {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TENANT_ID.get();
+        this.tenantId = ContextHolder.getTenantId();
     }
 }

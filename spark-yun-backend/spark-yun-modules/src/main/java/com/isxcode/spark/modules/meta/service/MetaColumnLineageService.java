@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Service
@@ -32,7 +32,7 @@ public class MetaColumnLineageService {
         }
 
         // 异步环境
-        TENANT_ID.set(workRunContext.getTenantId());
+        ContextHolder.setTenantId(workRunContext.getTenantId());
         USER_ID.set(workRunContext.getUserId());
 
         // 同步血缘

@@ -1,6 +1,6 @@
 package com.isxcode.spark.common.jpa;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ public final class JpaTenantContext {
 
     public static List<String> getVisibleTenantIds() {
 
-        if (Boolean.TRUE.equals(ALL_DATA.get()) || Strings.isEmpty(TENANT_ID.get())) {
+        if (Boolean.TRUE.equals(ALL_DATA.get()) || Strings.isEmpty(ContextHolder.getTenantId())) {
             return Collections.emptyList();
         }
 
@@ -33,16 +33,16 @@ public final class JpaTenantContext {
             return visibleTenantIds;
         }
 
-        return Collections.singletonList(TENANT_ID.get());
+        return Collections.singletonList(ContextHolder.getTenantId());
     }
 
     public static <T> T joinShareData(Supplier<T> supplier) {
 
-        if (Strings.isEmpty(TENANT_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getTenantId())) {
             return runWithTenantIds(Collections.singletonList(SHARE_TENANT_ID), supplier);
         }
 
-        return runWithTenantIds(List.of(TENANT_ID.get(), SHARE_TENANT_ID), supplier);
+        return runWithTenantIds(List.of(ContextHolder.getTenantId(), SHARE_TENANT_ID), supplier);
     }
 
     public static void joinShareData(Runnable runnable) {

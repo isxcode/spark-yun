@@ -1,6 +1,6 @@
 package com.isxcode.spark.common.userlog;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 import com.alibaba.fastjson.JSON;
@@ -52,10 +52,10 @@ public class UserLogAdvice {
             userActionEntity.setUserId(USER_ID.get());
         }
 
-        if (Strings.isEmpty(TENANT_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getTenantId())) {
             userActionEntity.setTenantId("anonymous");
         } else {
-            userActionEntity.setTenantId(TENANT_ID.get());
+            userActionEntity.setTenantId(ContextHolder.getTenantId());
         }
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

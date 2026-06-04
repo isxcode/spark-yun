@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Slf4j
@@ -94,7 +94,7 @@ public class WorkflowService {
         String httpProtocol = isxAppProperties.isUseSsl() ? "https://" : "http://";
         String httpUrlBuilder = httpProtocol + getInvokeUrlReq.getOuterAddress() + "/workflow/open/invokeWorkflow";
 
-        WorkflowToken workflowToken = WorkflowToken.builder().userId(USER_ID.get()).tenantId(TENANT_ID.get())
+        WorkflowToken workflowToken = WorkflowToken.builder().userId(USER_ID.get()).tenantId(ContextHolder.getTenantId())
             .workflowId(getInvokeUrlReq.getWorkflowId()).type("WORKFLOW_INVOKE").build();
         String token =
             JwtUtils.encrypt(isxAppProperties.getAesSlat(), workflowToken, isxAppProperties.getJwtKey(), 365 * 24 * 60);

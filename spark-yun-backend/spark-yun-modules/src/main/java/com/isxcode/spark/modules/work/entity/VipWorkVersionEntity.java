@@ -1,6 +1,6 @@
 package com.isxcode.spark.modules.work.entity;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -102,6 +102,6 @@ public class VipWorkVersionEntity {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TENANT_ID.get();
+        this.tenantId = ContextHolder.getTenantId();
     }
 }

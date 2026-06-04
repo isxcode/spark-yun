@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class ExcelSyncService {
 
         // 获取文件的绝对路径
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+            + File.separator + ContextHolder.getTenantId() + File.separator + file.getId();
 
         // 读取文件数据
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
@@ -84,7 +84,7 @@ public class ExcelSyncService {
 
         // 获取文件的绝对路径
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+            + File.separator + ContextHolder.getTenantId() + File.separator + file.getId();
 
         // 读取文件数据
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));

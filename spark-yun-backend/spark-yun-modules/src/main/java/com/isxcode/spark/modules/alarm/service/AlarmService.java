@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +102,7 @@ public class AlarmService {
     @Async
     public void sendWorkMessage(WorkInstanceEntity workInstance, String alarmEvent) {
 
-        TENANT_ID.set(workInstance.getTenantId());
+        ContextHolder.setTenantId(workInstance.getTenantId());
 
         Optional<VipWorkVersionEntity> byId = vipWorkVersionRepository.findById(workInstance.getVersionId());
         VipWorkVersionEntity workVersionEntity = byId.get();
@@ -190,7 +190,7 @@ public class AlarmService {
     @Async
     public void sendWorkflowMessage(WorkflowInstanceEntity workflowInstance, String alarmEvent) {
 
-        TENANT_ID.set(workflowInstance.getTenantId());
+        ContextHolder.setTenantId(workflowInstance.getTenantId());
 
         Optional<WorkflowVersionEntity> byId = workflowVersionRepository.findById(workflowInstance.getVersionId());
         WorkflowVersionEntity workflowVersionEntity = byId.get();

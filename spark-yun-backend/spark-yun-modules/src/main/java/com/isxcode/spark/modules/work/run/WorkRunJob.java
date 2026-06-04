@@ -11,7 +11,7 @@ import org.quartz.*;
 import org.springframework.stereotype.Component;
 
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Slf4j
@@ -39,7 +39,7 @@ public class WorkRunJob implements Job {
 
         // 刷新异步环境变量
         USER_ID.set(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.USER_ID)));
-        TENANT_ID.set(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.TENANT_ID)));
+        ContextHolder.setTenantId(String.valueOf(context.getJobDetail().getJobDataMap().get(QuartzPrefix.TENANT_ID)));
 
         // 获取当前作业运行状态
         String runStatus;

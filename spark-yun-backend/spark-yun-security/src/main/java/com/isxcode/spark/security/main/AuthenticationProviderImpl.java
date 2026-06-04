@@ -1,5 +1,6 @@
 package com.isxcode.spark.security.main;
 
+import com.isxcode.spark.common.security.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -25,11 +26,18 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         // 获取用户详细信息
-        UserDetails userDetail = userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
+        String tenantId = authentication.getCredentials() == null ? null : authentication.getCredentials().toString();
+        UserDetails userDetail;
+        if (userDetailsService instanceof UserDetailsServiceImpl userDetailsServiceImpl) {
+            userDetail =
+                userDetailsServiceImpl.loadUserByUsername(authentication.getPrincipal().toString(), tenantId);
+        } else {
+            userDetail = userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
+        }
 
         // 用户赋权
-        AuthenticationToken authenticationToken =
-            new AuthenticationToken(userDetail.getUsername(), userDetail.getPassword(), userDetail.getAuthorities());
+        AuthenticationToken authenticationToken = new AuthenticationToken(new CurrentUser(userDetail.getUsername(),
+            tenantId), userDetail.getPassword(), userDetail.getAuthorities());
         authenticationToken.setDetails(userDetail);
 
         return authenticationToken;
