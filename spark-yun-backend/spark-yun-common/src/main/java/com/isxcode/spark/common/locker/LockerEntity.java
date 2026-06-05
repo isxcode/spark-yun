@@ -1,5 +1,7 @@
 package com.isxcode.spark.common.locker;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +23,11 @@ public class LockerEntity {
     private String name;
 
     private String box;
+
+    @Column(name = "lock_owner")
+    private String owner;
+
+    private LocalDateTime expireTime;
+
+    private LocalDateTime createDateTime;
 }
