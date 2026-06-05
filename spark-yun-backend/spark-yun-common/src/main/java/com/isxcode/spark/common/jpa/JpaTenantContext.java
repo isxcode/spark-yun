@@ -76,7 +76,6 @@ public final class JpaTenantContext {
     }
 
     private enum TenantMode {
-        SHARE_DATA,
-        ALL_DATA
+        SHARE_DATA, ALL_DATA
     }
 }

@@ -45,6 +45,11 @@ public class IsxAppProperties {
     private Integer expirationMin = 1440;
 
     /**
+     * refreshToken超时.(分钟)
+     */
+    private Integer refreshExpirationMin = 10080;
+
+    /**
      * 资源目录.
      */
     private String resourcesPath = "/var/lib/zhiqingyun";

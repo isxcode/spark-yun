@@ -21,6 +21,7 @@ export default defineComponent({
 
         authStore.setUserInfo(res.data)
         authStore.setToken(res.data.token)
+        authStore.setRefreshToken(res.data.refreshToken)
         authStore.setTenantId(res.data?.tenantId)
         authStore.setRole(res.data?.role)
 

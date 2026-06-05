@@ -56,7 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 获取用户token
             String authorization = request.getHeader(SecurityConstants.HEADER_AUTHORIZATION);
             if (authorization == null) {
-                authenticationEntryPoint.commence(request, response, new InsufficientAuthenticationException("token丢失"));
+                authenticationEntryPoint.commence(request, response,
+                    new InsufficientAuthenticationException("token丢失"));
                 return;
             }
 

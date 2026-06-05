@@ -90,6 +90,7 @@ function clearStore() {
   authStore.setUserInfo({
   })
   authStore.setToken('')
+  authStore.setRefreshToken('')
   authStore.setTenantId('')
   authStore.setRole('')
   authStore.setRole('')
@@ -121,6 +122,7 @@ function tenantChange(e: string): void {
     .then((res: any) => {
       console.log('切换成功')
       authStore.setToken(res.data?.token || authStore.token)
+      authStore.setRefreshToken(res.data?.refreshToken || authStore.refreshToken)
       authStore.setTenantId(res.data?.tenantId || e)
       if (res.data?.role) {
         authStore.setRole(res.data.role)

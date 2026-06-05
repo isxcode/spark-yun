@@ -24,7 +24,8 @@ public class JpaTenantFilterAspect {
 
         Session session = entityManager.unwrap(Session.class);
 
-        // Default queries use ContextHolder tenantId. noTenant() adds shared data. allData() disables the filter.
+        // Default queries use ContextHolder tenantId. noTenant() adds shared data. allData() disables the
+        // filter.
         List<String> tenantIds = JpaTenantContext.getVisibleTenantIds();
 
         if (tenantIds.isEmpty()) {
