@@ -65,7 +65,7 @@ public class JwtUtils {
     }
 
     /** jwt解密. */
-    public static <A> A decrypt(String aesKey, String jwtString, String jwtKey, Class<A> targetClass) {
+    public static <A> A decrypt(String jwtKey, String jwtString, String aesKey, Class<A> targetClass) {
 
         JwtParserBuilder jwtParserBuilder = Jwts.parserBuilder();
 
