@@ -554,8 +554,8 @@ public abstract class WorkExecutor {
         workInstance.setExecEndDateTime(new Date());
         workInstance.setDuration(workInstance.getExecStartDateTime() == null ? 0
             : (System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
-        workInstance.setSubmitLog(
-            workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 已中止  \n");
+        workInstance
+            .setSubmitLog(workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 已中止  \n");
         workInstanceRepository.saveAndFlush(workInstance);
         return true;
     }
