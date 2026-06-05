@@ -93,8 +93,8 @@ public class ToolController {
         }
 
         try {
-            Path openFileDir = Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath())).toAbsolutePath()
-                .normalize();
+            Path openFileDir =
+                Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath())).toAbsolutePath().normalize();
             Path openFile = openFileDir.resolve(fileName).normalize();
             if (!openFile.startsWith(openFileDir) || !Files.isRegularFile(openFile)) {
                 return ResponseEntity.notFound().build();

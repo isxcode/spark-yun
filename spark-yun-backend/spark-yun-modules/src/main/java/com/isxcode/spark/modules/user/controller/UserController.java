@@ -34,6 +34,14 @@ public class UserController {
         return userBizService.login(loginReq);
     }
 
+    @Operation(summary = "刷新token接口")
+    @PostMapping("/open/refreshToken")
+    @SuccessResponse("刷新成功")
+    public LoginRes refreshToken(@Valid @RequestBody RefreshTokenReq refreshTokenReq) {
+
+        return userBizService.refreshToken(refreshTokenReq);
+    }
+
     @Operation(summary = "用户退出接口")
     @PostMapping("/logout")
     @SuccessResponse("退出成功")

@@ -9,6 +9,8 @@ public class ChooseTenantRes {
 
     private String token;
 
+    private String refreshToken;
+
     private String tenantId;
 
     private String role;

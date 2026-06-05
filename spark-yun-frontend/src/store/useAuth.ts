@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 interface AuthState {
   userInfo: Record<string, any>
   token: string
+  refreshToken: string
   tenantId: string
   role: string
   currentMenu: string
@@ -13,6 +14,7 @@ export const useAuthStore = defineStore('authStore', {
   state: (): AuthState => ({
     userInfo: {},
     token: '',
+    refreshToken: '',
     tenantId: '',
     role: '',
     currentMenu: '',
@@ -24,6 +26,9 @@ export const useAuthStore = defineStore('authStore', {
     },
     setToken(this: AuthState, data: string): void {
       this.token = data
+    },
+    setRefreshToken(this: AuthState, data: string): void {
+      this.refreshToken = data
     },
     setTenantId(this: AuthState, tenantId: string): void {
       this.tenantId = tenantId

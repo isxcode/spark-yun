@@ -5,6 +5,10 @@ interface LoginParam {
   passwd: string;
 }
 
+interface RefreshTokenParam {
+  refreshToken: string;
+}
+
 interface TenantParams {
   tenantId: string;
 }
@@ -14,6 +18,15 @@ export function LoginUserInfo(params: LoginParam): Promise<any> {
   return http.request({
     method: 'post',
     url: '/user/open/login',
+    params: params
+  })
+}
+
+// 刷新token
+export function RefreshToken(params: RefreshTokenParam): Promise<any> {
+  return http.request({
+    method: 'post',
+    url: '/user/open/refreshToken',
     params: params
   })
 }

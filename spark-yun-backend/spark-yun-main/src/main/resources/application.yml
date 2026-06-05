@@ -148,6 +148,7 @@ app:
     - /*/open/**
     - /vip/*/open/**
     - /*/api/**
+  refresh-expiration-min: 10080
   app-name: app1
   nodes:
     app1 : localhost

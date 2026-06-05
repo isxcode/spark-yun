@@ -17,6 +17,62 @@ const message = ElMessage
 
 const whiteList = ['/vip/auth/open/querySsoAuth', '/vip/license/open/checkLicense']
 let isRefreshingLicense = false
+let refreshTokenRequest: Promise<string> | null = null
+
+function clearAuthAndRedirect(): void {
+  const authStore = useAuthStore()
+  authStore.setUserInfo({})
+  authStore.setToken('')
+  authStore.setRefreshToken('')
+  authStore.setTenantId('')
+  authStore.setRole('')
+  authStore.setCurrentMenu('')
+  router.push({
+    name: 'login'
+  })
+}
+
+function isRefreshTokenRequest(response: any): boolean {
+  return Boolean(response?.config?.url?.includes('/user/open/refreshToken'))
+}
+
+async function refreshAccessToken(): Promise<string> {
+  const authStore = useAuthStore()
+  if (!authStore.refreshToken) {
+    throw new Error('refreshToken is empty')
+  }
+
+  if (!refreshTokenRequest) {
+    const urlPrefix = import.meta.env.VITE_VUE_APP_BASE_DOMAIN || ''
+    refreshTokenRequest = fetch(`${urlPrefix}/user/open/refreshToken`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        refreshToken: authStore.refreshToken
+      })
+    })
+      .then(async response => {
+        const result = await response.json()
+        const code = String(result.code)
+        if (!response.ok || (code !== '200' && code !== '100200')) {
+          throw new Error(result.msg || '刷新token失败')
+        }
+        authStore.setUserInfo(result.data || authStore.userInfo)
+        authStore.setToken(result.data?.token || '')
+        authStore.setRefreshToken(result.data?.refreshToken || '')
+        authStore.setTenantId(result.data?.tenantId || '')
+        authStore.setRole(result.data?.role || '')
+        return result.data?.token || ''
+      })
+      .finally(() => {
+        refreshTokenRequest = null
+      })
+  }
+
+  return refreshTokenRequest
+}
 
 function isLicenseMissingError(msg: string): boolean {
   return typeof msg === 'string' && msg.includes('请上传许可证')
@@ -73,9 +129,9 @@ export const httpOption = {
     checkStatus: (status: number, msg: string, showMsg: any, response: any): void => {
       try {
         if (status == 401) {
-          router.push({
-            name: 'login'
-          })
+          if (isRefreshTokenRequest(response)) {
+            clearAuthAndRedirect()
+          }
         } else if (status == 403) {
           message.error('许可证无效，请联系管理员')
         } else if (status == 404) {
@@ -98,6 +154,19 @@ export const httpOption = {
         //         redirect: '/home'
         //     }
         // });
+      }
+    },
+    refreshToken: async (response: any): Promise<string> => {
+      if (isRefreshTokenRequest(response)) {
+        clearAuthAndRedirect()
+        throw new Error('刷新token失败')
+      }
+
+      try {
+        return await refreshAccessToken()
+      } catch (error) {
+        clearAuthAndRedirect()
+        throw error
       }
     }
   },

@@ -61,6 +61,8 @@ export interface RequestOptions {
   showErrorMessage: ShowMessage;
   // 校验状态码
   checkStatus: CheckStatus;
+  // 刷新token
+  refreshToken?: (response: any) => Promise<string>;
 }
 
 // 接口返回结果

@@ -15,6 +15,7 @@ import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.common.security.RefreshUserToken;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
 import com.isxcode.spark.security.user.*;
@@ -39,6 +40,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
 public class TenantBizService {
+
+    private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
 
     private final TenantRepository tenantRepository;
 
@@ -340,8 +343,12 @@ public class TenantBizService {
         String token = JwtUtils.encrypt(isxAppProperties.getAesSlat(),
             new CurrentUser(userEntity.getId(), chooseTenantReq.getTenantId()), isxAppProperties.getJwtKey(),
             isxAppProperties.getExpirationMin());
+        String refreshToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(),
+            new RefreshUserToken(userEntity.getId(), chooseTenantReq.getTenantId(), REFRESH_TOKEN),
+            isxAppProperties.getJwtKey(), isxAppProperties.getRefreshExpirationMin());
 
-        return ChooseTenantRes.builder().token(token).tenantId(chooseTenantReq.getTenantId()).role(role).build();
+        return ChooseTenantRes.builder().token(token).refreshToken(refreshToken).tenantId(chooseTenantReq.getTenantId())
+            .role(role).build();
     }
 
     public GetTenantRes getTenant(GetTenantReq getTenantReq) {
