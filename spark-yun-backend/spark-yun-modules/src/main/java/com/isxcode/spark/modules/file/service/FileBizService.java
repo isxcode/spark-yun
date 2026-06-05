@@ -27,7 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -40,7 +40,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Slf4j
 public class FileBizService {
 

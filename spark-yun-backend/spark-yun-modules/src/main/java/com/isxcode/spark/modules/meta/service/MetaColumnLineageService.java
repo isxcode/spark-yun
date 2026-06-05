@@ -8,6 +8,7 @@ import com.isxcode.spark.modules.work.run.WorkRunContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class MetaColumnLineageService {
 

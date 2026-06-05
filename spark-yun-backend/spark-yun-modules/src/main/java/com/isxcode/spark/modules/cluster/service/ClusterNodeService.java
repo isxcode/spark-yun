@@ -15,6 +15,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class ClusterNodeService {
 

@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {IsxAppException.class})
+@Transactional(rollbackFor = Exception.class, noRollbackFor = {IsxAppException.class})
 @Slf4j
 public class ClusterNodeBizService {
 

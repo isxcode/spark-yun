@@ -76,10 +76,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class WorkflowBizService {
 

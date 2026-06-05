@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
@@ -57,7 +57,7 @@ import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class DatasourceBizService {
 
     private final DatasourceRepository datasourceRepository;
