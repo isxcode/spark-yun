@@ -1,5 +1,6 @@
 package com.isxcode.spark.common.jpa;
 
+import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.common.security.ContextHolder;
 
 import java.util.List;
@@ -12,14 +13,24 @@ public final class JpaTenantContext {
 
     public static final String TENANT_IDS_PARAM = "tenantIds";
 
-    private static final ThreadLocal<Boolean> DISABLE_TENANT_FILTER = ThreadLocal.withInitial(() -> false);
+    public static final String SHARE_TENANT_ID = "zhiqingyun";
+
+    private static final ThreadLocal<TenantMode> TENANT_MODE = new ThreadLocal<>();
 
     private JpaTenantContext() {}
 
     public static List<String> getVisibleTenantIds() {
 
-        if (Boolean.TRUE.equals(DISABLE_TENANT_FILTER.get()) || Strings.isEmpty(ContextHolder.getTenantId())) {
+        if (TenantMode.ALL_DATA.equals(TENANT_MODE.get())) {
             return List.of();
+        }
+
+        if (ContextHolder.getTenantId() == null) {
+            throw new IsxAppException("租户id丢失");
+        }
+
+        if (TenantMode.SHARE_DATA.equals(TENANT_MODE.get())) {
+            return List.of(ContextHolder.getTenantId(), SHARE_TENANT_ID);
         }
 
         return List.of(ContextHolder.getTenantId());
@@ -27,31 +38,27 @@ public final class JpaTenantContext {
 
     public static <T> T allData(Supplier<T> supplier) {
 
-        return withoutTenantFilter(supplier);
+        return runWithTenantMode(TenantMode.ALL_DATA, supplier);
     }
 
     public static <T> T noTenant(Supplier<T> supplier) {
 
-        return withoutTenantFilter(supplier);
+        return runWithTenantMode(TenantMode.SHARE_DATA, supplier);
     }
 
-    private static <T> T withoutTenantFilter(Supplier<T> supplier) {
+    private static <T> T runWithTenantMode(TenantMode tenantMode, Supplier<T> supplier) {
 
-        Boolean oldDisableTenantFilter = DISABLE_TENANT_FILTER.get();
         try {
-            DISABLE_TENANT_FILTER.set(true);
+            TENANT_MODE.set(tenantMode);
             return supplier.get();
         } finally {
-            restore(oldDisableTenantFilter);
+            TENANT_MODE.set(TenantMode.TENANT_DATA);
         }
     }
 
-    private static void restore(Boolean disableTenantFilter) {
-
-        if (disableTenantFilter == null) {
-            DISABLE_TENANT_FILTER.remove();
-        } else {
-            DISABLE_TENANT_FILTER.set(disableTenantFilter);
-        }
+    private enum TenantMode {
+        SHARE_DATA,
+        ALL_DATA,
+        TENANT_DATA
     }
 }
