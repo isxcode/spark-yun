@@ -1,5 +1,6 @@
 package com.isxcode.spark.common.locker;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,8 @@ public interface LockerRepository extends JpaRepository<LockerEntity, Integer> {
     void deleteByName(String name);
 
     Optional<LockerEntity> findByNameAndBox(String name, String box);
+
+    void deleteAllByOwner(String owner);
+
+    void deleteAllByExpireTimeBefore(LocalDateTime expireTime);
 }

@@ -1,5 +1,7 @@
 package com.isxcode.spark.common.locker;
 
+import java.lang.management.ManagementFactory;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class Locker {
 
+    private static final long LOCK_EXPIRE_HOURS = 24;
+
     private final LockerRepository lockerRepository;
 
     /**
@@ -19,8 +23,10 @@ public class Locker {
      */
     public Integer lockOnly(String name) {
 
+        clearExpiredLocks();
+
         // 给数据库加一条数据
-        return lockerRepository.saveAndFlush(LockerEntity.builder().name(name).build()).getId();
+        return lockerRepository.saveAndFlush(buildLocker(name, null)).getId();
     }
 
     /**
@@ -28,12 +34,14 @@ public class Locker {
      */
     public Integer lockOnly(String name, String box) {
 
+        clearExpiredLocks();
+
         Optional<LockerEntity> lockerEntityOptional = lockerRepository.findByBox(box);
         if (lockerEntityOptional.isPresent()) {
             return lockerEntityOptional.get().getId();
         } else {
             // 给数据库加一条数据
-            return lockerRepository.save(LockerEntity.builder().name(name).box(box).build()).getId();
+            return lockerRepository.save(buildLocker(name, box)).getId();
         }
     }
 
@@ -42,12 +50,15 @@ public class Locker {
      */
     public Integer lock(String name) {
 
+        clearExpiredLocks();
+
         // 给数据库加一条数据
-        Integer id = lockerRepository.save(LockerEntity.builder().name(name).build()).getId();
+        Integer id = lockerRepository.save(buildLocker(name, null)).getId();
 
         // 判断当前线程是否为最小值
         Integer minId;
         do {
+            clearExpiredLocks();
             minId = lockerRepository.getMinId(name);
             try {
                 Thread.sleep(500);
@@ -111,5 +122,36 @@ public class Locker {
     public void deleteLock(String name) {
 
         lockerRepository.findByName(name).ifPresent(lockerRepository::delete);
+    }
+
+    /**
+     * Clear locks that belong to this application instance and expired locks.
+     */
+    public void clearCurrentOwnerAndExpiredLocks() {
+
+        lockerRepository.deleteAllByOwner(getOwner());
+        clearExpiredLocks();
+    }
+
+    private void clearExpiredLocks() {
+
+        lockerRepository.deleteAllByExpireTimeBefore(LocalDateTime.now());
+    }
+
+    private LockerEntity buildLocker(String name, String box) {
+
+        LocalDateTime now = LocalDateTime.now();
+        return LockerEntity.builder().name(name).box(box).owner(getOwner()).createDateTime(now)
+            .expireTime(now.plusHours(LOCK_EXPIRE_HOURS)).build();
+    }
+
+    private String getOwner() {
+
+        String hostname = System.getenv("HOSTNAME");
+        if (hostname != null && !hostname.isBlank()) {
+            return hostname;
+        }
+
+        return "local-" + ManagementFactory.getRuntimeMXBean().getName();
     }
 }
