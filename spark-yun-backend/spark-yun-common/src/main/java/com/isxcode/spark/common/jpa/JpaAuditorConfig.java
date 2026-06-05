@@ -1,4 +1,4 @@
-package com.isxcode.spark.config;
+package com.isxcode.spark.common.jpa;
 
 import com.isxcode.spark.common.security.ContextHolder;
 import java.util.Optional;

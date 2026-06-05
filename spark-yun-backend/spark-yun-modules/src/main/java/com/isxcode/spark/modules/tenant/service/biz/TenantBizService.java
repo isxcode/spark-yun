@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
 import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
-import static com.isxcode.spark.common.jpa.JpaTenantContext.noTenant;
 
 import com.isxcode.spark.common.security.ContextHolder;
 import com.isxcode.spark.common.security.CurrentUser;
@@ -169,7 +168,7 @@ public class TenantBizService {
 
         Page<PageTenantRes> result = tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
         result.getContent().forEach(e -> {
-            e.setUsedWorkflowNum(String.valueOf(noTenant(() -> workflowRepository.countByTenantId(e.getId()))));
+            e.setUsedWorkflowNum(String.valueOf(allData(() -> workflowRepository.countByTenantId(e.getId()))));
             e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
         });
         return result;

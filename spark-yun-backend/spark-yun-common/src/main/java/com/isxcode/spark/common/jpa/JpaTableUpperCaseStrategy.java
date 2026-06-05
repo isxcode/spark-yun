@@ -1,4 +1,4 @@
-package com.isxcode.spark.config;
+package com.isxcode.spark.common.jpa;
 
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;

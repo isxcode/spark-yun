@@ -1,9 +1,8 @@
-package com.isxcode.spark.config;
+package com.isxcode.spark.common.jpa;
 
 import static com.isxcode.spark.common.jpa.JpaTenantContext.TENANT_FILTER;
 import static com.isxcode.spark.common.jpa.JpaTenantContext.TENANT_IDS_PARAM;
 
-import com.isxcode.spark.common.jpa.JpaTenantContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
@@ -25,8 +24,7 @@ public class JpaTenantFilterAspect {
 
         Session session = entityManager.unwrap(Session.class);
 
-        // Default queries use ContextHolder tenantId. noTenant() and allData() disable the filter for
-        // explicit queries.
+        // Default queries use ContextHolder tenantId. noTenant() adds shared data. allData() disables the filter.
         List<String> tenantIds = JpaTenantContext.getVisibleTenantIds();
 
         if (tenantIds.isEmpty()) {
