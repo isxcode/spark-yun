@@ -7,7 +7,6 @@ import com.isxcode.spark.common.security.ContextHolder;
 import com.isxcode.spark.common.security.CurrentUser;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,8 +15,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,14 +35,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IsxAppProperties isxAppProperties;
 
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, List<String> excludeUrlPaths,
-        IsxAppProperties isxAppProperties) {
+        IsxAppProperties isxAppProperties, AuthenticationEntryPoint authenticationEntryPoint) {
 
         this.authenticationManager = authenticationManager;
-        this.excludeUrlPaths = initExcludeUrlPaths(excludeUrlPaths);
+        this.excludeUrlPaths = excludeUrlPaths == null ? List.of() : List.copyOf(excludeUrlPaths);
         this.isxAppProperties = isxAppProperties;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Override
@@ -51,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 获取用户token
             String authorization = request.getHeader(SecurityConstants.HEADER_AUTHORIZATION);
             if (authorization == null) {
-                request.getRequestDispatcher(SecurityConstants.TOKEN_IS_NULL_PATH).forward(request, response);
+                authenticationEntryPoint.commence(request, response, new InsufficientAuthenticationException("token丢失"));
                 return;
             }
 
@@ -63,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 ContextHolder.setCurrentUser(currentUser.userId(), currentUser.tenantId());
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
-                request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
+                authenticationEntryPoint.commence(request, response, new BadCredentialsException("token不合法", e));
                 return;
             }
 
@@ -74,11 +79,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (IsxAppException isxAppException) {
                 log.debug(isxAppException.getMessage(), isxAppException);
-                request.getRequestDispatcher(SecurityConstants.TOKEN_IS_INVALID_PATH).forward(request, response);
+                authenticationEntryPoint.commence(request, response,
+                    new BadCredentialsException(isxAppException.getMessage(), isxAppException));
                 return;
             } catch (Exception e) {
                 log.debug(e.getMessage(), e);
-                request.getRequestDispatcher(SecurityConstants.AUTH_ERROR_PATH).forward(request, response);
+                authenticationEntryPoint.commence(request, response, new BadCredentialsException("认证失败", e));
                 return;
             }
 
@@ -92,17 +98,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
 
         return excludeUrlPaths.stream().anyMatch(p -> antPathMatcher.match(p, request.getServletPath()));
-    }
-
-    private List<String> initExcludeUrlPaths(List<String> excludeUrlPaths) {
-
-        List<String> paths = new ArrayList<>();
-        if (excludeUrlPaths != null) {
-            paths.addAll(excludeUrlPaths);
-        }
-        paths.add(SecurityConstants.TOKEN_IS_NULL_PATH);
-        paths.add(SecurityConstants.TOKEN_IS_INVALID_PATH);
-        paths.add(SecurityConstants.AUTH_ERROR_PATH);
-        return List.copyOf(paths);
     }
 }

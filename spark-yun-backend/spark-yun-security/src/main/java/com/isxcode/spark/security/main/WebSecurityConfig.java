@@ -1,7 +1,6 @@
 package com.isxcode.spark.security.main;
 
 import com.isxcode.spark.api.user.constants.RoleType;
-import com.isxcode.spark.backend.api.base.constants.SecurityConstants;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.security.user.TenantRepository;
 import com.isxcode.spark.security.user.TenantUserRepository;
@@ -26,6 +25,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
@@ -67,9 +68,17 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public RestSecurityExceptionHandler restSecurityExceptionHandler() {
 
-        return new JwtAuthenticationFilter(authenticationManager, openUrlPatterns(), isxAppProperties);
+        return new RestSecurityExceptionHandler();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager,
+        AuthenticationEntryPoint authenticationEntryPoint) {
+
+        return new JwtAuthenticationFilter(authenticationManager, openUrlPatterns(), isxAppProperties,
+            authenticationEntryPoint);
     }
 
     @Bean
@@ -81,13 +90,15 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
-        throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter,
+        AuthenticationEntryPoint authenticationEntryPoint, AccessDeniedHandler accessDeniedHandler) throws Exception {
 
         http.cors(Customizer.withDefaults());
         http.csrf(AbstractHttpConfigurer::disable);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+            .accessDeniedHandler(accessDeniedHandler));
         http.authorizeHttpRequests(
             authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                 .requestMatchers(toPatterns(openUrlPatterns())).permitAll()
@@ -126,9 +137,6 @@ public class WebSecurityConfig {
         if (isxAppProperties.getOpenUrl() != null) {
             patterns.addAll(isxAppProperties.getOpenUrl());
         }
-        patterns.add(SecurityConstants.TOKEN_IS_NULL_PATH);
-        patterns.add(SecurityConstants.TOKEN_IS_INVALID_PATH);
-        patterns.add(SecurityConstants.AUTH_ERROR_PATH);
         return List.copyOf(patterns);
     }
 }
