@@ -3,6 +3,7 @@ dependencies {
     api(project(':spark-yun-backend:spark-yun-modules'))
     api(project(':spark-yun-vip:spark-yun-backend'))
 
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     implementation libs.druid.spring.boot.starter
