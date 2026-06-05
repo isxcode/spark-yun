@@ -31,7 +31,6 @@ import com.isxcode.spark.api.monitor.res.GetSystemMonitorRes;
 import com.isxcode.spark.api.monitor.res.PageInstancesRes;
 import com.isxcode.spark.api.workflow.constants.WorkflowStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.modules.api.repository.ApiRepository;
 import com.isxcode.spark.modules.cluster.entity.ClusterNodeEntity;
@@ -289,7 +288,8 @@ public class MonitorBizService {
             pageInstancesReq.setSearchKeyWord("");
         }
 
-        Page<WorkflowMonitorAo> workflowMonitorAos = allData(() -> workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(),
+        Page<WorkflowMonitorAo> workflowMonitorAos =
+            allData(() -> workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(),
                 pageInstancesReq.getSearchKeyWord(),
                 PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize())));
 
