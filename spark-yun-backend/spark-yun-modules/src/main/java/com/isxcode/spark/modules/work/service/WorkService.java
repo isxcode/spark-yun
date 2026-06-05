@@ -103,6 +103,11 @@ public class WorkService {
             // 进入每个作业单独的中止逻辑
             WorkEntity workEntity = getWorkEntity(workInstance.getWorkId());
             WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
+            if (!workExecutor.hasLocalThread(workEvent.getId())) {
+                locker.unlock(lockKey);
+                scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+                return;
+            }
             boolean canStop = workExecutor.syncAbort(workInstance, workEvent);
 
             // 无法中止

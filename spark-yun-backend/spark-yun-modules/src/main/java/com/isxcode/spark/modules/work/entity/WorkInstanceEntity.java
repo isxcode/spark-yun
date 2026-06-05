@@ -76,6 +76,10 @@ public class WorkInstanceEntity {
 
     private String eventId;
 
+    private String runnerOwner;
+
+    private LocalDateTime heartbeatDateTime;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 

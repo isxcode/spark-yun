@@ -86,7 +86,7 @@ spring:
       org.quartz.jobStore.misfireThreshold: 300000 
 
   cache:
-    type: simple
+    type: none
 
   thymeleaf:
     check-template-location: false

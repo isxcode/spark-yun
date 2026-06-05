@@ -8,6 +8,11 @@ public interface MetaInstanceStatus {
     String COLLECTING = "COLLECTING";
 
     /**
+     * 中止中.
+     */
+    String ABORTING = "ABORTING";
+
+    /**
      * 失败.
      */
     String FAIL = "FAIL";

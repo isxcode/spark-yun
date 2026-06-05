@@ -9,6 +9,7 @@ import com.isxcode.spark.api.work.constants.EventType;
 import com.isxcode.spark.api.work.constants.LockerPrefix;
 import com.isxcode.spark.api.work.constants.WorkLog;
 import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
+import com.isxcode.spark.common.cluster.ClusterNodeOwner;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.modules.alarm.service.AlarmService;
 import com.isxcode.spark.modules.meta.service.MetaColumnLineageService;
@@ -164,6 +165,11 @@ public abstract class WorkExecutor {
         return this.abort(workInstance, workEvent);
     }
 
+    public boolean hasLocalThread(String workEventId) {
+
+        return WORK_THREAD.containsKey(workEventId);
+    }
+
     public String runSingleWork(String workEventId) {
 
         // 获取作业事件和运行上下文
@@ -175,6 +181,7 @@ public abstract class WorkExecutor {
 
         // 把事件id保存到实例中
         workInstance.setEventId(workEvent.getId());
+        refreshRunnerHeartbeat(workInstance);
         workInstanceRepository.save(workInstance);
 
         // 中止、中止中、成功、失败，不可以再运行
@@ -184,15 +191,26 @@ public abstract class WorkExecutor {
             return InstanceStatus.FINISHED;
         }
 
+        try {
+            if (tryFinishAbort(workInstance, workEvent)) {
+                return InstanceStatus.FINISHED;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return InstanceStatus.RUNNING;
+        }
+
         // 将作业状态改成运行中
         if (InstanceStatus.PENDING.equals(workInstance.getStatus())) {
             workInstance.setSubmitLog(infoLog("🔥 开始运行作业"));
             workInstance.setStatus(InstanceStatus.RUNNING);
             workInstance.setExecStartDateTime(new Date());
+            refreshRunnerHeartbeat(workInstance);
             workInstanceRepository.save(workInstance);
         }
 
         try {
+            refreshRunnerHeartbeat(workInstance);
 
             // 执行单个作业
             String executeStatus = execute(workRunContext, workInstance, workEvent);
@@ -256,6 +274,11 @@ public abstract class WorkExecutor {
                 && workInstance.getEventId().equals(workEventId))) {
 
             try {
+                refreshRunnerHeartbeat(workInstance);
+
+                if (tryFinishAbort(workInstance, workEvent)) {
+                    return InstanceStatus.FINISHED;
+                }
 
                 // 每秒执行作业
                 String executeStatus = execute(workRunContext, workInstance, workEvent);
@@ -412,6 +435,7 @@ public abstract class WorkExecutor {
                     // 修改作业实例状态为运行中
                     workInstance.setSubmitLog(infoLog("🔥 开始运行作业"));
                     workInstance.setStatus(InstanceStatus.RUNNING);
+                    refreshRunnerHeartbeat(workInstance);
                 }
 
                 // 绑定作业事件
@@ -508,5 +532,31 @@ public abstract class WorkExecutor {
 
         // 当前作业运行完毕
         return InstanceStatus.FINISHED;
+    }
+
+    private void refreshRunnerHeartbeat(WorkInstanceEntity workInstance) {
+
+        workInstance.setRunnerOwner(ClusterNodeOwner.getOwner());
+        workInstance.setHeartbeatDateTime(LocalDateTime.now());
+        workInstanceRepository.saveAndFlush(workInstance);
+    }
+
+    private boolean tryFinishAbort(WorkInstanceEntity workInstance, WorkEventEntity workEvent) throws Exception {
+
+        workInstance = workService.getWorkInstance(workInstance.getId());
+        if (!InstanceStatus.ABORTING.equals(workInstance.getStatus())) {
+            return false;
+        }
+
+        abort(workInstance, workEvent);
+        workInstance = workService.getWorkInstance(workInstance.getId());
+        workInstance.setStatus(InstanceStatus.ABORT);
+        workInstance.setExecEndDateTime(new Date());
+        workInstance.setDuration(workInstance.getExecStartDateTime() == null ? 0
+            : (System.currentTimeMillis() - workInstance.getExecStartDateTime().getTime()) / 1000);
+        workInstance.setSubmitLog(
+            workInstance.getSubmitLog() + LocalDateTime.now() + WorkLog.SUCCESS_INFO + "⚠️ 已中止  \n");
+        workInstanceRepository.saveAndFlush(workInstance);
+        return true;
     }
 }
