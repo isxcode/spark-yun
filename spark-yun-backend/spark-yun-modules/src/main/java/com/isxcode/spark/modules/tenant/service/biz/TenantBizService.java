@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
 import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+import static com.isxcode.spark.common.jpa.JpaTenantContext.noTenant;
 
 import com.isxcode.spark.common.security.ContextHolder;
 import com.isxcode.spark.common.security.CurrentUser;
@@ -15,7 +16,6 @@ import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
 import com.isxcode.spark.security.user.*;
@@ -168,10 +168,10 @@ public class TenantBizService {
             PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
         Page<PageTenantRes> result = tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
-        allData(() -> result.getContent().forEach(e -> {
-            e.setUsedWorkflowNum(String.valueOf(workflowRepository.countByTenantId(e.getId())));
+        result.getContent().forEach(e -> {
+            e.setUsedWorkflowNum(String.valueOf(noTenant(() -> workflowRepository.countByTenantId(e.getId()))));
             e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
-        }));
+        });
         return result;
     }
 
@@ -284,8 +284,7 @@ public class TenantBizService {
         TenantEntity tenantEntity = tenantEntityOptional.get();
 
         // 统计作业流数量
-        long usedWorkflowNum =
-            allData(() -> workflowRepository.countByTenantId(checkTenantReq.getTenantId()));
+        long usedWorkflowNum = allData(() -> workflowRepository.countByTenantId(checkTenantReq.getTenantId()));
         tenantEntity.setUsedWorkflowNum(usedWorkflowNum);
 
         // 统计成员数量

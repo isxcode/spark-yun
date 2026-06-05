@@ -18,39 +18,24 @@ public final class JpaTenantContext {
 
     public static List<String> getVisibleTenantIds() {
 
-        if (isTenantFilterDisabled() || Strings.isEmpty(ContextHolder.getTenantId())) {
+        if (Boolean.TRUE.equals(DISABLE_TENANT_FILTER.get()) || Strings.isEmpty(ContextHolder.getTenantId())) {
             return List.of();
         }
 
         return List.of(ContextHolder.getTenantId());
     }
 
-    public static boolean isTenantFilterDisabled() {
-
-        return Boolean.TRUE.equals(DISABLE_TENANT_FILTER.get());
-    }
-
     public static <T> T allData(Supplier<T> supplier) {
 
-        return runWithAllData(supplier);
+        return withoutTenantFilter(supplier);
     }
 
     public static <T> T noTenant(Supplier<T> supplier) {
 
-        return runWithAllData(supplier);
+        return withoutTenantFilter(supplier);
     }
 
-    public static void allData(Runnable runnable) {
-
-        runWithAllData(runnable);
-    }
-
-    public static void noTenant(Runnable runnable) {
-
-        runWithAllData(runnable);
-    }
-
-    public static <T> T runWithAllData(Supplier<T> supplier) {
+    private static <T> T withoutTenantFilter(Supplier<T> supplier) {
 
         Boolean oldDisableTenantFilter = DISABLE_TENANT_FILTER.get();
         try {
@@ -59,14 +44,6 @@ public final class JpaTenantContext {
         } finally {
             restore(oldDisableTenantFilter);
         }
-    }
-
-    public static void runWithAllData(Runnable runnable) {
-
-        runWithAllData(() -> {
-            runnable.run();
-            return null;
-        });
     }
 
     private static void restore(Boolean disableTenantFilter) {

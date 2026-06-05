@@ -33,7 +33,6 @@ import com.isxcode.spark.api.workflow.res.PageWorkflowRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.exceptions.IsxErrorException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.locker.Locker;
 import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import com.isxcode.spark.modules.cluster.entity.ClusterEntity;
@@ -892,7 +891,8 @@ public class WorkflowBizService {
     public Page<QueryWorkFlowInstancesRes> queryWorkFlowInstances(QueryWorkFlowInstancesReq queryWorkFlowInstancesReq) {
 
         // 因为是自定义sql，不使用多租户模式
-        Page<WorkflowInstanceAo> workflowInstanceAoPage = allData(() -> workflowInstanceRepository.pageWorkFlowInstances(ContextHolder.getTenantId(),
+        Page<WorkflowInstanceAo> workflowInstanceAoPage =
+            allData(() -> workflowInstanceRepository.pageWorkFlowInstances(ContextHolder.getTenantId(),
                 queryWorkFlowInstancesReq.getSearchKeyWord(), queryWorkFlowInstancesReq.getExecuteStatus(),
                 queryWorkFlowInstancesReq.getWorkflowId(),
                 PageRequest.of(queryWorkFlowInstancesReq.getPage(), queryWorkFlowInstancesReq.getPageSize())));
