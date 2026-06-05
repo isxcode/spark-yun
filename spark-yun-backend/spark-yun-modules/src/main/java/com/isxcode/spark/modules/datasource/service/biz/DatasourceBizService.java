@@ -1,5 +1,8 @@
 package com.isxcode.spark.modules.datasource.service.biz;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.noTenant;
+import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
+
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.api.datasource.constants.DatasourceStatus;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
@@ -11,7 +14,6 @@ import com.isxcode.spark.api.datasource.res.*;
 import com.isxcode.spark.api.meta.constant.MetaDatabaseStatus;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
@@ -52,7 +54,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.isxcode.spark.common.security.ContextHolder;
-import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
 
 @Service
 @Slf4j
@@ -373,8 +374,8 @@ public class DatasourceBizService {
 
     public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
 
-        Page<DatabaseDriverEntity> pageDatabaseDriver = JpaTenantContext
-            .joinShareData(() -> databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(),
+        Page<DatabaseDriverEntity> pageDatabaseDriver =
+            noTenant(() -> databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(),
                 ContextHolder.getTenantId(),
                 PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize())));
 
@@ -425,8 +426,8 @@ public class DatasourceBizService {
 
     public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-        Optional<DatabaseDriverEntity> databaseDriverEntityOptional = JpaTenantContext
-            .joinShareData(() -> databaseDriverRepository.findById(settingDefaultDatabaseDriverReq.getDriverId()));
+        Optional<DatabaseDriverEntity> databaseDriverEntityOptional = noTenant(() -> databaseDriverRepository
+            .findVisibleById(settingDefaultDatabaseDriverReq.getDriverId(), ContextHolder.getTenantId()));
 
         if (!databaseDriverEntityOptional.isPresent()) {
             throw new IsxAppException("数据源驱动不存在");
@@ -461,8 +462,8 @@ public class DatasourceBizService {
         }
 
         // 查询系统默认的返回
-        Optional<DatabaseDriverEntity> systemDriver = JpaTenantContext
-            .joinShareData(() -> databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
+        Optional<DatabaseDriverEntity> systemDriver =
+            noTenant(() -> databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
                 getDefaultDatabaseDriverReq.getDbType(), true));
 
         return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
