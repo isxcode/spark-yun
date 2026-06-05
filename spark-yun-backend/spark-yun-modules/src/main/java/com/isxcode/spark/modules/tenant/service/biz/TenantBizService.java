@@ -221,6 +221,10 @@ public class TenantBizService {
 
     public void updateTenantForTenantAdmin(UpdateTenantForTenantAdminReq tetUpdateTenantByTenantAdminReq) {
 
+        if (!tetUpdateTenantByTenantAdminReq.getId().equals(ContextHolder.getTenantId())) {
+            throw new IsxAppException("无权操作其他租户");
+        }
+
         // 判断租户是否存在
         Optional<TenantEntity> tenantEntityOptional =
             tenantRepository.findById(tetUpdateTenantByTenantAdminReq.getId());

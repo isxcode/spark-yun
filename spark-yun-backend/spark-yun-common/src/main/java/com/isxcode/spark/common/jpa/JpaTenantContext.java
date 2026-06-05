@@ -14,6 +14,8 @@ public final class JpaTenantContext {
 
     public static final String SHARE_TENANT_ID = "zhiqingyun";
 
+    private static final String EMPTY_TENANT_ID = "__empty_tenant__";
+
     private static final ThreadLocal<TenantMode> TENANT_MODE = new ThreadLocal<>();
 
     private JpaTenantContext() {}
@@ -37,7 +39,7 @@ public final class JpaTenantContext {
         }
 
         if (Strings.isEmpty(ContextHolder.getTenantId())) {
-            return List.of();
+            return List.of(EMPTY_TENANT_ID);
         }
 
         return List.of(ContextHolder.getTenantId());

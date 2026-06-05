@@ -385,8 +385,8 @@ public class UserBizService {
 
     public GetAnonymousTokenRes getAnonymousToken(GetAnonymousTokenReq getAnonymousTokenReq) {
 
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), "sy_anonymous", isxAppProperties.getJwtKey(),
-            getAnonymousTokenReq.getValidDay() * 24 * 60);
+        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), new CurrentUser("sy_anonymous", null),
+            isxAppProperties.getJwtKey(), getAnonymousTokenReq.getValidDay() * 24 * 60);
 
         return GetAnonymousTokenRes.builder().token(jwtToken).build();
     }
