@@ -1,10 +1,10 @@
 package com.isxcode.spark.common.locker;
 
-import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.isxcode.spark.common.cluster.ClusterNodeOwner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -147,11 +147,6 @@ public class Locker {
 
     private String getOwner() {
 
-        String hostname = System.getenv("HOSTNAME");
-        if (hostname != null && !hostname.isBlank()) {
-            return hostname;
-        }
-
-        return "local-" + ManagementFactory.getRuntimeMXBean().getName();
+        return ClusterNodeOwner.getOwner();
     }
 }

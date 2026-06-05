@@ -47,6 +47,10 @@ public class MetaInstanceEntity {
 
     private LocalDateTime endDateTime;
 
+    private String runnerOwner;
+
+    private LocalDateTime heartbeatDateTime;
+
     @CreatedDate
     private LocalDateTime createDateTime;
 
