@@ -56,7 +56,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.isxcode.spark.api.monitor.constants.TimeType;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +72,7 @@ import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class MonitorBizService {
 
     private final ClusterNodeRepository clusterNodeRepository;

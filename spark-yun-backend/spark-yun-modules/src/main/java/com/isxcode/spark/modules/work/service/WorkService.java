@@ -23,7 +23,7 @@ import org.quartz.Scheduler;
 import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,7 +49,7 @@ public class WorkService {
 
     private final WorkExecutorFactory workExecutorFactory;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void abortWork(String workInstanceId) {
 
         // 通过作业实例查询作业类型

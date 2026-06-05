@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {IsxAppException.class})
+@Transactional(rollbackFor = Exception.class, noRollbackFor = {IsxAppException.class})
 public class RunAgentCheckService {
 
     private final SparkYunProperties sparkYunProperties;

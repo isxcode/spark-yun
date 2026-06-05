@@ -43,7 +43,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -217,7 +217,7 @@ public class WorkBizService {
         return getWork(GetWorkReq.builder().workId(work.getId()).build());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateWork(UpdateWorkReq updateWorkReq) {
 
         WorkEntity work = workService.getWorkEntity(updateWorkReq.getId());
@@ -289,7 +289,7 @@ public class WorkBizService {
         workRepository.delete(work);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public WorkInstanceEntity genWorkInstance(String workId) {
 
         WorkInstanceEntity workInstanceEntity = new WorkInstanceEntity();
