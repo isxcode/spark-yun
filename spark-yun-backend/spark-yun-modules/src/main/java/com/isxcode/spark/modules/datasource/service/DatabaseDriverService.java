@@ -1,7 +1,10 @@
 package com.isxcode.spark.modules.datasource.service;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+import static com.isxcode.spark.common.jpa.JpaTenantContext.noTenant;
+
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
-import com.isxcode.spark.common.jpa.JpaTenantContext;
+import com.isxcode.spark.common.security.ContextHolder;
 import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.spark.modules.datasource.repository.DatabaseDriverRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +32,13 @@ public class DatabaseDriverService {
 
     public DatabaseDriverEntity getShareVisibleDriver(String driverId) {
 
-        return JpaTenantContext.joinShareData(() -> getVisibleDriver(driverId));
+        return noTenant(() -> databaseDriverRepository.findVisibleById(driverId, ContextHolder.getTenantId())
+            .orElseThrow(() -> new IsxAppException("数据源驱动不存在")));
     }
 
     public DatabaseDriverEntity getAllVisibleDriver(String driverId) {
 
-        return JpaTenantContext.joinAllData(() -> getVisibleDriver(driverId));
+        return allData(() -> getVisibleDriver(driverId));
     }
 
     public String getDriverName(String driverId) {

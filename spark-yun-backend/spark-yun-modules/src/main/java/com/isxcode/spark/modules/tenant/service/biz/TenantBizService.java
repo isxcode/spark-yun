@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
 import com.isxcode.spark.common.security.ContextHolder;
 import com.isxcode.spark.common.security.CurrentUser;
 
@@ -166,7 +168,7 @@ public class TenantBizService {
             PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
         Page<PageTenantRes> result = tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
-        JpaTenantContext.joinAllData(() -> result.getContent().forEach(e -> {
+        allData(() -> result.getContent().forEach(e -> {
             e.setUsedWorkflowNum(String.valueOf(workflowRepository.countByTenantId(e.getId())));
             e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
         }));
@@ -283,7 +285,7 @@ public class TenantBizService {
 
         // 统计作业流数量
         long usedWorkflowNum =
-            JpaTenantContext.joinAllData(() -> workflowRepository.countByTenantId(checkTenantReq.getTenantId()));
+            allData(() -> workflowRepository.countByTenantId(checkTenantReq.getTenantId()));
         tenantEntity.setUsedWorkflowNum(usedWorkflowNum);
 
         // 统计成员数量

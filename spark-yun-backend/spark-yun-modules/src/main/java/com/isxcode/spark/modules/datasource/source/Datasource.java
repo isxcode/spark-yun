@@ -9,7 +9,6 @@ import com.isxcode.spark.api.work.res.GetDataSourceDataRes;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.backend.api.base.exceptions.WorkRunException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
-import com.isxcode.spark.common.jpa.JpaTenantContext;
 import com.isxcode.spark.common.utils.aes.AesUtils;
 import com.isxcode.spark.common.utils.path.PathUtils;
 import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
@@ -102,8 +101,7 @@ public abstract class Datasource {
         if (driver == null) {
 
             // 获取租户和系统共享的驱动
-            DatabaseDriverEntity driverEntity =
-                JpaTenantContext.joinShareData(() -> dataDriverService.getVisibleDriver(connectInfo.getDriverId()));
+            DatabaseDriverEntity driverEntity = dataDriverService.getShareVisibleDriver(connectInfo.getDriverId());
 
             // 获取驱动路径
             String driverPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator

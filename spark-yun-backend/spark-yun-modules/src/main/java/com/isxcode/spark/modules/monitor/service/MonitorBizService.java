@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.monitor.service;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
@@ -287,8 +289,7 @@ public class MonitorBizService {
             pageInstancesReq.setSearchKeyWord("");
         }
 
-        Page<WorkflowMonitorAo> workflowMonitorAos = JpaTenantContext
-            .joinAllData(() -> workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(),
+        Page<WorkflowMonitorAo> workflowMonitorAos = allData(() -> workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(),
                 pageInstancesReq.getSearchKeyWord(),
                 PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize())));
 
@@ -302,7 +303,7 @@ public class MonitorBizService {
 
         // 获取所有的节点
         List<ClusterNodeEntity> allNode =
-            JpaTenantContext.joinAllData(() -> clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING));
+            allData(() -> clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING));
 
         allNode.forEach(e -> {
             CompletableFuture.supplyAsync(() -> {

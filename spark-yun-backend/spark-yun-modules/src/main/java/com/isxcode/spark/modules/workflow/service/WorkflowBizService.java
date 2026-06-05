@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.workflow.service;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
 import com.isxcode.spark.common.security.ContextHolder;
 
 import static com.isxcode.spark.api.workflow.constants.WorkflowExternalCallStatus.OFF;
@@ -890,8 +892,7 @@ public class WorkflowBizService {
     public Page<QueryWorkFlowInstancesRes> queryWorkFlowInstances(QueryWorkFlowInstancesReq queryWorkFlowInstancesReq) {
 
         // 因为是自定义sql，不使用多租户模式
-        Page<WorkflowInstanceAo> workflowInstanceAoPage = JpaTenantContext
-            .joinAllData(() -> workflowInstanceRepository.pageWorkFlowInstances(ContextHolder.getTenantId(),
+        Page<WorkflowInstanceAo> workflowInstanceAoPage = allData(() -> workflowInstanceRepository.pageWorkFlowInstances(ContextHolder.getTenantId(),
                 queryWorkFlowInstancesReq.getSearchKeyWord(), queryWorkFlowInstancesReq.getExecuteStatus(),
                 queryWorkFlowInstancesReq.getWorkflowId(),
                 PageRequest.of(queryWorkFlowInstancesReq.getPage(), queryWorkFlowInstancesReq.getPageSize())));
