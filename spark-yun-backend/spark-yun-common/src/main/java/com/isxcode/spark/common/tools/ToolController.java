@@ -25,6 +25,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
@@ -92,8 +93,14 @@ public class ToolController {
         }
 
         try {
-            InputStreamResource resource = new InputStreamResource(Files.newInputStream(
-                Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath()) + File.separator + fileName)));
+            Path openFileDir = Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath())).toAbsolutePath()
+                .normalize();
+            Path openFile = openFileDir.resolve(fileName).normalize();
+            if (!openFile.startsWith(openFileDir) || !Files.isRegularFile(openFile)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            InputStreamResource resource = new InputStreamResource(Files.newInputStream(openFile));
             HttpHeaders headers = new HttpHeaders();
             String contentTypeFromName = guessContentTypeFromName(fileName.toLowerCase());
             if (contentTypeFromName == null) {

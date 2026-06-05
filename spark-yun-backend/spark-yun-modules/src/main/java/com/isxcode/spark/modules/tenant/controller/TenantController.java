@@ -41,6 +41,7 @@ public class TenantController {
     }
 
     @Operation(summary = "查询租户列表接口")
+    @Secured({RoleType.SYS_ADMIN})
     @PostMapping("/pageTenant")
     @SuccessResponse("查询成功")
     public Page<PageTenantRes> pageTenant(@Valid @RequestBody PageTenantReq pageTenantReq) {

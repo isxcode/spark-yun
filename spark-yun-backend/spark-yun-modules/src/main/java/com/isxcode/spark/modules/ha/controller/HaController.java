@@ -1,9 +1,11 @@
 package com.isxcode.spark.modules.ha.controller;
 
 
+import com.isxcode.spark.api.user.constants.RoleType;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +20,8 @@ import static com.isxcode.spark.modules.work.run.WorkExecutor.WORK_THREAD;
 public class HaController {
 
     @Operation(summary = "中止作业进程")
-    @GetMapping("/open/kill")
+    @Secured({RoleType.SYS_ADMIN})
+    @GetMapping("/kill")
     public void kill(@RequestParam String workEventId) {
 
         Thread thread = WORK_THREAD.get(workEventId);
