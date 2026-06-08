@@ -30,7 +30,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORK_INSTANCE SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE sy_work_instance SET deleted = 1 WHERE id = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Table(name = "sy_work_instance")

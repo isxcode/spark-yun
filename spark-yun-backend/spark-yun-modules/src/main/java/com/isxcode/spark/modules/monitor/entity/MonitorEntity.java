@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_MONITOR SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE sy_monitor SET deleted = 1 WHERE id = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Table(name = "sy_monitor")

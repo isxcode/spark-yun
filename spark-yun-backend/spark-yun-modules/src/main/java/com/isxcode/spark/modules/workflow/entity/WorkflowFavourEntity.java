@@ -21,7 +21,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_WORKFLOW_FAVOUR SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE sy_workflow_favour SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Builder

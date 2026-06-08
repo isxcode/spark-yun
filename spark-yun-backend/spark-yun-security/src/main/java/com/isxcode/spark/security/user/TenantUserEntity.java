@@ -21,7 +21,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@SQLDelete(sql = "UPDATE SY_TENANT_USERS SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE sy_tenant_users SET deleted = 1 WHERE id = ? and version_number = ?")
 @Data
 @Builder
 @AllArgsConstructor
