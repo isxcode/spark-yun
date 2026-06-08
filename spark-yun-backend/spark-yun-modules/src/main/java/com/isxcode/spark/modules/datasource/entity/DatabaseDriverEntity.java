@@ -27,7 +27,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE SY_DATABASE_DRIVER SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE sy_database_driver SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantIds", type = String.class))

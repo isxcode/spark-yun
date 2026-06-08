@@ -21,7 +21,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_CONTAINER SET deleted = 1 WHERE id = ?")
+@SQLDelete(sql = "UPDATE sy_container SET deleted = 1 WHERE id = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Table(name = "sy_container")

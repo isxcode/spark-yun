@@ -25,7 +25,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE SY_FORM_LINK SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLDelete(sql = "UPDATE sy_form_link SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @Table(name = "sy_form_link")
