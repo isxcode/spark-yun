@@ -23,7 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLDelete(sql = "UPDATE SY_TENANT SET deleted = 1 WHERE id = ? and version_number = ?")
 @Data
 @Entity
-@Table(name = "SY_TENANT")
+@Table(name = "sy_tenant")
 @SQLRestriction("deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)

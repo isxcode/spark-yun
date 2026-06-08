@@ -31,7 +31,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantIds", type = String.class))
-@Table(name = "SY_DATABASE_DRIVER")
+@Table(name = "sy_database_driver")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class DatabaseDriverEntity {

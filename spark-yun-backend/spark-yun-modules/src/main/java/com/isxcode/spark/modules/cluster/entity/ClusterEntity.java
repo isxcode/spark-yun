@@ -27,7 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLDelete(sql = "UPDATE SY_CLUSTER SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
-@Table(name = "SY_CLUSTER")
+@Table(name = "sy_cluster")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class ClusterEntity {

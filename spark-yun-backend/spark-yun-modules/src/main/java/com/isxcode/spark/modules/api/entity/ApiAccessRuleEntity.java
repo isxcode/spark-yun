@@ -29,7 +29,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @SQLDelete(sql = "UPDATE SY_API_ACCESS_RULE SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
-@Table(name = "SY_API_ACCESS_RULE")
+@Table(name = "sy_api_access_rule")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class ApiAccessRuleEntity {

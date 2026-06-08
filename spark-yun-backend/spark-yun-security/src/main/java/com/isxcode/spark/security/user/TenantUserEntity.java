@@ -27,7 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "SY_TENANT_USERS")
+@Table(name = "sy_tenant_users")
 @SQLRestriction("deleted = 0")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
