@@ -105,7 +105,6 @@ jobs:
 
       - name: Downloads env file
         uses: appleboy/ssh-action@v1.0.3
-        if: ${{ inputs.install_latest_agent == true }}
         with:
           host: ${{ inputs.dev_server_ip }}
           username: ${{ inputs.dev_server_username }}
