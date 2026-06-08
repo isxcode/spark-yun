@@ -126,13 +126,13 @@ const transform: AxiosTransform = {
   },
 
   // 响应错误处理
-  responseInterceptorsCatch: async (error: any, options: RequestOptions) => {
+  responseInterceptorsCatch: (error: any, options: RequestOptions) => {
     const {
-      code, message, response 
+      code, message, response
     } = error || {
     }
     const {
-      showErrorMessage, checkStatus 
+      showErrorMessage, checkStatus
     } = options
 
     try {
@@ -150,16 +150,6 @@ const transform: AxiosTransform = {
     // 请求是否被取消
     const isCancel = axios.isCancel(error)
     if (!isCancel && response) {
-      if (statusCanRefresh(response) && options.refreshToken) {
-        try {
-          const token = await options.refreshToken(response)
-          response.config.headers = response.config.headers || {}
-          response.config.headers.authorization = token
-          return axios(response.config)
-        } catch (refreshError) {
-          return Promise.reject(refreshError)
-        }
-      }
       const status = response.status
       const msg = response.data && response.data.message ? response.data.message : message
       checkStatus(status, msg, showErrorMessage, response)
@@ -170,14 +160,6 @@ const transform: AxiosTransform = {
     // return Promise.reject(error);
     return Promise.reject(response?.data)
   }
-}
-
-function statusCanRefresh(response: any): boolean {
-  if (response?.status !== 401 || response.config?._retry) {
-    return false
-  }
-  response.config._retry = true
-  return true
 }
 
 const originOptions = {

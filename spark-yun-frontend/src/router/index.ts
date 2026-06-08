@@ -13,7 +13,6 @@ import Login from '../views/login/login'
 import Ssoauth from '../views/login/ssoauth'
 import ShareForm from '../views/share-form/index.vue'
 import ShareReport from '../views/report-views/share-report/index.vue'
-import { useAuthStore } from '@/store/useAuth'
 import { getVipLicenseEnabled, isVipMenuCode } from '@/utils/vip-license'
 
 import HomeChildren from './home-children'
@@ -69,24 +68,8 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const routeName = typeof to.name === 'string' ? to.name : ''
   const openRouteName = new Set(['login', 'ssoauth', 'share', 'share-report'])
-  const authStore = useAuthStore()
 
-  if (!openRouteName.has(routeName) && !authStore.token) {
-    return {
-      name: 'login',
-      query: {
-        redirect: to.fullPath
-      }
-    }
-  }
-
-  if (!routeName) {
-    return {
-      name: 'index'
-    }
-  }
-
-  if (openRouteName.has(routeName) || !isVipMenuCode(routeName)) {
+  if (!routeName || openRouteName.has(routeName) || !isVipMenuCode(routeName)) {
     return true
   }
 

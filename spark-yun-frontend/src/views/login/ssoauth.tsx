@@ -17,7 +17,6 @@ export default defineComponent({
             OauthLogin({code: code, clientId: clientId}).then((res: any) => {
                 authStore.setUserInfo(res.data)
                 authStore.setToken(res.data.token)
-                authStore.setRefreshToken(res.data.refreshToken)
                 authStore.setTenantId(res.data?.tenantId)
                 authStore.setRole(res.data?.role)
                 getVipLicenseEnabled(true).finally(() => {
