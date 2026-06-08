@@ -92,8 +92,7 @@ jobs:
           script: |
             yum install -y yum-utils
             yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-            yum makecache fast
-            yum -y install docker-ce-19.03.9-3.el7 docker-ce-cli-19.03.9-3.el7 containerd.io
+            yum install -y docker-ce docker-ce-cli containerd.io
             mkdir -p /data/docker
             mkdir -p /etc/docker
             echo "{" > /etc/docker/daemon.json
