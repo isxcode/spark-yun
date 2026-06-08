@@ -85,13 +85,13 @@ jobs:
 
       - name: Build with Nodejs
         run: |
-          cd docs
+          cd spark-yun-vip/docs
           pnpm install --force
           pnpm run build
 
       - name: Tar dist
         run: |
-          cd /home/runner/work/spark-yun/spark-yun/docs
+          cd /home/runner/work/spark-yun/spark-yun/spark-yun-vip/docs
           tar -czf website.tar.gz ./.output
           mv website.tar.gz /home/runner/work/spark-yun/spark-yun/
 
