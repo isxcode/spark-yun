@@ -146,8 +146,8 @@ public class ClusterNodeService {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         transactionTemplate.executeWithoutResult(status -> {
-            ClusterNodeEntity clusterNode = clusterNodeRepository.findById(clusterNodeId)
-                .orElseThrow(() -> new IsxAppException("节点不存在"));
+            ClusterNodeEntity clusterNode =
+                clusterNodeRepository.findById(clusterNodeId).orElseThrow(() -> new IsxAppException("节点不存在"));
             String progressLog = "进度:" + scpPercent + "%";
             String agentLog = clusterNode.getAgentLog() == null ? "" : clusterNode.getAgentLog();
             if (!agentLog.contains(progressLog)) {
