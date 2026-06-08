@@ -743,7 +743,7 @@ COMMENT ON COLUMN sy_license.deleted IS '逻辑删除';
 CREATE TABLE IF NOT EXISTS sy_locker
 (
   id INT NOT NULL,
-  name VARCHAR(2000) NOT NULL,
+  name VARCHAR(200) NOT NULL,
   box VARCHAR(2000),
   lock_owner VARCHAR(200),
   expire_time TIMESTAMP,

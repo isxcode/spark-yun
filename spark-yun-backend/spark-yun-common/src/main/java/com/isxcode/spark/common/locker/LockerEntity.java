@@ -13,13 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "SY_LOCKER")
+@Table(name = "sy_locker")
 public class LockerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(length = 200, nullable = false)
     private String name;
 
     private String box;

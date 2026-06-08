@@ -24,7 +24,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 @SQLDelete(sql = "UPDATE SY_META_WORK SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
-@Table(name = "SY_META_WORK")
+@Table(name = "sy_meta_work")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)

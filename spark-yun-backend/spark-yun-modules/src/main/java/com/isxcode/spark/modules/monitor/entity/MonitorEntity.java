@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE SY_MONITOR SET deleted = 1 WHERE id = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
-@Table(name = "SY_MONITOR")
+@Table(name = "sy_monitor")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)

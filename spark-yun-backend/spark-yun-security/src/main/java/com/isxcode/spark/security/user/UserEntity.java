@@ -22,7 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @SQLDelete(sql = "UPDATE SY_USER SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
-@Table(name = "SY_USER")
+@Table(name = "sy_user")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntity {

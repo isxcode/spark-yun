@@ -29,7 +29,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 @SQLDelete(sql = "UPDATE SY_SECRET_KEY SET deleted = 1 WHERE id = ? and version_number = ?")
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
-@Table(name = "SY_SECRET_KEY")
+@Table(name = "sy_secret_key")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class SecretKeyEntity {

@@ -21,7 +21,7 @@ import com.isxcode.spark.common.security.ContextHolder;
 @Entity
 @SQLRestriction("deleted = 0")
 @Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
-@Table(name = "SY_META_COLUMN")
+@Table(name = "sy_meta_column")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 @Builder(toBuilder = true)

@@ -54,8 +54,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-      naming:
-        physical-strategy: com.isxcode.spark.common.jpa.JpaTableUpperCaseStrategy
 
   mvc:
     view:
