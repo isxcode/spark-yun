@@ -919,7 +919,7 @@ CREATE TABLE IF NOT EXISTS sy_work_instance
   deleted INT DEFAULT 0 NOT NULL COMMENT '逻辑删除',
   tenant_id VARCHAR(200) NOT NULL COMMENT '租户id',
   workflow_instance_id VARCHAR(100) COMMENT '工作流实例id',
-  quartz_has_run TINYINT(1) COMMENT '是否被定时器触发过',
+  quartz_has_run BOOLEAN COMMENT '是否被定时器触发过',
   work_info LONGTEXT COMMENT '存储作业信息',
   event_id VARCHAR(100),
   runner_owner VARCHAR(200),
