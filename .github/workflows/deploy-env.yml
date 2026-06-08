@@ -32,7 +32,7 @@ on:
         type: boolean
         default: true
       ali:
-        description: buy server [CentOs-7.9/4C/16G]
+        description: buy server [CentOs-8.5/4C/16G]
         default: https://ecs-buy.aliyun.com/ecs
         type: string
 
@@ -79,7 +79,7 @@ jobs:
           script_stop: true
           timeout: 3600s
           script: |
-            yum install java-1.8.0-openjdk-devel java-1.8.0-openjdk -y
+            yum install java-17-openjdk-devel java-17-openjdk -y
 
       - name: Install docker
         uses: appleboy/ssh-action@v1.0.3
