@@ -80,6 +80,7 @@ flink-table-planner = { module = "org.apache.flink:flink-table-planner_2.12", ve
 flink-yarn = { module = "org.apache.flink:flink-yarn", version.ref = "flink" }
 flyway-core = { module = "org.flywaydb:flyway-core" }
 flyway-mysql = { module = "org.flywaydb:flyway-mysql" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql" }
 groovy-all = { module = "org.apache.groovy:groovy-all", version.ref = "groovy" }
 hadoop-common = { module = "org.apache.hadoop:hadoop-common", version.ref = "hadoop" }
 hadoop-hdfs = { module = "org.apache.hadoop:hadoop-hdfs", version.ref = "hadoop" }
