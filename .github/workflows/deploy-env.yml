@@ -147,7 +147,7 @@ jobs:
             echo "export HADOOP_CONF_DIR=\$HADOOP_HOME/etc/hadoop" >> /etc/profile
             echo "export PATH=\$PATH:\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin" >> /etc/profile
             source /etc/profile
-            echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
+            echo "export JAVA_HOME=/usr/lib/jvm/java-17-openjdk" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
             echo "export HDFS_NAMENODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
             echo "export HDFS_DATANODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
             echo "export HDFS_SECONDARYNAMENODE_USER=root" >> /opt/hadoop/etc/hadoop/hadoop-env.sh
