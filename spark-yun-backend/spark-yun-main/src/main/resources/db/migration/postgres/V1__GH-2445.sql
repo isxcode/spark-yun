@@ -745,7 +745,11 @@ CREATE TABLE IF NOT EXISTS sy_locker
   id INT NOT NULL,
   name VARCHAR(2000) NOT NULL,
   box VARCHAR(2000),
-  PRIMARY KEY (id)
+  lock_owner VARCHAR(200),
+  expire_time TIMESTAMP,
+  create_date_time TIMESTAMP,
+  PRIMARY KEY (id),
+  CONSTRAINT uk_sy_locker_name UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS sy_message
@@ -889,6 +893,8 @@ CREATE TABLE IF NOT EXISTS sy_meta_instance
   version_number INT NOT NULL,
   deleted INT DEFAULT 0 NOT NULL,
   tenant_id VARCHAR(200) NOT NULL,
+  runner_owner VARCHAR(200),
+  heartbeat_date_time TIMESTAMP,
   PRIMARY KEY (id)
 );
 
@@ -1457,6 +1463,8 @@ CREATE TABLE IF NOT EXISTS sy_work_instance
   duration INT,
   work_info TEXT,
   event_id VARCHAR(100),
+  runner_owner VARCHAR(200),
+  heartbeat_date_time TIMESTAMP,
   PRIMARY KEY (id)
 );
 COMMENT ON COLUMN sy_work_instance.id IS '实例唯一id';

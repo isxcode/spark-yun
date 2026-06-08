@@ -433,7 +433,11 @@ CREATE TABLE IF NOT EXISTS sy_locker
   id INT AUTO_INCREMENT NOT NULL,
   name VARCHAR(2000) NOT NULL,
   box VARCHAR(2000),
-  PRIMARY KEY (id)
+  lock_owner VARCHAR(200),
+  expire_time DATETIME,
+  create_date_time DATETIME,
+  PRIMARY KEY (id),
+  CONSTRAINT uk_sy_locker_name UNIQUE (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS sy_message
@@ -545,6 +549,8 @@ CREATE TABLE IF NOT EXISTS sy_meta_instance
   version_number INT NOT NULL COMMENT '版本号',
   deleted INT DEFAULT 0 NOT NULL COMMENT '逻辑删除',
   tenant_id VARCHAR(200) NOT NULL COMMENT '租户id',
+  runner_owner VARCHAR(200),
+  heartbeat_date_time DATETIME,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -916,6 +922,8 @@ CREATE TABLE IF NOT EXISTS sy_work_instance
   quartz_has_run TINYINT(1) COMMENT '是否被定时器触发过',
   work_info LONGTEXT COMMENT '存储作业信息',
   event_id VARCHAR(100),
+  runner_owner VARCHAR(200),
+  heartbeat_date_time DATETIME,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
