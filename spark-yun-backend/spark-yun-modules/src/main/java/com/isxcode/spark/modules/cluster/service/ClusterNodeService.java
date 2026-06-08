@@ -15,7 +15,10 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +38,8 @@ public class ClusterNodeService {
     private final ClusterNodeMapper clusterNodeMapper;
 
     private final AesUtils aesUtils;
+
+    private final PlatformTransactionManager transactionManager;
 
     public String getDefaultAgentHomePath(String username, ClusterNodeEntity clusterNode) {
 
@@ -127,17 +132,29 @@ public class ClusterNodeService {
                 scpPercent = (int) (remoteFileSize * 100 / localFileSize);
             }
 
-            clusterNode = clusterNodeRepository.findById(clusterNode.getId()).get();
-            if (!clusterNode.getAgentLog().contains("进度:" + scpPercent + "%")) {
-                clusterNode.setAgentLog(clusterNode.getAgentLog() + "\n进度:" + scpPercent + "%");
-                clusterNodeRepository.saveAndFlush(clusterNode);
-            }
+            saveScpPercent(clusterNode.getId(), scpPercent);
 
             Thread.sleep(10000);
         }
 
         channel.disconnect();
         session.disconnect();
+    }
+
+    private void saveScpPercent(String clusterNodeId, int scpPercent) {
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        transactionTemplate.executeWithoutResult(status -> {
+            ClusterNodeEntity clusterNode = clusterNodeRepository.findById(clusterNodeId)
+                .orElseThrow(() -> new IsxAppException("节点不存在"));
+            String progressLog = "进度:" + scpPercent + "%";
+            String agentLog = clusterNode.getAgentLog() == null ? "" : clusterNode.getAgentLog();
+            if (!agentLog.contains(progressLog)) {
+                clusterNode.setAgentLog(agentLog + "\n" + progressLog);
+                clusterNodeRepository.saveAndFlush(clusterNode);
+            }
+        });
     }
 
     @Async("sparkYunThreadPool")
