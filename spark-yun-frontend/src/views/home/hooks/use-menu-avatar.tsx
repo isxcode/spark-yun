@@ -98,28 +98,26 @@ export function useMenuAvatar() {
 
     ChangeTenantData({
       tenantId: targetTenantId
-    }).then((res: any) => {
-      const nextTenantId = res.data?.tenantId || targetTenantId
-      const nextToken = res.data?.token || authStore.token
-
-      authStore.setToken(nextToken)
-      authStore.setTenantId(nextTenantId)
-      if (res.data?.role) {
-        authStore.setRole(res.data.role)
-      }
-      http.setHeader({
-        tenant: nextTenantId
-      })
-
+    }, targetTenantId).then(() => {
       getVipLicenseEnabled(true).finally(() => {
         const needBackToWorkflowList = ['workflow-page', 'work-item', 'workflow-detail'].includes(String(route.name || ''))
+        const applyTenantContext = () => {
+          authStore.setTenantId(targetTenantId)
+          http.setHeader({
+            tenant: targetTenantId
+          })
+        }
 
         ElMessage.success('租户切换成功')
         closeTenantDialog()
         if (needBackToWorkflowList) {
           router.replace({
             name: 'workflow'
+          }).finally(() => {
+            applyTenantContext()
           })
+        } else {
+          applyTenantContext()
         }
       })
     }).catch(() => {

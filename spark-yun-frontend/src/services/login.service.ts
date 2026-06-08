@@ -5,10 +5,6 @@ interface LoginParam {
   passwd: string;
 }
 
-interface RefreshTokenParam {
-  refreshToken: string;
-}
-
 interface TenantParams {
   tenantId: string;
 }
@@ -22,15 +18,6 @@ export function LoginUserInfo(params: LoginParam): Promise<any> {
   })
 }
 
-// 刷新token
-export function RefreshToken(params: RefreshTokenParam): Promise<any> {
-  return http.request({
-    method: 'post',
-    url: '/user/open/refreshToken',
-    params: params
-  })
-}
-
 // 查询租户信息
 export function QueryTenantList(): Promise<any> {
   return http.request({
@@ -40,11 +27,16 @@ export function QueryTenantList(): Promise<any> {
 }
 
 // 切换租户
-export function ChangeTenantData(params: TenantParams): Promise<any> {
+export function ChangeTenantData(params: TenantParams, tenantHeader?: string): Promise<any> {
   return http.request({
     method: 'post',
     url: '/tenant/chooseTenant',
-    params: params
+    params: params,
+    headers: tenantHeader
+      ? {
+        tenant: tenantHeader
+      }
+      : undefined
   })
 }
 

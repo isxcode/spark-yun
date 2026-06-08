@@ -90,7 +90,6 @@ function clearStore() {
   authStore.setUserInfo({
   })
   authStore.setToken('')
-  authStore.setRefreshToken('')
   authStore.setTenantId('')
   authStore.setRole('')
   authStore.setRole('')
@@ -119,14 +118,9 @@ function tenantChange(e: string): void {
   ChangeTenantData({
     tenantId: e
   })
-    .then((res: any) => {
+    .then(() => {
       console.log('切换成功')
-      authStore.setToken(res.data?.token || authStore.token)
-      authStore.setRefreshToken(res.data?.refreshToken || authStore.refreshToken)
-      authStore.setTenantId(res.data?.tenantId || e)
-      if (res.data?.role) {
-        authStore.setRole(res.data.role)
-      }
+      authStore.setTenantId(e)
 
       // 这里发送eventbus，刷新当前打开的页面
       eventBus.emit('tenantChange')
