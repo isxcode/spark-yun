@@ -390,8 +390,7 @@ public class DatasourceBizService {
     public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
         // 支持查询租户和系统共享的数据
-        DatabaseDriverEntity driver =
-            databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
+        DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
 
         // 系统驱动无法删除
         if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
@@ -426,7 +425,8 @@ public class DatasourceBizService {
 
     public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-        DatabaseDriverEntity databaseDriver = datasourceService.getDatasourceDriver(settingDefaultDatabaseDriverReq.getDriverId());
+        DatabaseDriverEntity databaseDriver =
+            datasourceService.getDatasourceDriver(settingDefaultDatabaseDriverReq.getDriverId());
 
         if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
             throw new IsxAppException("系统驱动无法默认");
