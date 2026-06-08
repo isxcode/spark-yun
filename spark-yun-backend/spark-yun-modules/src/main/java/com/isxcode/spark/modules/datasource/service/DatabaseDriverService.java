@@ -20,30 +20,14 @@ public class DatabaseDriverService {
 
     private final DatabaseDriverRepository databaseDriverRepository;
 
-    public DatabaseDriverEntity getDriver(String driverId) {
-
-        return databaseDriverRepository.findById(driverId).orElseThrow(() -> new IsxAppException("数据源驱动不存在"));
-    }
-
-    public DatabaseDriverEntity getVisibleDriver(String driverId) {
-
-        return getDriver(driverId);
-    }
-
-    public DatabaseDriverEntity getShareVisibleDriver(String driverId) {
-
-        return noTenant(() -> databaseDriverRepository.findVisibleById(driverId, ContextHolder.getTenantId())
-            .orElseThrow(() -> new IsxAppException("数据源驱动不存在")));
-    }
-
-    public DatabaseDriverEntity getAllVisibleDriver(String driverId) {
-
-        return allData(() -> getVisibleDriver(driverId));
-    }
-
     public String getDriverName(String driverId) {
 
         DatabaseDriverEntity databaseDriver = databaseDriverRepository.findById(driverId).orElse(null);
         return databaseDriver == null ? driverId : databaseDriver.getName();
+    }
+
+    public DatabaseDriverEntity getDriver(String driverId) {
+
+        return noTenant(() -> databaseDriverRepository.findById(driverId).orElseThrow(() -> new IsxAppException("数据源驱动不存在")));
     }
 }

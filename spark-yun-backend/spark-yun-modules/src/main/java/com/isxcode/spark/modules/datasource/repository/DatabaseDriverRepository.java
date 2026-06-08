@@ -21,9 +21,6 @@ public interface DatabaseDriverRepository extends JpaRepository<DatabaseDriverEn
     Page<DatabaseDriverEntity> searchAll(@Param("keyword") String searchKeyWord, @Param("tenantId") String tenantId,
         Pageable pageable);
 
-    @Query("select D from DatabaseDriverEntity D where D.id = :id and (D.tenantId = :tenantId or D.driverType = 'SYSTEM_DRIVER')")
-    Optional<DatabaseDriverEntity> findVisibleById(@Param("id") String id, @Param("tenantId") String tenantId);
-
     List<DatabaseDriverEntity> findAllByDbType(String dbType);
 
     Optional<DatabaseDriverEntity> findByDriverTypeAndDbTypeAndIsDefaultDriver(String driverType, String dbType,
