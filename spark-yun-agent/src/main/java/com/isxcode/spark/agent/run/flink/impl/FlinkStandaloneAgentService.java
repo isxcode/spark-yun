@@ -117,10 +117,11 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
                 .setEntryPointClassName(submitWorkReq.getFlinkSubmit().getEntryClass()).setConfiguration(configuration)
                 .setArguments(submitWorkReq.getPluginReq().getArgs()).setUserClassPaths(userClassPaths);
             if (configuration.getString(SAVEPOINT_PATH_KEY, null) != null) {
-                program = builder
-                    .setSavepointRestoreSettings(SavepointRestoreSettings.forPath(
-                        configuration.getString(SAVEPOINT_PATH_KEY, null)))
-                    .build();
+                program =
+                    builder
+                        .setSavepointRestoreSettings(
+                            SavepointRestoreSettings.forPath(configuration.getString(SAVEPOINT_PATH_KEY, null)))
+                        .build();
             } else {
                 program = builder.build();
             }
@@ -133,9 +134,11 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
                     .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8)))
                 .setUserClassPaths(userClassPaths);
             if (configuration.getString(SAVEPOINT_PATH_KEY, null) != null) {
-                program = builder.setSavepointRestoreSettings(
-                    SavepointRestoreSettings.forPath(configuration.getString(SAVEPOINT_PATH_KEY, null)))
-                    .build();
+                program =
+                    builder
+                        .setSavepointRestoreSettings(
+                            SavepointRestoreSettings.forPath(configuration.getString(SAVEPOINT_PATH_KEY, null)))
+                        .build();
             } else {
                 program = builder.build();
             }
