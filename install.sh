@@ -7,9 +7,9 @@
 set -e  # 遇到错误立即退出
 
 # 配置项
-readonly SPARK_VERSION="3.4.1"
+readonly SPARK_VERSION="4.1.2"
 readonly SPARK_MIN_FILE="spark-${SPARK_VERSION}-bin-hadoop3.tgz"
-readonly FLINK_VERSION="1.18.1"
+readonly FLINK_VERSION="2.2.0"
 readonly FLINK_MIN_FILE="flink-${FLINK_VERSION}-bin-scala_2.12.tgz"
 readonly OSS_DOWNLOAD_URL="https://zhiqingyun-demo.isxcode.com/tools/open/file"
 
@@ -28,9 +28,9 @@ readonly TMP_LIBS_DIR="${TMP_DIR}/libs"
 
 # spark依赖列表
 readonly SPARK_JARS=(
-    "spark-sql-kafka-0-10_2.12-${SPARK_VERSION}.jar"
-    "spark-streaming-kafka-0-10_2.12-${SPARK_VERSION}.jar"
-    "spark-token-provider-kafka-0-10_2.12-${SPARK_VERSION}.jar"
+    "spark-sql-kafka-0-10_2.13-${SPARK_VERSION}.jar"
+    "spark-streaming-kafka-0-10_2.13-${SPARK_VERSION}.jar"
+    "spark-token-provider-kafka-0-10_2.13-${SPARK_VERSION}.jar"
     "commons-pool2-2.11.1.jar"
     "kafka-clients-3.1.2.jar"
     "bcpkix-jdk18on-1.78.1.jar"
@@ -42,7 +42,7 @@ readonly SPARK_JARS=(
 # flink依赖列表
 readonly FLINK_JARS=(
     "flink-connector-base-${FLINK_VERSION}.jar"
-    "flink-connector-jdbc-3.1.2-1.18.jar"
+    "flink-connector-jdbc-3.3.0-1.20.jar"
     "bcpkix-jdk18on-1.78.1.jar"
     "bcprov-jdk18on-1.78.1.jar"
     "bson-5.2.1.jar"
@@ -57,7 +57,7 @@ readonly JDBC_DRIVERS=(
     "ngdbc-2.18.13.jar"
     "mysql-connector-java-5.1.49.jar"
     "mssql-jdbc-12.4.2.jre8.jar"
-    "hive-jdbc-3.1.3-standalone.jar"
+    "hive-jdbc-4.1.0-standalone.jar"
     "hive-jdbc-uber-2.6.3.0-235.jar"
     "ojdbc8-19.23.0.0.jar"
     "oceanbase-client-2.4.6.jar"
