@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class Execute {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         PluginReq pluginReq = parse(args);
 
@@ -36,7 +36,7 @@ public class Execute {
                         sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
                             getResultType(e.getResultType()));
                     } else if (FuncType.UDAF.equals(e.getType())) {
-                        sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
+                        registerJavaUDAF(sparkSession, e.getFuncName(), e.getClassName());
                     }
                 });
             }
@@ -201,6 +201,17 @@ public class Execute {
                 return DataTypes.TimestampType;
             default:
                 return DataTypes.StringType;
+        }
+    }
+
+    private static void registerJavaUDAF(SparkSession sparkSession, String funcName, String className) {
+
+        try {
+            Object udaf = Class.forName(className).getDeclaredConstructor().newInstance();
+            sparkSession.udf().register(funcName,
+                (org.apache.spark.sql.expressions.UserDefinedAggregateFunction) udaf);
+        } catch (Exception e) {
+            throw new RuntimeException("注册自定义聚合函数失败: " + className, e);
         }
     }
 

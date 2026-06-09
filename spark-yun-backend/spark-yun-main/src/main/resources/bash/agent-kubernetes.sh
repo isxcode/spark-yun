@@ -89,15 +89,15 @@ if ! kubectl cluster-info &>/dev/null; then
 fi
 
 # 执行拉取spark镜像命令
-if ! docker image inspect spark:3.4.1 &>/dev/null; then
-  echo "{  \"status\": \"INSTALL_ERROR\", \"log\": \"没有spark:3.4.1镜像，需要执行拉取镜像命令，docker pull spark:3.4.1 或者 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/spark:3.4.1-amd64 && docker tag registry.cn-shanghai.aliyuncs.com/isxcode/spark:3.4.1-amd64 spark:3.4.1 \" }"
+if ! docker image inspect spark:4.1.2 &>/dev/null; then
+  echo "{  \"status\": \"INSTALL_ERROR\", \"log\": \"没有spark:4.1.2镜像，需要执行拉取镜像命令，docker pull spark:4.1.2 或者 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/spark:4.1.2-amd64 && docker tag registry.cn-shanghai.aliyuncs.com/isxcode/spark:4.1.2-amd64 spark:4.1.2 \" }"
   rm "${BASE_PATH}"/agent-kubernetes.sh
   exit 0
 fi
 
 # 执行拉取flink镜像命令
-if ! docker image inspect flink:1.18.1-scala_2.12 &>/dev/null; then
-  echo "{   \"status\": \"INSTALL_ERROR\", \"log\": \"没有flink:1.18.1-scala_2.12镜像，需要执行拉取镜像命令，docker pull flink:1.18.1-scala_2.12 或者 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/flink:1.18.1-scala-2.12-amd64 && docker tag registry.cn-shanghai.aliyuncs.com/isxcode/flink:1.18.1-scala-2.12-amd64 flink:1.18.1-scala_2.12\" }"
+if ! docker image inspect flink:2.2.0-scala_2.12 &>/dev/null; then
+  echo "{   \"status\": \"INSTALL_ERROR\", \"log\": \"没有flink:2.2.0-scala_2.12镜像，需要执行拉取镜像命令，docker pull flink:2.2.0-scala_2.12 或者 docker pull registry.cn-shanghai.aliyuncs.com/isxcode/flink:2.2.0-scala-2.12-amd64 && docker tag registry.cn-shanghai.aliyuncs.com/isxcode/flink:2.2.0-scala-2.12-amd64 flink:2.2.0-scala_2.12\" }"
   rm "${BASE_PATH}"/agent-kubernetes.sh
   exit 0
 fi
