@@ -5,8 +5,9 @@ import com.isxcode.spark.api.real.res.GetRealSubmitLogRes;
 import com.isxcode.spark.api.real.res.PageRealRes;
 import com.isxcode.spark.modules.real.entity.RealEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RealMapper {
 
     RealEntity addRealReqToRealEntity(AddRealReq addRealReq);

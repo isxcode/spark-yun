@@ -103,7 +103,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '8'
+          java-version: '17'
 
       - name: Print java version
         run: java -version
@@ -111,7 +111,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
-          gradle-version: '7.6.1'
+          gradle-version: '8.7'
           cache-disabled: true
 
       - name: Print gradle version
@@ -132,7 +132,7 @@ jobs:
         id: download-cache
         with:
           path: /home/runner/work/spark-yun/spark-yun/resources/tmp
-          key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/download.sh') }}
+          key: ${{ runner.os }}-file-${{ hashFiles('/home/runner/work/spark-yun/spark-yun/install.sh') }}
 
       - name: Download tmp dependencies
         if: steps.download-cache.outputs.cache-hit != 'true'
@@ -148,7 +148,7 @@ jobs:
 
       - name: Download dependencies
         if: steps.download-cache.outputs.cache-hit != 'true'
-        run: bash /home/runner/work/spark-yun/spark-yun/download.sh
+        run: bash /home/runner/work/spark-yun/spark-yun/install.sh
 
       - name: Build with gradle
         run: gradle package

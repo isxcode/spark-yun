@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-centos:8u412-8.78
+FROM azul/zulu-openjdk-centos:17
 
 RUN rm -rf /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 

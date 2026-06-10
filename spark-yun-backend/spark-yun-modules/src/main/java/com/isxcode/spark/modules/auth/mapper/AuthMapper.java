@@ -6,8 +6,9 @@ import com.isxcode.spark.api.auth.res.PageSsoAuthRes;
 import com.isxcode.spark.modules.auth.entity.AuthEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuthMapper {
 
     AuthEntity addSsoAuthReqToAuthEntity(AddSsoAuthReq addSsoAuthReq);
@@ -25,5 +26,5 @@ public interface AuthMapper {
     @Mapping(target = "id", source = "authEntity.id")
     AuthEntity updateSsoAuthReqToAuthEntity(UpdateSsoAuthReq updateSsoAuthReq, AuthEntity authEntity);
 
-    PageSsoAuthRes AuthEntityToPageSsoAuthRes(AuthEntity authEntity);
+    PageSsoAuthRes authEntityToPageSsoAuthRes(AuthEntity authEntity);
 }

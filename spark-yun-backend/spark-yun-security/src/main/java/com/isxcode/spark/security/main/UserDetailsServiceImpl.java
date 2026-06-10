@@ -1,7 +1,5 @@
 package com.isxcode.spark.security.main;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.api.user.constants.UserStatus;
@@ -34,6 +32,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
+        return loadUserByUsername(userId, null);
+    }
+
+    public UserDetails loadUserByUsername(String userId, String tenantId) throws UsernameNotFoundException {
+
         // 返回匿名者用户对象
         if ("sy_anonymous".equals(userId)) {
             return User.withUsername(userId).password("")
@@ -60,16 +63,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         String authority = userInfo.getRoleCode();
 
         // 如果不是系统管理员，且没有TENANT_ID则直接报错，缺少tenantId
-        if (!RoleType.SYS_ADMIN.equals(authority) && Strings.isEmpty(TENANT_ID.get())) {
+        if (!RoleType.SYS_ADMIN.equals(authority) && Strings.isEmpty(tenantId)) {
             throw new IsxAppException("缺少tenantId");
         }
 
         // 获取用户租户权限
         if (!RoleType.SYS_ADMIN.equals(authority)) {
-            if (!Strings.isEmpty(TENANT_ID.get()) && !"undefined".equals(TENANT_ID.get())) {
+            if (!Strings.isEmpty(tenantId) && !"undefined".equals(tenantId)) {
 
                 // 获取成员信息
-                TenantUserEntity memberInfo = tenantUserRepository.findByTenantIdAndUserId(TENANT_ID.get(), userId)
+                TenantUserEntity memberInfo = tenantUserRepository.findByTenantIdAndUserId(tenantId, userId)
                     .orElseThrow(() -> new IsxAppException("用户不在租户中，请联系管理员!"));
 
                 // 判断成员是否被禁用

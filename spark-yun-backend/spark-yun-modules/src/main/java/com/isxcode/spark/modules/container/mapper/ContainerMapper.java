@@ -7,8 +7,9 @@ import com.isxcode.spark.api.container.res.PageContainerRes;
 import com.isxcode.spark.modules.container.entity.ContainerEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ContainerMapper {
 
     ContainerEntity addContainerToContainerEntity(AddContainerReq addContainerReq);

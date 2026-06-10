@@ -11,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -38,7 +39,8 @@ public class JwtUtils {
             throw new IsxAppException("jwt加密异常");
         }
         if (aesKey != null) {
-            claimsStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).encryptBase64(claimsStr);
+            claimsStr =
+                SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(StandardCharsets.UTF_8), 1 << 5)).encryptBase64(claimsStr);
         }
         claims.put("CLAIM", claimsStr);
 
@@ -46,7 +48,8 @@ public class JwtUtils {
         if (jwtKey == null) {
             jwtBuilder = jwtBuilder.signWith(key);
         } else {
-            jwtBuilder = jwtBuilder.signWith(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
+            jwtBuilder =
+                jwtBuilder.signWith(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(StandardCharsets.UTF_8), 1 << 5)));
         }
 
         jwtBuilder.setClaims(claims).setIssuedAt(new Date()).setId(String.valueOf(UUID.randomUUID()));
@@ -62,22 +65,23 @@ public class JwtUtils {
     }
 
     /** jwt解密. */
-    public static <A> A decrypt(String aesKey, String jwtString, String jwtKey, Class<A> targetClass) {
+    public static <A> A decrypt(String jwtKey, String jwtString, String aesKey, Class<A> targetClass) {
 
         JwtParserBuilder jwtParserBuilder = Jwts.parserBuilder();
 
         if (jwtKey == null) {
             jwtParserBuilder = jwtParserBuilder.setSigningKey(key);
         } else {
-            jwtParserBuilder =
-                jwtParserBuilder.setSigningKey(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(), 1 << 5)));
+            jwtParserBuilder = jwtParserBuilder
+                .setSigningKey(Keys.hmacShaKeyFor(Arrays.copyOf(jwtKey.getBytes(StandardCharsets.UTF_8), 1 << 5)));
         }
 
         String claimStr = jwtParserBuilder.build().parseClaimsJws(jwtString).getBody().get("CLAIM", String.class);
 
         String targetJsonStr = claimStr;
         if (aesKey != null) {
-            targetJsonStr = SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(), 1 << 5)).decryptStr(claimStr);
+            targetJsonStr =
+                SecureUtil.aes(Arrays.copyOf(aesKey.getBytes(StandardCharsets.UTF_8), 1 << 5)).decryptStr(claimStr);
         }
 
         ObjectMapper objectMapper = new ObjectMapper();

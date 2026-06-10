@@ -10,11 +10,9 @@ import com.isxcode.spark.api.work.constants.WorkType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.logging.log4j.util.Strings;
@@ -28,6 +26,8 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         String sparkHome = !Strings.isEmpty(sparkHomePath) ? sparkHomePath : System.getenv("SPARK_HOME");
         String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(defaultSparkConfig))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(defaultSparkConfig), StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.matches("^spark\\.master\\s+(.+)")) {
@@ -68,7 +68,7 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         String sparkHome = !Strings.isEmpty(sparkHomePath) ? sparkHomePath : System.getenv("SPARK_HOME");
         String defaultSparkConfig = sparkHome + "/conf/spark-defaults.conf";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(defaultSparkConfig))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(defaultSparkConfig), StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.matches("^spark\\.master\\.web\\.url\\s+(.+)")) {
@@ -152,9 +152,9 @@ public class SparkStandaloneAgentService implements SparkAgentService {
         if (WorkType.SPARK_JAR.equals(submitWorkReq.getWorkType())) {
             sparkLauncher.addAppArgs(submitWorkReq.getArgs());
         } else {
-            sparkLauncher.addAppArgs(Base64.getEncoder()
-                .encodeToString(submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes()
-                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()));
+            sparkLauncher.addAppArgs(Base64.getEncoder().encodeToString(
+                submitWorkReq.getPluginReq() == null ? submitWorkReq.getArgsStr().getBytes(StandardCharsets.UTF_8)
+                    : JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8)));
         }
 
         // 删除自定义属性
@@ -388,13 +388,15 @@ public class SparkStandaloneAgentService implements SparkAgentService {
 
         httpPost.setEntity(stringEntity);
 
-        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-            CloseableHttpResponse response = httpClient.execute(httpPost)) {
-            HttpEntity responseEntity = response.getEntity();
-            if (responseEntity != null) {
-                EntityUtils.toString(responseEntity);
-            }
-        } catch (ParseException e) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            httpClient.execute(httpPost, response -> {
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    EntityUtils.toString(responseEntity);
+                }
+                return null;
+            });
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new Exception("中止失败");
         }

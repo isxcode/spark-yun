@@ -1,26 +1,36 @@
 package com.isxcode.spark.common.locker;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
+import com.isxcode.spark.common.cluster.ClusterNodeOwner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class Locker {
 
+    private static final long LOCK_EXPIRE_HOURS = 24;
+
+    private static final long LOCK_WAIT_INTERVAL_MILLIS = 500;
+
     private final LockerRepository lockerRepository;
+
+    private final PlatformTransactionManager transactionManager;
 
     /**
      * 加锁.
      */
     public Integer lockOnly(String name) {
 
-        // 给数据库加一条数据
-        return lockerRepository.saveAndFlush(LockerEntity.builder().name(name).build()).getId();
+        return lock(name);
     }
 
     /**
@@ -28,13 +38,7 @@ public class Locker {
      */
     public Integer lockOnly(String name, String box) {
 
-        Optional<LockerEntity> lockerEntityOptional = lockerRepository.findByBox(box);
-        if (lockerEntityOptional.isPresent()) {
-            return lockerEntityOptional.get().getId();
-        } else {
-            // 给数据库加一条数据
-            return lockerRepository.save(LockerEntity.builder().name(name).box(box).build()).getId();
-        }
+        return lock(name, box);
     }
 
     /**
@@ -42,21 +46,38 @@ public class Locker {
      */
     public Integer lock(String name) {
 
-        // 给数据库加一条数据
-        Integer id = lockerRepository.save(LockerEntity.builder().name(name).build()).getId();
+        return lock(name, null);
+    }
 
-        // 判断当前线程是否为最小值
-        Integer minId;
-        do {
-            minId = lockerRepository.getMinId(name);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) {
+    private Integer lock(String name, String box) {
+
+        while (!Thread.currentThread().isInterrupted()) {
+            clearExpiredLocks();
+            Integer lockId = tryAcquire(name, box);
+            if (lockId != null) {
+                return lockId;
+            } else {
+                log.debug("Waiting for database lock: {}", name);
+                sleepQuietly();
             }
-        } while (!Objects.equals(id, minId));
+        }
 
-        // 返回id
-        return id;
+        Thread.currentThread().interrupt();
+        throw new IllegalStateException("Interrupted while waiting for database lock: " + name);
+    }
+
+    private Integer tryAcquire(String name, String box) {
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        return transactionTemplate.execute(status -> {
+            try {
+                return lockerRepository.saveAndFlush(buildLocker(name, box)).getId();
+            } catch (DataIntegrityViolationException e) {
+                status.setRollbackOnly();
+                return null;
+            }
+        });
     }
 
     /**
@@ -65,12 +86,14 @@ public class Locker {
     public Boolean isLocked(String name, Integer id) {
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(LOCK_WAIT_INTERVAL_MILLIS);
         } catch (InterruptedException ignored) {
             // 防止没有写进去
+            Thread.currentThread().interrupt();
         }
 
-        return !Objects.equals(lockerRepository.getMinId(name), id);
+        return lockerRepository.findByName(name).map(lockerEntity -> !Objects.equals(lockerEntity.getId(), id))
+            .orElse(false);
     }
 
     /**
@@ -79,12 +102,14 @@ public class Locker {
     public Boolean isLocked(String name, String box) {
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(LOCK_WAIT_INTERVAL_MILLIS);
         } catch (InterruptedException ignored) {
             // 防止没有写进去
+            Thread.currentThread().interrupt();
         }
 
-        return !Objects.equals(lockerRepository.getMinBox(name), box);
+        return lockerRepository.findByName(name).map(lockerEntity -> !Objects.equals(lockerEntity.getBox(), box))
+            .orElse(false);
     }
 
     /**
@@ -110,5 +135,40 @@ public class Locker {
     public void deleteLock(String name) {
 
         lockerRepository.findByName(name).ifPresent(lockerRepository::delete);
+    }
+
+    /**
+     * Clear locks that belong to this application instance and expired locks.
+     */
+    public void clearCurrentOwnerAndExpiredLocks() {
+
+        lockerRepository.deleteAllByOwner(getOwner());
+        clearExpiredLocks();
+    }
+
+    private void clearExpiredLocks() {
+
+        lockerRepository.deleteAllByExpireTimeBefore(LocalDateTime.now());
+    }
+
+    private LockerEntity buildLocker(String name, String box) {
+
+        LocalDateTime now = LocalDateTime.now();
+        return LockerEntity.builder().name(name).box(box).owner(getOwner()).createDateTime(now)
+            .expireTime(now.plusHours(LOCK_EXPIRE_HOURS)).build();
+    }
+
+    private String getOwner() {
+
+        return ClusterNodeOwner.getOwner();
+    }
+
+    private void sleepQuietly() {
+
+        try {
+            Thread.sleep(LOCK_WAIT_INTERVAL_MILLIS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

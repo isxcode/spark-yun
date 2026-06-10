@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.cluster.run;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 
@@ -33,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {IsxAppException.class})
+@Transactional(rollbackFor = Exception.class, noRollbackFor = {IsxAppException.class})
 public class RunAgentCheckService {
 
     private final SparkYunProperties sparkYunProperties;
@@ -45,8 +44,8 @@ public class RunAgentCheckService {
     @Async("sparkYunWorkThreadPool")
     public void run(String clusterNodeId, ScpFileEngineNodeDto scpFileEngineNodeDto, String tenantId, String userId) {
 
-        USER_ID.set(userId);
-        TENANT_ID.set(tenantId);
+        ContextHolder.setUserId(userId);
+        ContextHolder.setTenantId(tenantId);
 
         // 获取节点信息
         Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);

@@ -10,8 +10,9 @@ import com.isxcode.spark.security.user.TenantEntity;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TenantMapper {
 
     @Mapping(target = "checkDateTime", expression = "java(java.time.LocalDateTime.now())")

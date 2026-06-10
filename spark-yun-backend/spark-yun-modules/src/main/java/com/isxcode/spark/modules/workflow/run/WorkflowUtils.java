@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.workflow.run;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -23,7 +22,7 @@ import org.apache.logging.log4j.util.Strings;
 public class WorkflowUtils {
 
     /**
-     * 将数据库字段flowStr转成List<List<String>>结构.
+     * 将数据库字段flowStr转成 {@code List<List<String>>} 结构.
      */
     public static List<List<String>> translateFlow(String flowStr) {
 
@@ -137,7 +136,7 @@ public class WorkflowUtils {
         WorkConfigEntity workConfig) {
 
         return WorkRunContext.builder().datasourceId(workConfig.getDatasourceId()).script(workConfig.getScript())
-            .instanceId(instanceId).tenantId(TENANT_ID.get())
+            .instanceId(instanceId).tenantId(ContextHolder.getTenantId())
             .clusterConfig(JSON.parseObject(workConfig.getClusterConfig(), ClusterConfig.class))
             .syncWorkConfig(JSON.parseObject(workConfig.getSyncWorkConfig(), SyncWorkConfig.class))
             .excelSyncConfig(JSON.parseObject(workConfig.getExcelSyncConfig(), ExcelSyncConfig.class))
@@ -152,8 +151,8 @@ public class WorkflowUtils {
             .syncFlinkConfig(JSON.parseObject(workConfig.getSyncFlinkConfig(), SyncFlinkConfig.class))
             .queryConfig(JSON.parseObject(workConfig.getQueryConfig(), QueryConfig.class))
             .containerId(workConfig.getContainerId()).eventType(eventType).workName(work.getName())
-            .libPackageConfig(JSON.parseArray(workConfig.getLibPackageConfig(), String.class)).userId(USER_ID.get())
-            .build();
+            .libPackageConfig(JSON.parseArray(workConfig.getLibPackageConfig(), String.class))
+            .userId(ContextHolder.getUserId()).build();
     }
 
     /**
@@ -163,7 +162,7 @@ public class WorkflowUtils {
         VipWorkVersionEntity workVersion) {
 
         return WorkRunContext.builder().datasourceId(workVersion.getDatasourceId()).script(workVersion.getScript())
-            .instanceId(instanceId).tenantId(TENANT_ID.get()).userId(USER_ID.get())
+            .instanceId(instanceId).tenantId(ContextHolder.getTenantId()).userId(ContextHolder.getUserId())
             .syncWorkConfig(JSON.parseObject(workVersion.getSyncWorkConfig(), SyncWorkConfig.class))
             .excelSyncConfig(JSON.parseObject(workVersion.getExcelSyncConfig(), ExcelSyncConfig.class))
             .syncRule(JSON.parseObject(workVersion.getSyncRule(), SyncRule.class))

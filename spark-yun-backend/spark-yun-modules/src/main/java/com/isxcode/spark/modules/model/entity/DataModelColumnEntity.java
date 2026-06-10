@@ -2,32 +2,33 @@ package com.isxcode.spark.modules.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import com.isxcode.spark.common.jpa.SyId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_DATA_MODEL_COLUMN SET deleted = 1 WHERE id = ? and version_number = ?")
-@Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_DATA_MODEL_COLUMN")
+@SQLDelete(sql = "UPDATE sy_data_model_column SET deleted = 1 WHERE id = ? and version_number = ?")
+@SQLRestriction("deleted = 0")
+@Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
+@Table(name = "sy_data_model_column")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class DataModelColumnEntity {
 
     @Id
-    @GeneratedValue(generator = "sy-id-generator")
-    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
+    @SyId
     private String id;
 
     private String name;
@@ -66,6 +67,6 @@ public class DataModelColumnEntity {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TENANT_ID.get();
+        this.tenantId = ContextHolder.getTenantId();
     }
 }

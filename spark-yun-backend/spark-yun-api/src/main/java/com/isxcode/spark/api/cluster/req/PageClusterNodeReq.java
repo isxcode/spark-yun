@@ -2,7 +2,7 @@ package com.isxcode.spark.api.cluster.req;
 
 import com.isxcode.spark.backend.api.base.pojos.BasePageRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

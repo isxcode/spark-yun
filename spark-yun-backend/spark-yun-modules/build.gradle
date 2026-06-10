@@ -12,27 +12,27 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    implementation "org.apache.calcite:calcite-core:${CALCITE_VERSION}"
+    implementation libs.calcite.core
 
-    implementation "org.apache.kafka:kafka-clients:${KAFKA_VERSION}"
+    implementation libs.kafka.clients
 
-    implementation "org.apache.groovy:groovy-all:${GROOVY_VERSION}"
+    implementation libs.groovy.all
 
-    implementation "com.aliyun:dysmsapi20170525:${ALI_SMS_VERSION}"
+    implementation libs.aliyun.sms
 
-    implementation 'org.apache.poi:poi-ooxml:5.2.5'
-    implementation 'org.apache.xmlbeans:xmlbeans:5.2.0'
-    implementation 'pull-parser:pull-parser:2.1.10'
+    implementation libs.poi.ooxml
+    implementation libs.xmlbeans
+    implementation libs.pull.parser
 
-    implementation 'commons-dbutils:commons-dbutils:1.7'
+    implementation libs.commons.dbutils
 
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-    implementation 'org.apache.httpcomponents.core5:httpcore5:5.2.1'
+    implementation libs.httpclient5
+    implementation libs.httpcore5
 
     // quartz
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
-    implementation 'com.mchange:c3p0:0.9.5.5'
+    implementation libs.c3p0
 
     // jsqlparser
-    implementation("com.github.jsqlparser:jsqlparser:4.8")
+    implementation(libs.jsqlparser)
 }

@@ -128,11 +128,11 @@ const transform: AxiosTransform = {
   // 响应错误处理
   responseInterceptorsCatch: (error: any, options: RequestOptions) => {
     const {
-      code, message, response 
+      code, message, response
     } = error || {
     }
     const {
-      showErrorMessage, checkStatus 
+      showErrorMessage, checkStatus
     } = options
 
     try {

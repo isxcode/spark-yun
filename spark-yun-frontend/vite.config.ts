@@ -10,7 +10,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { readFileSync } from 'node:fs'
 
 // 读取VERSION文件
-const version = readFileSync('./VERSION', 'utf-8').trim()
+const version = readFileSync('../VERSION', 'utf-8').trim()
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,9 +20,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0'
   },
-  plugins: [ 
-    vue(), 
-    vueJsx(), 
+  plugins: [
+    vue(),
+    vueJsx(),
     viteStaticCopy({
       targets: [
         {

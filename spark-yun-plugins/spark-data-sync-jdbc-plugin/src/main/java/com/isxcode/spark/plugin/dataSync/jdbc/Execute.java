@@ -19,7 +19,7 @@ import java.util.*;
 
 public class Execute {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         PluginReq pluginReq = parse(args);
 
@@ -32,7 +32,7 @@ public class Execute {
                         sparkSession.udf().registerJava(e.getFuncName(), e.getClassName(),
                             getResultType(e.getResultType()));
                     } else if (FuncType.UDAF.equals(e.getType())) {
-                        sparkSession.udf().registerJavaUDAF(e.getFuncName(), e.getClassName());
+                        registerJavaUdaf(sparkSession, e.getFuncName(), e.getClassName());
                     }
                 });
             }
@@ -250,49 +250,49 @@ public class Execute {
         return database + ".";
     }
 
-    public static String getHashPredicate(String datasourceType, String PartitionColumn, Integer NumPartitions,
+    public static String getHashPredicate(String datasourceType, String partitionColumn, Integer numPartitions,
         Integer startIndex, Integer endIndex) {
 
         switch (datasourceType) {
             case DatasourceType.MYSQL:
             case DatasourceType.TIDB:
-                return "CRC32(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                return "CRC32(`" + partitionColumn + "`) % " + numPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.ORACLE:
-                return "MOD(ORA_HASH(\"" + PartitionColumn + "\")," + NumPartitions + ") in (" + startIndex + ",-"
+                return "MOD(ORA_HASH(\"" + partitionColumn + "\")," + numPartitions + ") in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.DM:
-                return "ORA_HASH(\"" + PartitionColumn + "\") % " + NumPartitions + " in (" + startIndex + ",-"
+                return "ORA_HASH(\"" + partitionColumn + "\") % " + numPartitions + " in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.OCEANBASE:
-                return "ORA_HASH(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                return "ORA_HASH(`" + partitionColumn + "`) % " + numPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.SQL_SERVER:
-                return "CHECKSUM(" + PartitionColumn + ") % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                return "CHECKSUM(" + partitionColumn + ") % " + numPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.POSTGRE_SQL:
             case DatasourceType.OPEN_GAUSS:
             case DatasourceType.GAUSS:
-                return "hashtext(cast(\"" + PartitionColumn + "\" as TEXT)) % " + NumPartitions + " in (" + startIndex
+                return "hashtext(cast(\"" + partitionColumn + "\" as TEXT)) % " + numPartitions + " in (" + startIndex
                     + ",-" + endIndex + ")";
             case DatasourceType.CLICKHOUSE:
-                return "sipHash64(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-"
+                return "sipHash64(`" + partitionColumn + "`) % " + numPartitions + " in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.HIVE:
-                return "hash(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-" + endIndex
+                return "hash(`" + partitionColumn + "`) % " + numPartitions + " in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.HANA_SAP:
-                return "MOD(HASH_SHA256(`" + PartitionColumn + "`), " + NumPartitions + ") in (" + startIndex + ",-"
+                return "MOD(HASH_SHA256(`" + partitionColumn + "`), " + numPartitions + ") in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.DORIS:
             case DatasourceType.STAR_ROCKS:
-                return "murmur_hash3_32(`" + PartitionColumn + "`) % " + NumPartitions + " in (" + startIndex + ",-"
+                return "murmur_hash3_32(`" + partitionColumn + "`) % " + numPartitions + " in (" + startIndex + ",-"
                     + endIndex + ")";
             case DatasourceType.DB2:
-                return "MOD(hash8(`" + PartitionColumn + "`)," + NumPartitions + ") in (" + startIndex + ",-" + endIndex
+                return "MOD(hash8(`" + partitionColumn + "`)," + numPartitions + ") in (" + startIndex + ",-" + endIndex
                     + ")";
             case DatasourceType.H2:
-                return "MOD(ORA_HASH(`" + PartitionColumn + "`), " + NumPartitions + ") in (" + startIndex + ",-"
+                return "MOD(ORA_HASH(`" + partitionColumn + "`), " + numPartitions + ") in (" + startIndex + ",-"
                     + endIndex + ")";
             default:
                 throw new RuntimeException("暂不支持的数据库");
@@ -317,6 +317,16 @@ public class Execute {
                 return DataTypes.TimestampType;
             default:
                 return DataTypes.StringType;
+        }
+    }
+
+    private static void registerJavaUdaf(SparkSession sparkSession, String funcName, String className) {
+
+        try {
+            Object udaf = Class.forName(className).getDeclaredConstructor().newInstance();
+            sparkSession.udf().register(funcName, (org.apache.spark.sql.expressions.UserDefinedAggregateFunction) udaf);
+        } catch (Exception e) {
+            throw new RuntimeException("注册自定义聚合函数失败: " + className, e);
         }
     }
 

@@ -24,7 +24,7 @@ import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(noRollbackFor = {IsxAppException.class})
+@Transactional(rollbackFor = Exception.class, noRollbackFor = {IsxAppException.class})
 public class RunAgentCleanService {
 
     private final SparkYunProperties sparkYunProperties;

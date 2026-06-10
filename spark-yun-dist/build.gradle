@@ -1,9 +1,9 @@
 dependencies {
     // dbutils
-    implementation 'commons-dbutils:commons-dbutils:1.7'
+    implementation libs.commons.dbutils
 
     // hadoop-hdfs-client
-    implementation("org.apache.hadoop:hadoop-hdfs-client:${HADOOP_VERSION}") {
+    implementation(libs.hadoop.hdfs.client) {
         isForce()
     }
 }
@@ -143,23 +143,6 @@ tasks.register('copy_version') {
         def process = ['git', 'branch', '--show-current'].execute(null, rootDir)
         process.waitFor()
         file("${rootDir}/VERSION").text = process.text.trim()
-
-        // 写入到版本文件中
-        delete '../spark-yun-backend/spark-yun-main/src/main/resources/VERSION'
-        delete '../spark-yun-frontend/VERSION'
-        delete '../docs/VERSION'
-        copy {
-            from '../VERSION'
-            into '../spark-yun-backend/spark-yun-main/src/main/resources/'
-        }
-        copy {
-            from '../VERSION'
-            into '../spark-yun-frontend/'
-        }
-        copy {
-            from '../VERSION'
-            into '../docs/'
-        }
     }
 }
 
@@ -172,7 +155,7 @@ tasks.register('make', GradleBuild) {
 // 添加依赖
 dependencies {
 
-    implementation 'com.sparkjava:spark-core:2.9.4'
+    implementation libs.sparkjava.core
 
-    implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.51.v20230217'
+    implementation libs.jetty.server
 }

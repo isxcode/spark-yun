@@ -1,15 +1,22 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
+import com.isxcode.spark.common.security.ContextHolder;
+import com.isxcode.spark.common.security.CurrentUser;
+
 
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
 import com.isxcode.spark.api.tenant.req.*;
+import com.isxcode.spark.api.tenant.res.ChooseTenantRes;
 import com.isxcode.spark.api.tenant.res.GetTenantRes;
 import com.isxcode.spark.api.tenant.res.PageTenantRes;
 import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
+import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
+import com.isxcode.spark.common.security.RefreshUserToken;
+import com.isxcode.spark.common.utils.jwt.JwtUtils;
 import com.isxcode.spark.modules.license.repository.LicenseStore;
 import com.isxcode.spark.security.user.*;
 import com.isxcode.spark.modules.tenant.mapper.TenantMapper;
@@ -19,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +38,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TenantBizService {
+
+    private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
 
     private final TenantRepository tenantRepository;
 
@@ -45,6 +54,8 @@ public class TenantBizService {
     private final WorkflowRepository workflowRepository;
 
     private final LicenseStore licenseStore;
+
+    private final IsxAppProperties isxAppProperties;
 
     public void addTenant(AddTenantReq tetAddTenantReq) {
 
@@ -117,11 +128,11 @@ public class TenantBizService {
     public List<QueryUserTenantRes> queryUserTenant() {
 
         List<String> tenantIds;
-        if ("admin_id".equals(USER_ID.get())) {
+        if ("admin_id".equals(ContextHolder.getUserId())) {
             List<TenantEntity> allTenantList = tenantRepository.findAll();
             tenantIds = allTenantList.stream().map(TenantEntity::getId).collect(Collectors.toList());
         } else {
-            List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(USER_ID.get());
+            List<TenantUserEntity> tenantUserEntities = tenantUserRepository.findAllByUserId(ContextHolder.getUserId());
             tenantIds = tenantUserEntities.stream().map(TenantUserEntity::getTenantId).collect(Collectors.toList());
             if (tenantUserEntities.isEmpty()) {
                 throw new IsxAppException("请管理员添加进入租户");
@@ -129,7 +140,7 @@ public class TenantBizService {
         }
 
         // 查询用户最近一次租户
-        UserEntity userEntity = userRepository.findById(USER_ID.get()).get();
+        UserEntity userEntity = userRepository.findById(ContextHolder.getUserId()).get();
         if (!tenantIds.isEmpty() && !tenantIds.contains(userEntity.getCurrentTenantId())) {
             userEntity.setCurrentTenantId(tenantIds.get(0));
             // 更新用户最近一次租户
@@ -159,12 +170,10 @@ public class TenantBizService {
             PageRequest.of(tetQueryTenantReq.getPage(), tetQueryTenantReq.getPageSize()));
 
         Page<PageTenantRes> result = tenantEntityPage.map(tenantMapper::tenantEntityToTetQueryTenantRes);
-        JPA_TENANT_MODE.set(false);
         result.getContent().forEach(e -> {
-            e.setUsedWorkflowNum(String.valueOf(workflowRepository.countByTenantId(e.getId())));
+            e.setUsedWorkflowNum(String.valueOf(allData(() -> workflowRepository.countByTenantId(e.getId()))));
             e.setUsedMemberNum(String.valueOf(tenantUserRepository.countByTenantId(e.getId())));
         });
-        JPA_TENANT_MODE.set(true);
         return result;
     }
 
@@ -214,6 +223,10 @@ public class TenantBizService {
     }
 
     public void updateTenantForTenantAdmin(UpdateTenantForTenantAdminReq tetUpdateTenantByTenantAdminReq) {
+
+        if (!tetUpdateTenantByTenantAdminReq.getId().equals(ContextHolder.getTenantId())) {
+            throw new IsxAppException("无权操作其他租户");
+        }
 
         // 判断租户是否存在
         Optional<TenantEntity> tenantEntityOptional =
@@ -277,10 +290,8 @@ public class TenantBizService {
         TenantEntity tenantEntity = tenantEntityOptional.get();
 
         // 统计作业流数量
-        JPA_TENANT_MODE.set(false);
-        long usedWorkflowNum = workflowRepository.countByTenantId(checkTenantReq.getTenantId());
+        long usedWorkflowNum = allData(() -> workflowRepository.countByTenantId(checkTenantReq.getTenantId()));
         tenantEntity.setUsedWorkflowNum(usedWorkflowNum);
-        JPA_TENANT_MODE.set(true);
 
         // 统计成员数量
         long memberNum = tenantUserRepository.countByTenantId(checkTenantReq.getTenantId());
@@ -291,7 +302,7 @@ public class TenantBizService {
         tenantRepository.save(tenantEntity);
     }
 
-    public void chooseTenant(ChooseTenantReq chooseTenantReq) {
+    public ChooseTenantRes chooseTenant(ChooseTenantReq chooseTenantReq) {
 
         Optional<TenantEntity> tenantEntityOptional = tenantRepository.findById(chooseTenantReq.getTenantId());
         if (!tenantEntityOptional.isPresent()) {
@@ -307,7 +318,7 @@ public class TenantBizService {
             }
         }
 
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -320,6 +331,24 @@ public class TenantBizService {
         UserEntity userEntity = userEntityOptional.get();
         userEntity.setCurrentTenantId(chooseTenantReq.getTenantId());
         userRepository.save(userEntity);
+
+        String role = userEntity.getRoleCode();
+        if (!RoleType.SYS_ADMIN.equals(role)) {
+            TenantUserEntity tenantUser =
+                tenantUserRepository.findByTenantIdAndUserId(chooseTenantReq.getTenantId(), userEntity.getId())
+                    .orElseThrow(() -> new IsxAppException("用户不在租户中"));
+            role = tenantUser.getRoleCode();
+        }
+
+        String token = JwtUtils.encrypt(isxAppProperties.getAesSlat(),
+            new CurrentUser(userEntity.getId(), chooseTenantReq.getTenantId()), isxAppProperties.getJwtKey(),
+            isxAppProperties.getExpirationMin());
+        String refreshToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(),
+            new RefreshUserToken(userEntity.getId(), chooseTenantReq.getTenantId(), REFRESH_TOKEN),
+            isxAppProperties.getJwtKey(), isxAppProperties.getRefreshExpirationMin());
+
+        return ChooseTenantRes.builder().token(token).refreshToken(refreshToken).tenantId(chooseTenantReq.getTenantId())
+            .role(role).build();
     }
 
     public GetTenantRes getTenant(GetTenantReq getTenantReq) {
@@ -330,7 +359,7 @@ public class TenantBizService {
         }
         TenantEntity tenantEntity = tenantEntityOptional.get();
 
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -343,7 +372,7 @@ public class TenantBizService {
 
         // 判断用户是否在租户中
         Optional<TenantUserEntity> tenantUserEntityOptional =
-            tenantUserRepository.findByTenantIdAndUserId(getTenantReq.getTenantId(), USER_ID.get());
+            tenantUserRepository.findByTenantIdAndUserId(getTenantReq.getTenantId(), ContextHolder.getUserId());
         if (!tenantUserEntityOptional.isPresent()) {
             throw new IsxAppException("不在租户中");
         }

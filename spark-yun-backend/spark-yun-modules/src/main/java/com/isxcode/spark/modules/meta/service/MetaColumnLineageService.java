@@ -8,16 +8,17 @@ import com.isxcode.spark.modules.work.run.WorkRunContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class MetaColumnLineageService {
 
@@ -32,8 +33,8 @@ public class MetaColumnLineageService {
         }
 
         // 异步环境
-        TENANT_ID.set(workRunContext.getTenantId());
-        USER_ID.set(workRunContext.getUserId());
+        ContextHolder.setTenantId(workRunContext.getTenantId());
+        ContextHolder.setUserId(workRunContext.getUserId());
 
         // 同步血缘
         SyncWorkConfig syncWorkConfig = workRunContext.getSyncWorkConfig();

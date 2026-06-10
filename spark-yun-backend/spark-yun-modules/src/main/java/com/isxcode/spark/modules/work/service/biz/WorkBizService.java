@@ -1,5 +1,9 @@
 package com.isxcode.spark.modules.work.service.biz;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
+import com.isxcode.spark.common.security.ContextHolder;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONPath;
@@ -40,13 +44,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.isxcode.spark.common.config.CommonConfig.*;
 import static com.isxcode.spark.modules.workflow.run.WorkflowUtils.genWorkRunContext;
 
 @Service
@@ -214,7 +218,7 @@ public class WorkBizService {
         return getWork(GetWorkReq.builder().workId(work.getId()).build());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateWork(UpdateWorkReq updateWorkReq) {
 
         WorkEntity work = workService.getWorkEntity(updateWorkReq.getId());
@@ -286,7 +290,7 @@ public class WorkBizService {
         workRepository.delete(work);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public WorkInstanceEntity genWorkInstance(String workId) {
 
         WorkInstanceEntity workInstanceEntity = new WorkInstanceEntity();
@@ -347,7 +351,9 @@ public class WorkBizService {
 
         if (WorkType.QUERY_JDBC_SQL.equals(workEntity.getWorkType())
             || WorkType.PRQL.equals(workEntity.getWorkType())) {
-            return new GetDataRes(JSON.parseArray(workInstanceEntity.getResultData()), null, null);
+            List<List<String>> data =
+                JSON.parseObject(workInstanceEntity.getResultData(), new TypeReference<List<List<String>>>() {});
+            return new GetDataRes(data, null, null);
         }
 
         return JSON.parseObject(workInstanceEntity.getResultData(), GetDataRes.class);
@@ -553,11 +559,9 @@ public class WorkBizService {
 
     public Page<QueryInstanceRes> queryInstance(QueryInstanceReq woiQueryInstanceReq) {
 
-        JPA_TENANT_MODE.set(false);
-        Page<Map> instancePage = workInstanceRepository.searchAll(TENANT_ID.get(),
+        Page<Map> instancePage = allData(() -> workInstanceRepository.searchAll(ContextHolder.getTenantId(),
             woiQueryInstanceReq.getSearchKeyWord(), woiQueryInstanceReq.getExecuteStatus(),
-            PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+            PageRequest.of(woiQueryInstanceReq.getPage(), woiQueryInstanceReq.getPageSize())));
 
         return instancePage.map(workMapper::mapToWoiQueryInstanceRes);
     }
@@ -606,8 +610,9 @@ public class WorkBizService {
             GetWorkInstanceValuePathRes metaWorkInstance = new GetWorkInstanceValuePathRes();
             metaWorkInstance.setJsonPath(k);
             metaWorkInstance.setValue(String.valueOf(v));
-            metaWorkInstance.setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k
-                + "','" + Base64.getEncoder().encodeToString(String.valueOf(v).getBytes()) + "')]]");
+            metaWorkInstance
+                .setCopyValue("#[[get_json_value('${qing." + workEntity.getId() + ".result_data}','" + k + "','"
+                    + Base64.getEncoder().encodeToString(String.valueOf(v).getBytes(StandardCharsets.UTF_8)) + "')]]");
             result.add(metaWorkInstance);
         });
         return result;
@@ -641,8 +646,9 @@ public class WorkBizService {
             result.setValue("");
         }
         result.setCopyValue("#[[get_regex_value('${qing." + workEntity.getId() + ".result_data}','"
-            + Base64.getEncoder().encodeToString(getWorkInstanceRegexPathReq.getRegexStr().getBytes()) + "','"
-            + Base64.getEncoder().encodeToString(result.getValue().getBytes()) + "')]]");
+            + Base64.getEncoder()
+                .encodeToString(getWorkInstanceRegexPathReq.getRegexStr().getBytes(StandardCharsets.UTF_8))
+            + "','" + Base64.getEncoder().encodeToString(result.getValue().getBytes(StandardCharsets.UTF_8)) + "')]]");
         return result;
     }
 
@@ -686,7 +692,7 @@ public class WorkBizService {
 
         result.setCopyValue("#[[get_table_value('${qing." + workEntity.getId() + ".result_data}',"
             + getWorkInstanceTablePathReq.getTableRow() + "," + getWorkInstanceTablePathReq.getTableCol() + ",'"
-            + Base64.getEncoder().encodeToString(result.getValue().getBytes()) + "')]]");
+            + Base64.getEncoder().encodeToString(result.getValue().getBytes(StandardCharsets.UTF_8)) + "')]]");
 
         return result;
     }

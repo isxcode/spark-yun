@@ -37,15 +37,14 @@ spring:
     location: classpath:logo.txt
 
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 10
       max-active: 200
       min-idle: 10
       max-wait: 30000
       test-while-idle: true
-      filters: stat,wall,log4j2
-      validationQuery: select 'x'
+      validation-query: select 1
+      filters: stat,log4j2
       stat-view-servlet:
         enabled: true
         allow:
@@ -55,12 +54,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
-      naming:
-        physical-strategy: com.isxcode.spark.config.JpaTableUpperCaseStrategy
-    properties:
-      hibernate:
-        session_factory:
-          statement_inspector: com.isxcode.spark.config.JpaTenantInterceptor
 
   mvc:
     view:
@@ -82,13 +75,16 @@ spring:
     jdbc:
       initialize-schema: never
     properties:
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.jobStore.isClustered: true
+      org.quartz.jobStore.clusterCheckinInterval: 10000
       org.quartz.threadPool.threadCount: 50
       org.quartz.threadPool.threadPriority: 5
       org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
       org.quartz.jobStore.misfireThreshold: 300000 
 
   cache:
-    type: simple
+    type: none
 
   thymeleaf:
     check-template-location: false
@@ -128,31 +124,32 @@ jasypt:
     property:
       suffix: )
       prefix: ENC(
+    password: zhiqingyun
 
-isx-app:
-  admin-url:
-    - /swagger-ui/** # http://localhost:8080/swagger-ui/index.html
-    - /v3/** # swagger地址
-    - /h2-console/** # http://localhost:8080/h2-console
-    - /druid/** # http://localhost:8080/druid/index.html
-    - /**/developer/** # 开发者接口
-  anonymous-url:
-    - / # 让页面可以访问前端
-    - /static/** # 放行前端资源文件
-    - /favicon.ico # 放行网站的logo
-    - /login # 放行登录接口
-    - /ssoauth # 单点登录
-    - /auth # 放行登录接口
-    - /share/** # 分享表单
-    - /dashboard/** # 分享大屏
-    - /**/open/** # 放行所有的开放接口
-    - /vip/**/open/** # 放行所有的开放接口
-    - /**/api/** # 放行所有自定义接口
-    - /**/api/**/** # 放行所有自定义接口
-    - /**/api/**/**/** # 放行所有自定义接口
-    - /home/** # 放行全部前端的刷新访问路径
+app:
+  admin-role-url:
+    - /swagger-ui/**
+    - /v3/**
+    - /h2-console/**
+    - /druid/**
+    - /*/developer/**
   anonymous-role-url:
-    - /vip/form/getFormConfigForAnonymous # 匿名者获取表单配置
+    - /vip/form/getFormConfigForAnonymous
+  open-url:
+    - /
+    - /static/**
+    - /home/**
+    - /home*/**
+    - /favicon.ico
+    - /login
+    - /ssoauth
+    - /auth
+    - /share/**
+    - /dashboard/**
+    - /*/open/**
+    - /vip/*/open/**
+    - /*/api/**
+  refresh-expiration-min: 10080
   app-name: app1
   nodes:
     app1 : localhost

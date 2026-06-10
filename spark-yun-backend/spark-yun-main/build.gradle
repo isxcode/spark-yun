@@ -3,16 +3,28 @@ dependencies {
     api(project(':spark-yun-backend:spark-yun-modules'))
     api(project(':spark-yun-vip:spark-yun-backend'))
 
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-    implementation "com.alibaba:druid-spring-boot-starter:${DRUID_VERSION}"
+    implementation libs.druid.spring.boot.starter
 
-    implementation "org.flywaydb:flyway-core:${FLYWAY_VERSION}"
-    implementation "org.flywaydb:flyway-mysql:${FLYWAY_VERSION}"
+    implementation libs.flyway.core
+    implementation libs.flyway.mysql
+    implementation libs.flyway.postgresql
+
+    runtimeOnly 'com.h2database:h2'
 }
 
 bootJar {
+    enabled = true
+    mainClass = 'com.isxcode.spark.SparkYunApplication'
     archiveFileName = 'zhiqingyun.jar'
+}
+
+processResources {
+    from(rootDir.getAbsolutePath() + '/VERSION') {
+        into '.'
+    }
 }
 
 bootRun {

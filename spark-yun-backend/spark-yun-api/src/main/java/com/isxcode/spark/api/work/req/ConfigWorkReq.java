@@ -1,9 +1,10 @@
 package com.isxcode.spark.api.work.req;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.isxcode.spark.api.work.dto.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
@@ -50,10 +51,12 @@ public class ConfigWorkReq {
     private List<String> funcList;
 
     @Schema(title = "依赖选择")
-    private List<String> LibList;
+    @JsonProperty("LibList")
+    private List<String> libList;
 
     @Schema(title = "依赖包配置")
-    private List<String> LibPackageList;
+    @JsonProperty("LibPackageList")
+    private List<String> libPackageList;
 
     @Schema(title = "容器id", example = "sy_fd34e4a53db640f5943a4352c4d549b9")
     private String containerId;

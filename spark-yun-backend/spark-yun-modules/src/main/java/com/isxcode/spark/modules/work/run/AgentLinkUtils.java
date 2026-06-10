@@ -64,7 +64,7 @@ public class AgentLinkUtils {
             } catch (HttpServerErrorException e) {
                 log.error("请求代理异常,第{}次尝试 : {}", attempt, e.getMessage(), e);
 
-                if (HttpStatus.BAD_GATEWAY.value() == e.getRawStatusCode()) {
+                if (HttpStatus.BAD_GATEWAY.value() == e.getStatusCode().value()) {
                     throw new WorkRunException("提交作业异常 : 无法访问节点服务器,请检查服务器防火墙或者计算集群");
                 }
 

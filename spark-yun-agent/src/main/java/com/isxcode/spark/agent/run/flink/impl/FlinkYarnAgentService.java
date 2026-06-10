@@ -66,8 +66,8 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         } else {
             flinkConfig.set(PipelineOptions.JARS, singletonList(submitWorkReq.getAgentHomePath() + File.separator
                 + "plugins" + File.separator + submitWorkReq.getFlinkSubmit().getAppResource()));
-            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, singletonList(
-                Base64.getEncoder().encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes())));
+            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, singletonList(Base64.getEncoder()
+                .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8))));
         }
 
         flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName());
@@ -78,16 +78,8 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, appName);
 
         submitWorkReq.getFlinkSubmit().getConf().forEach((k, v) -> {
-            if (v instanceof String) {
+            if (v != null) {
                 flinkConfig.setString(k, String.valueOf(v));
-            } else if (v instanceof Boolean) {
-                flinkConfig.setBoolean(k, Boolean.parseBoolean(String.valueOf(v)));
-            } else if (v instanceof Double) {
-                flinkConfig.setDouble(k, Double.parseDouble(String.valueOf(v)));
-            } else if (v instanceof Integer) {
-                flinkConfig.setInteger(k, Integer.parseInt(String.valueOf(v)));
-            } else if (v instanceof Long) {
-                flinkConfig.setLong(k, Long.parseLong(String.valueOf(v)));
             } else {
                 throw new IllegalArgumentException("Unsupported type for key: " + k + ", value: " + v);
             }
@@ -105,7 +97,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         yarn.forEach((k, v) -> flinkConfig.setString("flink.yarn" + k, v));
 
         // 添加flink dist
-        flinkConfig.set(YarnConfigOptions.FLINK_DIST_JAR, submitWorkReq.getFlinkHome() + "/lib/flink-dist-1.18.1.jar");
+        flinkConfig.set(YarnConfigOptions.FLINK_DIST_JAR, submitWorkReq.getFlinkHome() + "/lib/flink-dist-2.2.0.jar");
 
         // 初始化要加载到lib包
         List<String> libFile = new ArrayList<>();
@@ -117,7 +109,7 @@ public class FlinkYarnAgentService implements FlinkAgentService {
         File[] jarFiles = new File(submitWorkReq.getAgentHomePath() + File.separator + "lib").listFiles();
         if (jarFiles != null) {
             for (File jarFile : jarFiles) {
-                if (!"hive-jdbc-3.1.3-standalone.jar".equals(jarFile.getName())
+                if (!"hive-jdbc-4.1.0-standalone.jar".equals(jarFile.getName())
                     && !"hive-jdbc-uber-2.6.3.0-235.jar".equals(jarFile.getName())) {
                     libFile.add(jarFile.getPath());
                 }

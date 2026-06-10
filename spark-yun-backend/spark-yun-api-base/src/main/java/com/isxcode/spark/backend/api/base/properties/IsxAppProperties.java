@@ -10,19 +10,19 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "isx-app")
+@ConfigurationProperties(prefix = "app")
 @EnableConfigurationProperties(IsxAppProperties.class)
 public class IsxAppProperties {
 
     /**
      * 需要ADMIN权限访问路径.
      */
-    private List<String> adminUrl;
+    private List<String> adminRoleUrl;
 
     /**
      * 任何人都可以访问路径.
      */
-    private List<String> anonymousUrl;
+    private List<String> openUrl;
 
     /**
      * 匿名者权限都可以访问路径.
@@ -43,6 +43,11 @@ public class IsxAppProperties {
      * jwt超时.(分钟)
      */
     private Integer expirationMin = 1440;
+
+    /**
+     * refreshToken超时.(分钟)
+     */
+    private Integer refreshExpirationMin = 10080;
 
     /**
      * 资源目录.

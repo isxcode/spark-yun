@@ -5,10 +5,11 @@ import com.isxcode.spark.api.layer.res.LayerPageRes;
 import com.isxcode.spark.api.layer.res.RecursiveLayerRes;
 import com.isxcode.spark.modules.layer.entity.LayerEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LayerMapper {
 
     LayerEntity addLayerReqToLayerEntity(AddLayerReq addLayerReq);

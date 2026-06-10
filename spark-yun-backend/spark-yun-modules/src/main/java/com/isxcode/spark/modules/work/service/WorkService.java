@@ -23,7 +23,7 @@ import org.quartz.Scheduler;
 import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,7 +49,7 @@ public class WorkService {
 
     private final WorkExecutorFactory workExecutorFactory;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void abortWork(String workInstanceId) {
 
         // 通过作业实例查询作业类型
@@ -103,6 +103,11 @@ public class WorkService {
             // 进入每个作业单独的中止逻辑
             WorkEntity workEntity = getWorkEntity(workInstance.getWorkId());
             WorkExecutor workExecutor = workExecutorFactory.create(workEntity.getWorkType());
+            if (!workExecutor.hasLocalThread(workEvent.getId())) {
+                locker.unlock(lockKey);
+                scheduler.resumeTrigger(TriggerKey.triggerKey(QuartzPrefix.WORK_RUN_PROCESS + workEvent.getId()));
+                return;
+            }
             boolean canStop = workExecutor.syncAbort(workInstance, workEvent);
 
             // 无法中止

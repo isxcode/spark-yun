@@ -1,5 +1,6 @@
 package com.isxcode.spark.security.main;
 
+import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import com.isxcode.spark.security.user.TenantRepository;
 import com.isxcode.spark.security.user.TenantUserRepository;
@@ -7,18 +8,24 @@ import com.isxcode.spark.security.user.UserRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
@@ -30,7 +37,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig {
 
     private final IsxAppProperties isxAppProperties;
@@ -41,16 +48,30 @@ public class WebSecurityConfig {
 
     private final TenantRepository tenantRepository;
 
+    @Bean
     public UserDetailsService userDetailsServiceBean() {
 
         return new UserDetailsServiceImpl(userRepository, tenantUserRepository, tenantRepository);
     }
 
-    public AuthenticationManager authenticationManagerBean() {
+    @Bean
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
 
-        List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-        authenticationProviders.add(new AuthenticationProviderImpl(userDetailsServiceBean()));
-        return new AuthenticationManagerImpl(authenticationProviders);
+        return new ProviderManager(new AuthenticationProviderImpl(userDetailsService));
+    }
+
+    @Bean
+    public RestSecurityExceptionHandler restSecurityExceptionHandler() {
+
+        return new RestSecurityExceptionHandler();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager,
+        AuthenticationEntryPoint authenticationEntryPoint) {
+
+        return new JwtAuthenticationFilter(authenticationManager, openUrlPatterns(), isxAppProperties,
+            authenticationEntryPoint);
     }
 
     @Bean
@@ -62,35 +83,24 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter,
+        AuthenticationEntryPoint authenticationEntryPoint, AccessDeniedHandler accessDeniedHandler) throws Exception {
 
         http.cors(Customizer.withDefaults());
-        http.csrf().disable();
-        http.headers().cacheControl();
-        http.headers().frameOptions().disable();
-        http.sessionManagement().disable();
-
-        // 访问h2,swagger，druid界面需要的权限
-        http.authorizeRequests().antMatchers(isxAppProperties.getAdminUrl().toArray(new String[0])).hasRole("ADMIN");
-
-        // 匿名者才可以访问的指定接口
-        http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousRoleUrl().toArray(new String[0]))
-            .hasRole("ANONYMOUS");
-
-        // 任何人都可以访问的权限
-        http.authorizeRequests().antMatchers(isxAppProperties.getAnonymousUrl().toArray(new String[0])).permitAll();
-
-        // 需要token才可以访问的地址
-        List<String> excludePaths = new ArrayList<>();
-        excludePaths.addAll(isxAppProperties.getAdminUrl());
-        excludePaths.addAll(isxAppProperties.getAnonymousUrl());
-
-        // token
-        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean(), excludePaths, isxAppProperties),
-            UsernamePasswordAuthenticationFilter.class);
-        http.authorizeRequests().antMatchers("/**").authenticated();
-
-        http.formLogin();
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+            .accessDeniedHandler(accessDeniedHandler));
+        http.authorizeHttpRequests(
+            authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                .requestMatchers(toPatterns(openUrlPatterns())).permitAll()
+                .requestMatchers(toPatterns(isxAppProperties.getAdminRoleUrl())).hasAuthority(RoleType.SYS_ADMIN)
+                .requestMatchers(toPatterns(isxAppProperties.getAnonymousRoleUrl()))
+                .hasAuthority(RoleType.ROLE_ANONYMOUS).anyRequest().authenticated());
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.formLogin(AbstractHttpConfigurer::disable);
+        http.httpBasic(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
@@ -107,5 +117,19 @@ public class WebSecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    private String[] toPatterns(List<String> patterns) {
+
+        return patterns == null ? new String[0] : patterns.toArray(new String[0]);
+    }
+
+    private List<String> openUrlPatterns() {
+
+        List<String> patterns = new ArrayList<>();
+        if (isxAppProperties.getOpenUrl() != null) {
+            patterns.addAll(isxAppProperties.getOpenUrl());
+        }
+        return List.copyOf(patterns);
     }
 }

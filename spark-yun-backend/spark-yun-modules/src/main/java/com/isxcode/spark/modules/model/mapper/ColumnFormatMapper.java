@@ -7,8 +7,9 @@ import com.isxcode.spark.api.model.res.ColumnFormatPageRes;
 import com.isxcode.spark.modules.model.entity.ColumnFormatEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ColumnFormatMapper {
 
     ColumnFormatEntity addColumnFormatReqToColumnFormatEntity(AddColumnFormatReq addColumnFormatReq);

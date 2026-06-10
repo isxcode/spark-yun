@@ -4,79 +4,79 @@ dependencies {
     api(project(':spark-yun-backend:spark-yun-api'))
 
     // spark-streaming
-    implementation "org.apache.spark:spark-streaming_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.streaming
 
     // spark-streaming-kafka
-    implementation "org.apache.spark:spark-streaming-kafka-0-10_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.streaming.kafka010
 
     // spark-core
-    implementation "org.apache.spark:spark-core_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.core
 
     // spark-catalyst
-    implementation "org.apache.spark:spark-catalyst_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.catalyst
 
     // spark-sql
-    implementation "org.apache.spark:spark-sql_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.sql
 
     // spark-hive
-    implementation "org.apache.spark:spark-hive_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.hive
 
     // spark-network-common
-    implementation "org.apache.spark:spark-network-common_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.network.common
 
     // spark-network-shuffle
-    implementation "org.apache.spark:spark-network-shuffle_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.network.shuffle
 
     // spark-yarn
-    implementation "org.apache.spark:spark-yarn_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.yarn
 
     // spark-kvstore
-    implementation "org.apache.spark:spark-kvstore_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.kvstore
 
     // spark-launcher
-    implementation "org.apache.spark:spark-launcher_${SPARK_SCALA_VERSION}:${SPARK_VERSION}"
+    implementation libs.spark.launcher
 
     // jersey-container-servlet-core
-    implementation "org.glassfish.jersey.containers:jersey-container-servlet-core:2.27"
+    implementation libs.jersey.container.servlet.core
 
     // hive-common
-    implementation "org.apache.hive:hive-common:${HIVE_VERSION}"
+    implementation libs.hive.common
 
     // hadoop-yarn-client
-    implementation "org.apache.hadoop:hadoop-yarn-client:${HADOOP_VERSION}"
+    implementation libs.hadoop.yarn.client
 
     // hadoop-hdfs
-    implementation "org.apache.hadoop:hadoop-hdfs:${HADOOP_VERSION}"
+    implementation libs.hadoop.hdfs
 
     // hadoop-mapreduce-client-core
-    implementation "org.apache.hadoop:hadoop-mapreduce-client-core:${HADOOP_VERSION}"
+    implementation libs.hadoop.mapreduce.client.core
 
     // json4s-jackson
-    implementation "org.json4s:json4s-jackson_${SPARK_SCALA_VERSION}:${JSON4S_VERSION}"
+    implementation libs.json4s.jackson
 
     // json4s-core
-    implementation "org.json4s:json4s-core_${SPARK_SCALA_VERSION}:${JSON4S_VERSION}"
+    implementation libs.json4s.core
 
     // janino
-    implementation "org.codehaus.janino:janino:3.0.8"
+    implementation libs.janino308
 
     // commons-compiler
-    implementation "org.codehaus.janino:commons-compiler:3.0.8"
+    implementation libs.janino.commons.compiler308
 
     // jackson-module
-    implementation "com.fasterxml.jackson.module:jackson-module-scala_${SPARK_SCALA_VERSION}:2.10.0"
+    implementation libs.jackson.module.scala210
 
     // commons-compiler
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.10.0"
+    implementation libs.jackson.databind210
 
     // lz4-java
-    implementation "org.lz4:lz4-java:1.5.0"
+    implementation libs.lz4.java
 
     // xbean-asm6-shaded
-    implementation "org.apache.xbean:xbean-asm6-shaded:4.8"
+    implementation libs.xbean.asm6.shaded
 
     // univocity-parsers
-    implementation "com.univocity:univocity-parsers:2.8.2"
+    implementation libs.univocity.parsers
 
 }
 

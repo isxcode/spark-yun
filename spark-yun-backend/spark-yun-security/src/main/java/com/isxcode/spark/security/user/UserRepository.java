@@ -40,7 +40,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     @Cacheable(key = "'users'")
     List<UserEntity> findAll();
 
-    @Caching(evict = {@CacheEvict(key = "'users'")}, put = {@CachePut(key = "#userEntity.id")})
+    @Caching(evict = {@CacheEvict(key = "'users'")}, put = {@CachePut(key = "#result.id")})
     @Override
-    UserEntity save(UserEntity userEntity);
+    <S extends UserEntity> S save(S userEntity);
 }

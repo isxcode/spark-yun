@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.cluster.run;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 
@@ -25,8 +24,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 @Slf4j
 @RequiredArgsConstructor
 public class RunAgentInstallService {
@@ -43,8 +44,8 @@ public class RunAgentInstallService {
     public void run(String clusterNodeId, String clusterType, ScpFileEngineNodeDto scpFileEngineNodeDto,
         String tenantId, String userId) {
 
-        USER_ID.set(userId);
-        TENANT_ID.set(tenantId);
+        ContextHolder.setUserId(userId);
+        ContextHolder.setTenantId(tenantId);
 
         // 获取节点信息
         Optional<ClusterNodeEntity> clusterNodeEntityOptional = clusterNodeRepository.findById(clusterNodeId);

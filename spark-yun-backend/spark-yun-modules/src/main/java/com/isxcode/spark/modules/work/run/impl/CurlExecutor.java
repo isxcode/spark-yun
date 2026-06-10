@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.work.run.impl;
 
+import com.isxcode.spark.common.security.ContextHolder;
+
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RuntimeUtil;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
@@ -29,7 +31,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Service
 @Slf4j
@@ -132,7 +133,7 @@ public class CurlExecutor extends WorkExecutor {
             for (SecretKeyEntity secretKeyEntity : allKey) {
                 String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                 if (script.contains(secretName)) {
-                    if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                    if (!secretKeyEntity.getCreateBy().equals(ContextHolder.getUserId())) {
                         throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
                     }
                     script = script.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));

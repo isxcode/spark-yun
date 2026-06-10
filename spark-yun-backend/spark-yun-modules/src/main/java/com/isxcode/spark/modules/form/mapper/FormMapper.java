@@ -7,8 +7,9 @@ import com.isxcode.spark.api.form.res.GetFormLinkInfoRes;
 import com.isxcode.spark.modules.form.entity.FormEntity;
 import com.isxcode.spark.modules.form.entity.FormLinkEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FormMapper {
 
     FormEntity addFormReqToFormEntity(AddFormReq addFormReq);

@@ -1,5 +1,8 @@
 package com.isxcode.spark.modules.datasource.service.biz;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.noTenant;
+import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
+
 import com.alibaba.fastjson2.JSON;
 import com.isxcode.spark.api.datasource.constants.DatasourceStatus;
 import com.isxcode.spark.api.datasource.constants.DatasourceType;
@@ -35,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.isxcode.spark.modules.datasource.source.DataSourceFactory;
 import com.isxcode.spark.modules.datasource.source.Datasource;
@@ -50,14 +53,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class DatasourceBizService {
 
     private final DatasourceRepository datasourceRepository;
@@ -332,7 +333,7 @@ public class DatasourceBizService {
 
         // 判断驱动文件夹是否存在，没有则创建
         String driverDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "jdbc"
-            + File.separator + TENANT_ID.get();
+            + File.separator + ContextHolder.getTenantId();
         if (!new File(driverDirPath).exists()) {
             try {
                 Files.createDirectories(Paths.get(driverDirPath));
@@ -373,11 +374,10 @@ public class DatasourceBizService {
 
     public Page<PageDatabaseDriverRes> pageDatabaseDriver(PageDatabaseDriverReq pageDatabaseDriverReq) {
 
-        JPA_TENANT_MODE.set(false);
         Page<DatabaseDriverEntity> pageDatabaseDriver =
-            databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(), TENANT_ID.get(),
-                PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+            noTenant(() -> databaseDriverRepository.searchAll(pageDatabaseDriverReq.getSearchKeyWord(),
+                ContextHolder.getTenantId(),
+                PageRequest.of(pageDatabaseDriverReq.getPage(), pageDatabaseDriverReq.getPageSize())));
 
         Page<PageDatabaseDriverRes> map =
             pageDatabaseDriver.map(datasourceMapper::dataDriverEntityToPageDatabaseDriverRes);
@@ -389,10 +389,8 @@ public class DatasourceBizService {
 
     public void deleteDatabaseDriver(DeleteDatabaseDriverReq deleteDatabaseDriverReq) {
 
-        // 支持查询所有的数据
-        JPA_TENANT_MODE.set(false);
+        // 支持查询租户和系统共享的数据
         DatabaseDriverEntity driver = databaseDriverService.getDriver(deleteDatabaseDriverReq.getDriverId());
-        JPA_TENANT_MODE.set(true);
 
         // 系统驱动无法删除
         if ("SYSTEM_DRIVER".equals(driver.getDriverType())) {
@@ -411,7 +409,7 @@ public class DatasourceBizService {
         // 将文件名改名字 xxx.jar ${driverId}_xxx.jar_bak
         try {
             String jdbcDirPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
-                + "jdbc" + File.separator + TENANT_ID.get();
+                + "jdbc" + File.separator + ContextHolder.getTenantId();
             Files.copy(Paths.get(jdbcDirPath).resolve(driver.getFileName()),
                 Paths.get(jdbcDirPath).resolve(driver.getId() + "_" + driver.getFileName() + "_bak"),
                 StandardCopyOption.REPLACE_EXISTING);
@@ -427,16 +425,8 @@ public class DatasourceBizService {
 
     public void settingDefaultDatabaseDriver(SettingDefaultDatabaseDriverReq settingDefaultDatabaseDriverReq) {
 
-        JPA_TENANT_MODE.set(false);
-        Optional<DatabaseDriverEntity> databaseDriverEntityOptional =
-            databaseDriverRepository.findById(settingDefaultDatabaseDriverReq.getDriverId());
-        JPA_TENANT_MODE.set(true);
-
-        if (!databaseDriverEntityOptional.isPresent()) {
-            throw new IsxAppException("数据源驱动不存在");
-        }
-
-        DatabaseDriverEntity databaseDriver = databaseDriverEntityOptional.get();
+        DatabaseDriverEntity databaseDriver =
+            datasourceService.getDatasourceDriver(settingDefaultDatabaseDriverReq.getDriverId());
 
         if ("SYSTEM_DRIVER".equals(databaseDriver.getDriverType())) {
             throw new IsxAppException("系统驱动无法默认");
@@ -465,11 +455,9 @@ public class DatasourceBizService {
         }
 
         // 查询系统默认的返回
-        JPA_TENANT_MODE.set(false);
         Optional<DatabaseDriverEntity> systemDriver =
-            databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
-                getDefaultDatabaseDriverReq.getDbType(), true);
-        JPA_TENANT_MODE.set(true);
+            noTenant(() -> databaseDriverRepository.findByDriverTypeAndDbTypeAndIsDefaultDriver("SYSTEM_DRIVER",
+                getDefaultDatabaseDriverReq.getDbType(), true));
 
         return datasourceMapper.databaseDriverEntityToGetDefaultDatabaseDriverRes(systemDriver.get());
     }
@@ -557,7 +545,7 @@ public class DatasourceBizService {
             if (datasourceMap.get(metaDatabase.getDatasourceId()) == null) {
                 metaDatabase.setStatus(MetaDatabaseStatus.DELETED);
                 deleteAllMetaDatasource.add(metaDatabase);
-            } ;
+            }
         });
         metaDatabaseRepository.saveAll(deleteAllMetaDatasource);
     }

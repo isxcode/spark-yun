@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
@@ -60,14 +62,15 @@ public class ToolController {
         try {
             Resource resource = resourceLoader.getResource("classpath:VERSION");
             InputStream inputStream = resource.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder content = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content.append(line);
+            try (BufferedReader reader =
+                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line);
+                }
+                return content.toString();
             }
-            reader.close();
-            return content.toString();
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new IsxAppException("获取版本号异常", e.getMessage());
@@ -90,8 +93,14 @@ public class ToolController {
         }
 
         try {
-            InputStreamResource resource = new InputStreamResource(Files.newInputStream(
-                Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath()) + File.separator + fileName)));
+            Path openFileDir =
+                Paths.get(PathUtils.parseProjectPath(isxAppProperties.getOpenFilePath())).toAbsolutePath().normalize();
+            Path openFile = openFileDir.resolve(fileName).normalize();
+            if (!openFile.startsWith(openFileDir) || !Files.isRegularFile(openFile)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            InputStreamResource resource = new InputStreamResource(Files.newInputStream(openFile));
             HttpHeaders headers = new HttpHeaders();
             String contentTypeFromName = guessContentTypeFromName(fileName.toLowerCase());
             if (contentTypeFromName == null) {

@@ -34,7 +34,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,11 +43,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Slf4j
 public class AlarmService {
 
@@ -102,7 +102,7 @@ public class AlarmService {
     @Async
     public void sendWorkMessage(WorkInstanceEntity workInstance, String alarmEvent) {
 
-        TENANT_ID.set(workInstance.getTenantId());
+        ContextHolder.setTenantId(workInstance.getTenantId());
 
         Optional<VipWorkVersionEntity> byId = vipWorkVersionRepository.findById(workInstance.getVersionId());
         VipWorkVersionEntity workVersionEntity = byId.get();
@@ -190,7 +190,7 @@ public class AlarmService {
     @Async
     public void sendWorkflowMessage(WorkflowInstanceEntity workflowInstance, String alarmEvent) {
 
-        TENANT_ID.set(workflowInstance.getTenantId());
+        ContextHolder.setTenantId(workflowInstance.getTenantId());
 
         Optional<WorkflowVersionEntity> byId = workflowVersionRepository.findById(workflowInstance.getVersionId());
         WorkflowVersionEntity workflowVersionEntity = byId.get();

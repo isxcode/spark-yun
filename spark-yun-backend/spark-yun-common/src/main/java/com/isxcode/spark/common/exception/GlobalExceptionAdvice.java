@@ -12,6 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -74,7 +75,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<BaseResponse<Object>> accessDeniedException(AccessDeniedException accessDeniedException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("401");
         baseResponse.setMsg("当前用户没有权限");
         baseResponse.setErr(accessDeniedException.getMessage());
@@ -86,7 +87,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> accessDeniedException(
         org.springframework.security.access.AccessDeniedException accessDeniedException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("401");
         baseResponse.setMsg("当前用户没有权限");
         baseResponse.setErr(accessDeniedException.getMessage());
@@ -98,7 +99,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> emptyResultDataAccessException(
         EmptyResultDataAccessException emptyResultDataAccessException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("55500");
         baseResponse.setMsg("请稍后再试");
         baseResponse.setErr(emptyResultDataAccessException.getMessage());
@@ -110,7 +111,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> objectOptimisticLockingFailureException(
         ObjectOptimisticLockingFailureException objectOptimisticLockingFailureException) {
 
-        BaseResponse baseResponse = new BaseResponse();
+        BaseResponse<Object> baseResponse = new BaseResponse<>();
         baseResponse.setCode("55500");
         baseResponse.setMsg("请稍后再试");
         baseResponse.setErr(objectOptimisticLockingFailureException.getMessage());
@@ -131,7 +132,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-        @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
+        @NonNull HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
         ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
         return new ResponseEntity<>(new BaseResponse<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
             objectError.getDefaultMessage(), "请求参数不合法"), HttpStatus.OK);

@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.tenant.service.biz;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import cn.hutool.core.util.DesensitizedUtil;
 import com.isxcode.spark.api.tenant.req.*;
@@ -18,19 +17,20 @@ import com.isxcode.spark.security.user.UserEntity;
 import com.isxcode.spark.security.user.UserRepository;
 
 import java.util.Optional;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TenantUserBizService {
 
     private final UserRepository userRepository;
@@ -43,9 +43,7 @@ public class TenantUserBizService {
 
     public void addTenantUser(AddTenantUserReq turAddTenantUserReq) {
 
-        // 已req中的tenantId为主
-        String tenantId =
-            Strings.isEmpty(turAddTenantUserReq.getTenantId()) ? TENANT_ID.get() : turAddTenantUserReq.getTenantId();
+        String tenantId = resolveTenantId(turAddTenantUserReq.getTenantId());
 
         // 判断是否到租户的人员上限
         TenantEntity tenant = tenantService.getTenant(tenantId);
@@ -67,11 +65,6 @@ public class TenantUserBizService {
             throw new IsxAppException("用户不存在");
         }
         UserEntity userEntity = userEntityOptional.get();
-
-        // 如果租户id为空
-        if (Strings.isEmpty(TENANT_ID.get()) && Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
-            throw new IsxAppException("请指定租户id");
-        }
 
         // 判断该用户是否已经是成员
         Optional<TenantUserEntity> tenantUserEntityOptional =
@@ -103,13 +96,7 @@ public class TenantUserBizService {
 
     public Page<PageTenantUserRes> pageTenantUser(PageTenantUserReq turAddTenantUserReq) {
 
-        // 如果请求体中有tenantId，使用请求体中的
-        String tenantId;
-        if (!Strings.isEmpty(turAddTenantUserReq.getTenantId())) {
-            tenantId = turAddTenantUserReq.getTenantId();
-        } else {
-            tenantId = TENANT_ID.get();
-        }
+        String tenantId = resolveTenantId(turAddTenantUserReq.getTenantId());
 
         Page<PageTenantUserRes> tenantUserPage =
             tenantUserRepository.searchTenantUser(tenantId, turAddTenantUserReq.getSearchKeyWord(),
@@ -132,9 +119,10 @@ public class TenantUserBizService {
         if (!tenantUserEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
+        checkTenantPermission(tenantUserEntityOptional.get().getTenantId());
 
         // 不可以删除自己
-        if (USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
+        if (ContextHolder.getUserId().equals(tenantUserEntityOptional.get().getUserId())) {
             throw new IsxAppException("不可以移除自己");
         }
 
@@ -150,6 +138,7 @@ public class TenantUserBizService {
         if (!tenantUserEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
+        checkTenantPermission(tenantUserEntityOptional.get().getTenantId());
 
         // 设置为租户管理员权限
         TenantUserEntity tenantUserEntity = tenantUserEntityOptional.get();
@@ -167,10 +156,11 @@ public class TenantUserBizService {
         if (!tenantUserEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
+        checkTenantPermission(tenantUserEntityOptional.get().getTenantId());
 
         // 管理员不可以移除自己
         if (RoleType.TENANT_ADMIN.equals(tenantUserEntityOptional.get().getRoleCode())
-            && USER_ID.get().equals(tenantUserEntityOptional.get().getUserId())) {
+            && ContextHolder.getUserId().equals(tenantUserEntityOptional.get().getUserId())) {
             throw new IsxAppException("不可以取消自己的管理员权限");
         }
 
@@ -180,5 +170,40 @@ public class TenantUserBizService {
 
         // 持久化
         tenantUserRepository.save(tenantUserEntity);
+    }
+
+    private String resolveTenantId(String tenantId) {
+
+        if (isSysAdmin()) {
+            if (Strings.isEmpty(tenantId)) {
+                throw new IsxAppException("请指定租户id");
+            }
+            return tenantId;
+        }
+
+        if (Strings.isEmpty(ContextHolder.getTenantId())) {
+            throw new IsxAppException("租户id丢失");
+        }
+
+        if (!Strings.isEmpty(tenantId) && !ContextHolder.getTenantId().equals(tenantId)) {
+            throw new IsxAppException("无权操作其他租户");
+        }
+
+        return ContextHolder.getTenantId();
+    }
+
+    private void checkTenantPermission(String tenantId) {
+
+        if (!isSysAdmin()
+            && (Strings.isEmpty(ContextHolder.getTenantId()) || !ContextHolder.getTenantId().equals(tenantId))) {
+            throw new IsxAppException("无权操作其他租户");
+        }
+    }
+
+    private boolean isSysAdmin() {
+
+        return SecurityContextHolder.getContext().getAuthentication() != null
+            && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(authority -> RoleType.SYS_ADMIN.equals(authority.getAuthority()));
     }
 }

@@ -35,7 +35,8 @@ public class SshUtils {
         JSch jsch = new JSch();
 
         if (engineNode.getPasswd().length() > 1000) {
-            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(StandardCharsets.UTF_8), null,
+                null);
         }
 
         Session session =
@@ -89,7 +90,8 @@ public class SshUtils {
         JSch jsch = new JSch();
 
         if (engineNode.getPasswd().length() > 1000) {
-            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(StandardCharsets.UTF_8), null,
+                null);
         }
 
         Session session;
@@ -159,7 +161,8 @@ public class SshUtils {
         JSch jsch = new JSch();
 
         if (engineNode.getPasswd().length() > 1000) {
-            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(StandardCharsets.UTF_8), null,
+                null);
         }
 
         Session session =
@@ -238,7 +241,8 @@ public class SshUtils {
         JSch jsch = new JSch();
 
         if (engineNode.getPasswd().length() > 1000) {
-            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(StandardCharsets.UTF_8), null,
+                null);
         }
 
         Session session =
@@ -262,7 +266,7 @@ public class SshUtils {
         ChannelSftp channel;
         channel = (ChannelSftp) session.openChannel("sftp");
         channel.connect(120000);
-        InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+        InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         channel.put(inputStream, dstPath);
 
         // 文件校验
@@ -271,7 +275,7 @@ public class SshUtils {
             attrs = channel.stat(dstPath);
             if (attrs != null) {
                 long remoteFileSize = attrs.getSize();
-                long localFileSize = content.getBytes().length;
+                long localFileSize = content.getBytes(StandardCharsets.UTF_8).length;
                 if (remoteFileSize == localFileSize) {
                     break;
                 }
@@ -293,7 +297,8 @@ public class SshUtils {
         JSch jsch = new JSch();
 
         if (engineNode.getPasswd().length() > 1000) {
-            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(), null, null);
+            jsch.addIdentity(engineNode.getUsername(), engineNode.getPasswd().getBytes(StandardCharsets.UTF_8), null,
+                null);
         }
 
         Session session =

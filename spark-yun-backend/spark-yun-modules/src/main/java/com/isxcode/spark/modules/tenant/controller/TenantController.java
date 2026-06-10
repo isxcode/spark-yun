@@ -5,6 +5,7 @@ import com.isxcode.spark.api.main.constants.ModuleCode;
 import com.isxcode.spark.api.tenant.req.*;
 import com.isxcode.spark.api.tenant.res.GetTenantRes;
 import com.isxcode.spark.api.tenant.res.PageTenantRes;
+import com.isxcode.spark.api.tenant.res.ChooseTenantRes;
 import com.isxcode.spark.api.tenant.res.QueryUserTenantRes;
 import com.isxcode.spark.api.user.constants.RoleType;
 import com.isxcode.spark.common.annotations.successResponse.SuccessResponse;
@@ -12,7 +13,7 @@ import com.isxcode.spark.modules.tenant.service.biz.TenantBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -40,6 +41,7 @@ public class TenantController {
     }
 
     @Operation(summary = "查询租户列表接口")
+    @Secured({RoleType.SYS_ADMIN})
     @PostMapping("/pageTenant")
     @SuccessResponse("查询成功")
     public Page<PageTenantRes> pageTenant(@Valid @RequestBody PageTenantReq pageTenantReq) {
@@ -114,9 +116,9 @@ public class TenantController {
     @Operation(summary = "选择租户接口")
     @PostMapping("/chooseTenant")
     @SuccessResponse("切换成功")
-    public void chooseTenant(@Valid @RequestBody ChooseTenantReq chooseTenantReq) {
+    public ChooseTenantRes chooseTenant(@Valid @RequestBody ChooseTenantReq chooseTenantReq) {
 
-        tenantBizService.chooseTenant(chooseTenantReq);
+        return tenantBizService.chooseTenant(chooseTenantReq);
     }
 
     @Operation(summary = "获取租户信息接口")

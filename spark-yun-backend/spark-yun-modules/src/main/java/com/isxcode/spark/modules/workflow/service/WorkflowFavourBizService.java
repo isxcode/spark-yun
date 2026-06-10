@@ -1,6 +1,7 @@
 package com.isxcode.spark.modules.workflow.service;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
+
 
 import com.isxcode.spark.backend.api.base.exceptions.IsxAppException;
 import com.isxcode.spark.modules.workflow.entity.WorkflowFavourEntity;
@@ -8,8 +9,10 @@ import com.isxcode.spark.modules.workflow.repository.WorkflowFavourRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class WorkflowFavourBizService {
 
@@ -23,13 +26,13 @@ public class WorkflowFavourBizService {
 
         // 判断工作流是否被收藏过
         Optional<WorkflowFavourEntity> workflowFavourEntityOptional =
-            workflowFavourRepository.findByWorkflowIdAndUserId(workflowId, USER_ID.get());
+            workflowFavourRepository.findByWorkflowIdAndUserId(workflowId, ContextHolder.getUserId());
         if (!workflowFavourEntityOptional.isPresent()) {
             throw new IsxAppException("已收藏");
         }
 
         WorkflowFavourEntity workflowFavour =
-            WorkflowFavourEntity.builder().workflowId(workflowId).userId(USER_ID.get()).build();
+            WorkflowFavourEntity.builder().workflowId(workflowId).userId(ContextHolder.getUserId()).build();
         workflowFavourRepository.save(workflowFavour);
     }
 }

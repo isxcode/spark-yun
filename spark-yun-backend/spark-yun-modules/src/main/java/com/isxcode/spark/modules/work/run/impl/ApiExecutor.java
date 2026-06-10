@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.work.run.impl;
 
+import com.isxcode.spark.common.security.ContextHolder;
+
 import com.alibaba.fastjson.JSON;
 import com.isxcode.spark.api.api.constants.ApiType;
 import com.isxcode.spark.api.work.constants.WorkType;
@@ -35,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 
 @Service
 @Slf4j
@@ -149,7 +150,7 @@ public class ApiExecutor extends WorkExecutor {
                         for (SecretKeyEntity secretKeyEntity : allKey) {
                             String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                             if (value.contains(secretName)) {
-                                if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                                if (!secretKeyEntity.getCreateBy().equals(ContextHolder.getUserId())) {
                                     throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
                                 }
                                 value = value.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
@@ -170,7 +171,7 @@ public class ApiExecutor extends WorkExecutor {
                         for (SecretKeyEntity secretKeyEntity : allKey) {
                             String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                             if (value.contains(secretName)) {
-                                if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                                if (!secretKeyEntity.getCreateBy().equals(ContextHolder.getUserId())) {
                                     throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
                                 }
                                 value = value.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));
@@ -196,7 +197,7 @@ public class ApiExecutor extends WorkExecutor {
                     for (SecretKeyEntity secretKeyEntity : allKey) {
                         String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                         if (value.contains(secretName)) {
-                            if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                            if (!secretKeyEntity.getCreateBy().equals(ContextHolder.getUserId())) {
                                 throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
                             }
                             value = value.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));

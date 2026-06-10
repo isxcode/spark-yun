@@ -12,8 +12,9 @@ import com.isxcode.spark.modules.datasource.entity.DatabaseDriverEntity;
 import com.isxcode.spark.modules.datasource.entity.DatasourceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DatasourceMapper {
 
     @Mapping(target = "kafkaConfig", ignore = true)

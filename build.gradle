@@ -1,12 +1,14 @@
 plugins {
     id 'java'
     id 'checkstyle'
-    id 'org.springframework.boot' version "${SPRING_VERSION}"
-    id 'io.spring.dependency-management' version "${SPRING_MANAGER_VERSION}"
-    id "com.diffplug.spotless" version "${SPOTLESS_VERSION}"
+    id 'pmd'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.spotbugs) apply false
+    alias(libs.plugins.spotless)
 }
 
-def version_number = new File(rootDir.getAbsolutePath(), 'spark-yun-backend/spark-yun-main/src/main/resources/VERSION').readLines()[0].trim()
+def version_number = new File(rootDir.getAbsolutePath(), 'VERSION').readLines()[0].trim()
 
 allprojects {
 
@@ -14,12 +16,17 @@ allprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
     apply plugin: 'checkstyle'
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
 
     group = 'com.isxcode.spark'
     version = version_number
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     repositories {
         mavenLocal()
@@ -32,6 +39,12 @@ allprojects {
     configurations.configureEach {
         exclude group: "org.apache.logging.log4j", module: "log4j-slf4j-impl"
         exclude group: "org.slf4j", module: "slf4j-reload4j"
+        exclude group: "com.sun.xml.bind", module: "jaxb-core"
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.kafka' && details.requested.name == 'kafka-clients') {
+                details.useVersion libs.versions.kafka.get()
+            }
+        }
     }
 
     dependencies {
@@ -46,20 +59,20 @@ allprojects {
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-        implementation "org.springdoc:springdoc-openapi-ui:${OPENAPI_VERSION}"
+        implementation libs.springdoc.openapi.starter.webmvc.ui
 
-        compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
-        annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
+        compileOnly libs.lombok
+        annotationProcessor libs.lombok
 
-        implementation "com.alibaba:fastjson:${FASTJSON_VERSION}"
+        implementation libs.fastjson
 
-        implementation "org.junit.jupiter:junit-jupiter:${JUPITER_VERSION}"
-        testImplementation "org.junit.jupiter:junit-jupiter-api:${JUPITER_VERSION}"
+        implementation libs.junit.jupiter
+        testImplementation libs.junit.jupiter.api
 
-        implementation "org.mapstruct:mapstruct:${MAPSTRUCT_VERSION}"
-        implementation "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-        annotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
-        testAnnotationProcessor "org.mapstruct:mapstruct-processor:${MAPSTRUCT_VERSION}"
+        implementation libs.mapstruct
+        implementation libs.mapstruct.processor
+        annotationProcessor libs.mapstruct.processor
+        testAnnotationProcessor libs.mapstruct.processor
     }
 
     configurations {
@@ -68,32 +81,127 @@ allprojects {
         }
     }
 
+    tasks.named('bootJar') {
+        enabled = false
+    }
+
+    tasks.named('jar') {
+        enabled = true
+    }
+
+    checkstyle {
+        toolVersion = libs.versions.checkstyle.get()
+        configDirectory = rootProject.layout.projectDirectory.dir('format/checkstyle')
+    }
+
     tasks.withType(Checkstyle).configureEach {
-        maxWarnings = 100
+        maxWarnings = 0
         maxErrors = 0
         ignoreFailures = false
-        config resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle.xml')
+        config resources.text.fromFile(rootProject.file('format/checkstyle/checkstyle.xml'))
         reports {
             xml.required = false
             html.required = true
-            html.stylesheet resources.text.fromFile(rootDir.getAbsolutePath() + '/.checkstyle/checkstyle-simple.xsl')
+            html.stylesheet resources.text.fromFile(rootProject.file('format/checkstyle/checkstyle-simple.xsl'))
+        }
+        doLast {
+            def reportFile = reports.html.outputLocation.get().asFile
+            if (reportFile.exists()) {
+                println "Checkstyle HTML report: ${reportFile.toURI()}"
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
+    }
+
+    pmd {
+        toolVersion = libs.versions.pmd.get()
+        ignoreFailures = false
+        consoleOutput = true
+        ruleSets = []
+        ruleSetFiles = files(rootProject.file('format/pmd/ruleset.xml'))
+    }
+
+    configurations.named('pmd') {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.commons' && details.requested.name == 'commons-lang3') {
+                details.useVersion '3.20.0'
+            }
+            if (details.requested.group == 'com.google.code.gson' && details.requested.name == 'gson') {
+                details.useVersion '2.14.0'
+            }
+        }
+    }
+
+    configurations.named('spotbugs') {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.apache.commons' && details.requested.name == 'commons-lang3') {
+                details.useVersion '3.19.0'
+            }
+            if (details.requested.group == 'com.google.code.gson' && details.requested.name == 'gson') {
+                details.useVersion '2.13.2'
+            }
+        }
+    }
+
+    tasks.withType(Pmd).configureEach {
+        ignoreFailures = false
+        reports {
+            xml.required = false
+            html.required = true
+        }
+        doLast {
+            def reportFile = reports.html.outputLocation.get().asFile
+            if (reportFile.exists()) {
+                println "PMD HTML report: ${reportFile.toURI()}"
+            }
+        }
+    }
+
+    spotbugs {
+        toolVersion = libs.versions.spotbugs.tool.get()
+        ignoreFailures = false
+        effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
+        excludeFilter = rootProject.file('format/spotbugs/exclude.xml')
+        reportLevel = com.github.spotbugs.snom.Confidence.valueOf('HIGH')
+        showStackTraces = true
+        showProgress = true
+    }
+
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+        ignoreFailures = false
+        reports {
+            html.required = true
+            xml.required = false
+        }
+        doLast {
+            def reportFile = reports.html.outputLocation.get().asFile
+            if (reportFile.exists()) {
+                println "SpotBugs HTML report: ${reportFile.toURI()}"
+            }
         }
     }
 }
 
 spotless {
     java {
-        target '*/**/*.java'
-        targetExclude('*/build/**/*.java')
-        targetExclude('flink-yun-dist/**/*.java')
-        eclipse().configFile(rootDir.getAbsolutePath() + '/.spotless/eclipse-java-google-style.xml')
+        target fileTree(rootDir) {
+            include 'spark-yun-agent/**/*.java'
+            include 'spark-yun-backend/**/*.java'
+            include 'spark-yun-plugins/**/*.java'
+            include 'spark-yun-vip/**/*.java'
+            exclude '**/build/**/*.java'
+        }
+        eclipse().configFile(rootProject.file('format/spotless/eclipse-java-google-style.xml'))
         removeUnusedImports()
     }
 }
 
 tasks.register("format") {
-
-    dependsOn(":spark-yun-dist:copy_version", ":spotlessApply", ":checkstyleMain")
+    dependsOn(":spark-yun-dist:copy_version", ":spotlessApply")
+    dependsOn(subprojects.findAll { it.path != ':spark-yun-frontend' }.collect { "${it.path}:check" })
 }
 
 tasks.register('package', GradleBuild) {
@@ -114,9 +222,9 @@ tasks.register('start', Exec) {
 tasks.register('website', Exec) {
 
     commandLine 'sh', '-c', '''
-      cd docs
+      cd spark-yun-vip/docs
       rm -rf node_modules
-      pnpm install --force
+      pnpm install
       pnpm run dev
      '''
 }
@@ -126,7 +234,7 @@ tasks.register('frontend', Exec) {
     commandLine 'sh', '-c', '''
       cd spark-yun-frontend
       rm -rf node_modules
-      pnpm install --force
+      pnpm install
       pnpm run dev --host
     '''
 }
@@ -140,11 +248,11 @@ tasks.register('install', Exec) {
     if (!System.properties['os.name'].toString().contains('Mac OS X')) {
         doFirst {
             exec {
-                commandLine 'sh', '-c', "sed -i 's/\\r\$//' download.sh && sed -i 's/\\r\$//' install.sh"
+                commandLine 'sh', '-c', "sed -i 's/\\r\$//' install.sh"
             }
         }
     }
-    commandLine 'sh', '-c', 'bash download.sh && bash install.sh'
+    commandLine 'sh', '-c', 'bash install.sh'
 }
 
 tasks.register('docker', Exec) {

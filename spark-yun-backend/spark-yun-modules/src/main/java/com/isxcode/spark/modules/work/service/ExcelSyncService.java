@@ -20,15 +20,17 @@ import com.isxcode.spark.modules.work.sql.SqlFunctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 @Slf4j
 public class ExcelSyncService {
@@ -46,7 +48,7 @@ public class ExcelSyncService {
 
         // 获取文件的绝对路径
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+            + File.separator + ContextHolder.getTenantId() + File.separator + file.getId();
 
         // 读取文件数据
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));
@@ -84,7 +86,7 @@ public class ExcelSyncService {
 
         // 获取文件的绝对路径
         String filePath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator + "file"
-            + File.separator + TENANT_ID.get() + File.separator + file.getId();
+            + File.separator + ContextHolder.getTenantId() + File.separator + file.getId();
 
         // 读取文件数据
         ExcelReader reader = ExcelUtil.getReader(FileUtil.file(filePath));

@@ -1,7 +1,6 @@
 package com.isxcode.spark.modules.workflow.run;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import com.isxcode.spark.api.alarm.constants.AlarmEventType;
 import com.isxcode.spark.api.instance.constants.InstanceStatus;
@@ -62,8 +61,8 @@ public class WorkflowRunEventListener {
     public void onApplicationEvent(WorkflowRunEvent event) {
 
         // 由于是异步，先初始化系统参数
-        USER_ID.set(event.getUserId());
-        TENANT_ID.set(event.getTenantId());
+        ContextHolder.setUserId(event.getUserId());
+        ContextHolder.setTenantId(event.getTenantId());
 
         // 修改状态前都要加锁，给工作流实例加锁
         Integer lockId = locker.lock(event.getFlowInstanceId());

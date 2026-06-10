@@ -1,22 +1,22 @@
 package com.isxcode.spark.modules.real.entity;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import com.isxcode.spark.common.jpa.SyId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -25,16 +25,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE SY_REAL SET deleted = 1 WHERE id = ?")
-@Where(clause = "deleted = 0 ${TENANT_FILTER} ")
-@Table(name = "SY_REAL")
+@SQLDelete(sql = "UPDATE sy_real SET deleted = 1 WHERE id = ?")
+@SQLRestriction("deleted = 0")
+@Filter(name = "tenantFilter", condition = "tenant_id in (:tenantIds)")
+@Table(name = "sy_real")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @EntityListeners(AuditingEntityListener.class)
 public class RealEntity {
 
     @Id
-    @GeneratedValue(generator = "sy-id-generator")
-    @GenericGenerator(name = "sy-id-generator", strategy = "com.isxcode.spark.config.GeneratedValueConfig")
+    @SyId
     private String id;
 
     private String name;
@@ -78,6 +78,6 @@ public class RealEntity {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TENANT_ID.get();
+        this.tenantId = ContextHolder.getTenantId();
     }
 }

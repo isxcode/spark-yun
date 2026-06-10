@@ -10,7 +10,7 @@ import com.isxcode.spark.modules.user.service.UserBizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +32,14 @@ public class UserController {
     public LoginRes login(@Valid @RequestBody LoginReq loginReq) {
 
         return userBizService.login(loginReq);
+    }
+
+    @Operation(summary = "刷新token接口")
+    @PostMapping("/open/refreshToken")
+    @SuccessResponse("刷新成功")
+    public LoginRes refreshToken(@Valid @RequestBody RefreshTokenReq refreshTokenReq) {
+
+        return userBizService.refreshToken(refreshTokenReq);
     }
 
     @Operation(summary = "用户退出接口")

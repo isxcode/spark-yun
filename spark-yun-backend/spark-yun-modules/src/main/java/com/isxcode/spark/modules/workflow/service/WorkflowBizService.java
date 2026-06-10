@@ -1,8 +1,11 @@
 package com.isxcode.spark.modules.workflow.service;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
+import com.isxcode.spark.common.security.ContextHolder;
+
 import static com.isxcode.spark.api.workflow.constants.WorkflowExternalCallStatus.OFF;
 import static com.isxcode.spark.api.workflow.constants.WorkflowExternalCallStatus.ON;
-import static com.isxcode.spark.common.config.CommonConfig.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -65,7 +68,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,10 +77,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
+@Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class WorkflowBizService {
 
@@ -120,7 +125,7 @@ public class WorkflowBizService {
     public void addWorkflow(AddWorkflowReq wofAddWorkflowReq) {
 
         // 判断租户下的作业流上限
-        TenantEntity tenant = tenantService.getTenant(TENANT_ID.get());
+        TenantEntity tenant = tenantService.getTenant(ContextHolder.getTenantId());
         long workflowCount = workflowRepository.count();
         if (workflowCount + 1 > tenant.getMaxWorkflowNum()) {
             throw new IsxAppException("超出租户的最大作业流限制");
@@ -210,7 +215,7 @@ public class WorkflowBizService {
     public String runWorkflow(RunWorkflowReq runWorkflowReq) {
 
         // 判断租户下的作业流上限
-        TenantEntity tenant = tenantService.getTenant(TENANT_ID.get());
+        TenantEntity tenant = tenantService.getTenant(ContextHolder.getTenantId());
         long workflowCount = workflowRepository.count();
         if (workflowCount + 1 > tenant.getMaxWorkflowNum()) {
             throw new IsxAppException("超出租户的最大作业流限制");
@@ -486,8 +491,8 @@ public class WorkflowBizService {
 
         // 异步参数
         Map<String, String> result = new HashMap<>();
-        result.put("tenantId", TENANT_ID.get());
-        result.put("userId", USER_ID.get());
+        result.put("tenantId", ContextHolder.getTenantId());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -498,8 +503,8 @@ public class WorkflowBizService {
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
 
-            TENANT_ID.set(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setTenantId(result.get("tenantId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 中止成功，修改作业流状态
             WorkflowInstanceEntity workflowInstanceNew =
@@ -546,8 +551,8 @@ public class WorkflowBizService {
 
         // 异步参数
         Map<String, String> result = new HashMap<>();
-        result.put("tenantId", TENANT_ID.get());
-        result.put("userId", USER_ID.get());
+        result.put("tenantId", ContextHolder.getTenantId());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -559,8 +564,8 @@ public class WorkflowBizService {
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
 
-            TENANT_ID.set(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setTenantId(result.get("tenantId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 初始化工作流实例状态
             workflowInstance.setStatus(InstanceStatus.RUNNING);
@@ -650,8 +655,8 @@ public class WorkflowBizService {
 
         // 异步参数
         Map<String, String> result = new HashMap<>();
-        result.put("tenantId", TENANT_ID.get());
-        result.put("userId", USER_ID.get());
+        result.put("tenantId", ContextHolder.getTenantId());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -659,8 +664,8 @@ public class WorkflowBizService {
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
 
-            TENANT_ID.set(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setTenantId(result.get("tenantId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 获取作业
             WorkEntity work = workService.getWorkEntity(workInstance.getWorkId());
@@ -737,8 +742,8 @@ public class WorkflowBizService {
 
         // 异步参数
         Map<String, String> result = new HashMap<>();
-        result.put("tenantId", TENANT_ID.get());
-        result.put("userId", USER_ID.get());
+        result.put("tenantId", ContextHolder.getTenantId());
+        result.put("userId", ContextHolder.getUserId());
 
         // 异步调用中止作业的方法
         CompletableFuture.supplyAsync(() -> {
@@ -746,8 +751,8 @@ public class WorkflowBizService {
             return "SUCCESS";
         }).whenComplete((exeStatus, exception) -> {
 
-            TENANT_ID.set(result.get("tenantId"));
-            USER_ID.set(result.get("userId"));
+            ContextHolder.setTenantId(result.get("tenantId"));
+            ContextHolder.setUserId(result.get("userId"));
 
             // 修改作业流状态
             workflowInstance.setStatus(InstanceStatus.RUNNING);
@@ -867,8 +872,8 @@ public class WorkflowBizService {
         }
 
         // 赋予userId和租户id
-        USER_ID.set(workflowToken.getUserId());
-        TENANT_ID.set(workflowToken.getTenantId());
+        ContextHolder.setUserId(workflowToken.getUserId());
+        ContextHolder.setTenantId(workflowToken.getTenantId());
 
         // 调用作业流执行
         workflowService.runInvokeWorkflow(invokeWorkflowReq.getWorkflowId());
@@ -886,12 +891,11 @@ public class WorkflowBizService {
     public Page<QueryWorkFlowInstancesRes> queryWorkFlowInstances(QueryWorkFlowInstancesReq queryWorkFlowInstancesReq) {
 
         // 因为是自定义sql，不使用多租户模式
-        JPA_TENANT_MODE.set(false);
-        Page<WorkflowInstanceAo> workflowInstanceAoPage = workflowInstanceRepository.pageWorkFlowInstances(
-            TENANT_ID.get(), queryWorkFlowInstancesReq.getSearchKeyWord(), queryWorkFlowInstancesReq.getExecuteStatus(),
-            queryWorkFlowInstancesReq.getWorkflowId(),
-            PageRequest.of(queryWorkFlowInstancesReq.getPage(), queryWorkFlowInstancesReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+        Page<WorkflowInstanceAo> workflowInstanceAoPage =
+            allData(() -> workflowInstanceRepository.pageWorkFlowInstances(ContextHolder.getTenantId(),
+                queryWorkFlowInstancesReq.getSearchKeyWord(), queryWorkFlowInstancesReq.getExecuteStatus(),
+                queryWorkFlowInstancesReq.getWorkflowId(),
+                PageRequest.of(queryWorkFlowInstancesReq.getPage(), queryWorkFlowInstancesReq.getPageSize())));
 
         return workflowInstanceAoPage.map(workflowMapper::wfiWorkflowInstanceAo2WfiQueryWorkFlowInstancesRes);
     }

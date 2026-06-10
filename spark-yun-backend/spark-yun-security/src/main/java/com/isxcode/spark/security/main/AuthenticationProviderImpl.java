@@ -1,10 +1,10 @@
 package com.isxcode.spark.security.main;
 
+import com.isxcode.spark.common.security.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -26,15 +26,18 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         // 获取用户详细信息
-        UserDetails userDetail = userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
+        String tenantId = authentication.getCredentials() == null ? null : authentication.getCredentials().toString();
+        UserDetails userDetail;
+        if (userDetailsService instanceof UserDetailsServiceImpl userDetailsServiceImpl) {
+            userDetail = userDetailsServiceImpl.loadUserByUsername(authentication.getPrincipal().toString(), tenantId);
+        } else {
+            userDetail = userDetailsService.loadUserByUsername(authentication.getPrincipal().toString());
+        }
 
         // 用户赋权
-        AuthenticationToken authenticationToken =
-            new AuthenticationToken(userDetail.getUsername(), userDetail.getPassword(), userDetail.getAuthorities());
+        AuthenticationToken authenticationToken = new AuthenticationToken(
+            new CurrentUser(userDetail.getUsername(), tenantId), userDetail.getPassword(), userDetail.getAuthorities());
         authenticationToken.setDetails(userDetail);
-
-        // 上下文保存用户信息
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         return authenticationToken;
     }
@@ -42,6 +45,6 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
 
-        return false;
+        return AuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

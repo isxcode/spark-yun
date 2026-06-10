@@ -1,6 +1,9 @@
 package com.isxcode.spark.modules.user.service;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
+import com.isxcode.spark.common.security.CurrentUser;
+import com.isxcode.spark.common.security.RefreshUserToken;
+
 
 import cn.hutool.crypto.SecureUtil;
 import com.isxcode.spark.api.tenant.constants.TenantStatus;
@@ -19,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -29,8 +32,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class UserBizService {
+
+    private static final String REFRESH_TOKEN = "REFRESH_TOKEN";
 
     private final UserRepository userRepository;
 
@@ -77,15 +82,14 @@ public class UserBizService {
             throw new IsxAppException("账号或者密码不正确");
         }
 
-        // 生成token
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), userEntity.getId(),
-            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
-
         // 如果是系统管理员直接返回
         if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+            String jwtToken = generateUserToken(userEntity.getId(), userEntity.getCurrentTenantId());
             return LoginRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
                 .account(userEntity.getAccount()).phone(userEntity.getPhone()).email(userEntity.getEmail())
-                .remark(userEntity.getRemark()).token(jwtToken).role(userEntity.getRoleCode()).build();
+                .remark(userEntity.getRemark()).token(jwtToken)
+                .refreshToken(generateRefreshToken(userEntity.getId(), userEntity.getCurrentTenantId()))
+                .role(userEntity.getRoleCode()).build();
         }
 
         // 如果用户不在任何一个租户报错
@@ -130,15 +134,17 @@ public class UserBizService {
         }
 
         // 生成token并返回
+        String jwtToken = generateUserToken(userEntity.getId(), currentTenantId);
         return LoginRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
             .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark()).token(jwtToken)
-            .tenantId(currentTenantId).role(tenantUserEntityOptional.get().getRoleCode()).build();
+            .refreshToken(generateRefreshToken(userEntity.getId(), currentTenantId)).tenantId(currentTenantId)
+            .role(tenantUserEntityOptional.get().getRoleCode()).build();
     }
 
     public GetUserRes getUser() {
 
         // 判断用户是否存在
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("账号或者密码不正确");
         }
@@ -149,14 +155,13 @@ public class UserBizService {
             throw new IsxAppException("账号已被禁用，请联系管理员");
         }
 
-        // 生成token
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), userEntity.getId(),
-            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
-
         // 如果是系统管理员直接返回
         if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+            String jwtToken = generateUserToken(userEntity.getId(), userEntity.getCurrentTenantId());
             return GetUserRes.builder().tenantId(userEntity.getCurrentTenantId()).username(userEntity.getUsername())
-                .account(userEntity.getAccount()).token(jwtToken).role(userEntity.getRoleCode()).build();
+                .account(userEntity.getAccount()).token(jwtToken)
+                .refreshToken(generateRefreshToken(userEntity.getId(), userEntity.getCurrentTenantId()))
+                .role(userEntity.getRoleCode()).build();
         }
 
         // 获取用户最近一次租户信息
@@ -187,9 +192,38 @@ public class UserBizService {
         }
 
         // 生成token并返回
+        String jwtToken = generateUserToken(userEntity.getId(), currentTenantId);
         return GetUserRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
             .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark()).token(jwtToken)
-            .tenantId(currentTenantId).role(tenantUserEntityOptional.get().getRoleCode()).build();
+            .refreshToken(generateRefreshToken(userEntity.getId(), currentTenantId)).tenantId(currentTenantId)
+            .role(tenantUserEntityOptional.get().getRoleCode()).build();
+    }
+
+    public LoginRes refreshToken(RefreshTokenReq refreshTokenReq) {
+
+        RefreshUserToken refreshUserToken;
+        try {
+            refreshUserToken = JwtUtils.decrypt(isxAppProperties.getJwtKey(), refreshTokenReq.getRefreshToken(),
+                isxAppProperties.getAesSlat(), RefreshUserToken.class);
+        } catch (Exception e) {
+            throw new IsxAppException("401", "刷新token异常，请重新登录");
+        }
+
+        if (!REFRESH_TOKEN.equals(refreshUserToken.tokenType())) {
+            throw new IsxAppException("401", "刷新token异常，请重新登录");
+        }
+
+        UserEntity userEntity = userRepository.findById(refreshUserToken.userId())
+            .orElseThrow(() -> new IsxAppException("401", "刷新token异常，请重新登录"));
+        validateUserStatus(userEntity);
+
+        if (RoleType.SYS_ADMIN.equals(userEntity.getRoleCode())) {
+            String tenantId = refreshUserToken.tenantId();
+            return buildLoginRes(userEntity, tenantId, userEntity.getRoleCode());
+        }
+
+        TenantUserEntity tenantUserEntity = validateTenantUser(userEntity.getId(), refreshUserToken.tenantId());
+        return buildLoginRes(userEntity, refreshUserToken.tenantId(), tenantUserEntity.getRoleCode());
     }
 
     public void logout() {
@@ -332,7 +366,7 @@ public class UserBizService {
     public void updateUserInfo(UpdateUserInfoReq updateUserInfoReq) {
 
         // 获取当前信息
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -360,7 +394,7 @@ public class UserBizService {
     public void updateMyPassword(UpdateMyPasswordReq updateMyPasswordReq) {
 
         // 获取当前用户
-        Optional<UserEntity> userEntityOptional = userRepository.findById(USER_ID.get());
+        Optional<UserEntity> userEntityOptional = userRepository.findById(ContextHolder.getUserId());
         if (!userEntityOptional.isPresent()) {
             throw new IsxAppException("用户不存在");
         }
@@ -387,9 +421,72 @@ public class UserBizService {
 
     public GetAnonymousTokenRes getAnonymousToken(GetAnonymousTokenReq getAnonymousTokenReq) {
 
-        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), "sy_anonymous", isxAppProperties.getJwtKey(),
-            getAnonymousTokenReq.getValidDay() * 24 * 60);
+        String jwtToken = JwtUtils.encrypt(isxAppProperties.getAesSlat(), new CurrentUser("sy_anonymous", null),
+            isxAppProperties.getJwtKey(), getAnonymousTokenReq.getValidDay() * 24 * 60);
 
         return GetAnonymousTokenRes.builder().token(jwtToken).build();
+    }
+
+    private String generateUserToken(String userId, String tenantId) {
+
+        return JwtUtils.encrypt(isxAppProperties.getAesSlat(), new CurrentUser(userId, tenantId),
+            isxAppProperties.getJwtKey(), isxAppProperties.getExpirationMin());
+    }
+
+    private String generateRefreshToken(String userId, String tenantId) {
+
+        return JwtUtils.encrypt(isxAppProperties.getAesSlat(), new RefreshUserToken(userId, tenantId, REFRESH_TOKEN),
+            isxAppProperties.getJwtKey(), isxAppProperties.getRefreshExpirationMin());
+    }
+
+    private LoginRes buildLoginRes(UserEntity userEntity, String tenantId, String role) {
+
+        return LoginRes.builder().username(userEntity.getUsername()).account(userEntity.getAccount())
+            .phone(userEntity.getPhone()).email(userEntity.getEmail()).remark(userEntity.getRemark())
+            .token(generateUserToken(userEntity.getId(), tenantId))
+            .refreshToken(generateRefreshToken(userEntity.getId(), tenantId)).tenantId(tenantId).role(role).build();
+    }
+
+    private void validateUserStatus(UserEntity userEntity) {
+
+        if (UserStatus.DISABLE.equals(userEntity.getStatus())) {
+            throw new IsxAppException("401", "账号已被禁用，请联系管理员");
+        }
+
+        if (userEntity.getValidStartDateTime() != null && userEntity.getValidEndDateTime() != null) {
+            if (LocalDateTime.now().isBefore(userEntity.getValidStartDateTime())
+                || LocalDateTime.now().isAfter(userEntity.getValidEndDateTime())) {
+                throw new IsxAppException("401", "用户账号不在有效期内，请联系管理员");
+            }
+        }
+    }
+
+    private TenantUserEntity validateTenantUser(String userId, String tenantId) {
+
+        if (Strings.isEmpty(tenantId)) {
+            throw new IsxAppException("401", "刷新token异常，请重新登录");
+        }
+
+        TenantUserEntity tenantUserEntity = tenantUserRepository.findByTenantIdAndUserId(tenantId, userId)
+            .orElseThrow(() -> new IsxAppException("401", "用户不在租户中，请重新登录"));
+
+        if (TenantStatus.DISABLE.equals(tenantUserEntity.getStatus())) {
+            throw new IsxAppException("401", "用户被租户禁用，请重新登录");
+        }
+
+        TenantEntity tenantEntity =
+            tenantRepository.findById(tenantId).orElseThrow(() -> new IsxAppException("401", "当前租户不可用"));
+        if (TenantStatus.DISABLE.equals(tenantEntity.getStatus())) {
+            throw new IsxAppException("401", "当前租户已被禁用");
+        }
+
+        if (tenantEntity.getValidStartDateTime() != null && tenantEntity.getValidEndDateTime() != null) {
+            if (LocalDateTime.now().isBefore(tenantEntity.getValidStartDateTime())
+                || LocalDateTime.now().isAfter(tenantEntity.getValidEndDateTime())) {
+                throw new IsxAppException("401", "当前租户不在有效期内");
+            }
+        }
+
+        return tenantUserEntity;
     }
 }

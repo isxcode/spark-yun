@@ -6,8 +6,9 @@ import com.isxcode.spark.api.api.res.PageAccessRuleRes;
 import com.isxcode.spark.modules.api.entity.ApiAccessRuleEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ApiAccessRuleMapper {
 
     ApiAccessRuleEntity addAccessRuleReqToApiAccessRuleEntity(AddAccessRuleReq addAccessRuleReq);

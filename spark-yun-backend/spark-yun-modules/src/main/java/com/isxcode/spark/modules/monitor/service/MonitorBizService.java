@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.monitor.service;
 
+import static com.isxcode.spark.common.jpa.JpaTenantContext.allData;
+
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
@@ -51,11 +53,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.ap.internal.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.isxcode.spark.api.monitor.constants.TimeType;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,15 +65,14 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.executeCommand;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpFile;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class MonitorBizService {
 
     private final ClusterNodeRepository clusterNodeRepository;
@@ -287,24 +287,21 @@ public class MonitorBizService {
             pageInstancesReq.setSearchKeyWord("");
         }
 
-        JPA_TENANT_MODE.set(false);
         Page<WorkflowMonitorAo> workflowMonitorAos =
-            workflowInstanceRepository.searchWorkflowMonitor(TENANT_ID.get(), pageInstancesReq.getSearchKeyWord(),
-                PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize()));
-        JPA_TENANT_MODE.set(true);
+            allData(() -> workflowInstanceRepository.searchWorkflowMonitor(ContextHolder.getTenantId(),
+                pageInstancesReq.getSearchKeyWord(),
+                PageRequest.of(pageInstancesReq.getPage(), pageInstancesReq.getPageSize())));
 
         return workflowMonitorAos.map(workflowMapper::workflowMonitorAoToPageInstancesRes);
     }
 
-    @Scheduled(cron = "0 * * * * ?")
     public void scheduleGetNodeMonitor() {
 
         LocalDateTime now = LocalDateTime.now();
 
         // 获取所有的节点
-        JPA_TENANT_MODE.set(false);
-        List<ClusterNodeEntity> allNode = clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING);
-        JPA_TENANT_MODE.set(true);
+        List<ClusterNodeEntity> allNode =
+            allData(() -> clusterNodeRepository.findAllByStatus(ClusterNodeStatus.RUNNING));
 
         allNode.forEach(e -> {
             CompletableFuture.supplyAsync(() -> {

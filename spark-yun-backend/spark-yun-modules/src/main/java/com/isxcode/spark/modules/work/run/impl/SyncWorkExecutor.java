@@ -1,5 +1,7 @@
 package com.isxcode.spark.modules.work.run.impl;
 
+import com.isxcode.spark.common.security.ContextHolder;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.isxcode.spark.api.agent.constants.AgentType;
@@ -56,8 +58,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
 import static com.isxcode.spark.common.utils.ssh.SshUtils.scpJar;
 
 @Service
@@ -164,7 +166,7 @@ public class SyncWorkExecutor extends WorkExecutor {
             }
 
             // 随机选择一个节点，解析请求节点信息
-            ClusterNodeEntity agentNode = clusterNodes.get(new Random().nextInt(clusterNodes.size()));
+            ClusterNodeEntity agentNode = clusterNodes.get(ThreadLocalRandom.current().nextInt(clusterNodes.size()));
             ScpFileEngineNodeDto scpNode = clusterNodeMapper.engineNodeEntityToScpFileEngineNodeDto(agentNode);
             scpNode.setPasswd(aesUtils.decrypt(scpNode.getPasswd()));
 
@@ -216,7 +218,7 @@ public class SyncWorkExecutor extends WorkExecutor {
                 for (SecretKeyEntity secretKeyEntity : allKey) {
                     String secretName = "${{ secret." + secretKeyEntity.getKeyName() + " }}";
                     if (script.contains(secretName)) {
-                        if (!secretKeyEntity.getCreateBy().equals(USER_ID.get())) {
+                        if (!secretKeyEntity.getCreateBy().equals(ContextHolder.getUserId())) {
                             throw errorLogException("检测脚本异常 : 需要申请别人的全局变量" + secretName);
                         }
                         script = script.replace(secretName, aesUtils.decrypt(secretKeyEntity.getSecretValue()));

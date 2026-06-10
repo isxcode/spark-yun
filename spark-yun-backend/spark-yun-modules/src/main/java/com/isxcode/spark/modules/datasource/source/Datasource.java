@@ -33,7 +33,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.isxcode.spark.common.config.CommonConfig.JPA_TENANT_MODE;
 import static com.isxcode.spark.modules.datasource.service.DatasourceService.ALL_EXIST_DRIVER;
 
 @Slf4j
@@ -101,10 +100,8 @@ public abstract class Datasource {
 
         if (driver == null) {
 
-            // 获取驱动
-            JPA_TENANT_MODE.set(false);
+            // 获取租户和系统共享的驱动
             DatabaseDriverEntity driverEntity = dataDriverService.getDriver(connectInfo.getDriverId());
-            JPA_TENANT_MODE.set(true);
 
             // 获取驱动路径
             String driverPath = PathUtils.parseProjectPath(isxAppProperties.getResourcesPath()) + File.separator
@@ -145,8 +142,8 @@ public abstract class Datasource {
                 throw new IsxAppException(e.getMessage());
             }
             try {
-                driver = new DriverShim((Driver) driverClass.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
+                driver = new DriverShim((Driver) driverClass.getDeclaredConstructor().newInstance());
+            } catch (ReflectiveOperationException e) {
                 log.error(e.getMessage(), e);
                 throw new IsxAppException(e.getMessage());
             }

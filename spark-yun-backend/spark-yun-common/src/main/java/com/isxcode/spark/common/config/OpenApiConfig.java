@@ -24,12 +24,8 @@ public class OpenApiConfig {
             new SecurityScheme().type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.HEADER).description("输入用户token")
                 .scheme("basic").name(SecurityConstants.HEADER_AUTHORIZATION);
 
-        SecurityScheme basicTenantScheme =
-            new SecurityScheme().type(SecurityScheme.Type.APIKEY).in(SecurityScheme.In.HEADER).description("输入租户tenant")
-                .scheme("tenant").name(SecurityConstants.HEADER_TENANT_ID);
-
-        SecurityRequirement basicAuthRequirement = new SecurityRequirement().addList("tenantAuth").addList("tokenAuth");
-        return new OpenAPI().components(new Components().addSecuritySchemes("tokenAuth", basicAuthScheme)
-            .addSecuritySchemes("tenantAuth", basicTenantScheme)).addSecurityItem(basicAuthRequirement);
+        SecurityRequirement basicAuthRequirement = new SecurityRequirement().addList("tokenAuth");
+        return new OpenAPI().components(new Components().addSecuritySchemes("tokenAuth", basicAuthScheme))
+            .addSecurityItem(basicAuthRequirement);
     }
 }

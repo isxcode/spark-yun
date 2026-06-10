@@ -87,7 +87,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         Files.setPosixFilePermissions(k8sLog, perms);
 
         // 创建pod文件
-        try (InputStream inputStream = new ByteArrayInputStream(podTemplateContent.getBytes())) {
+        try (InputStream inputStream = new ByteArrayInputStream(podTemplateContent.getBytes(StandardCharsets.UTF_8))) {
             Files.copy(inputStream, Paths.get(agentHomePath + File.separator + "pod").resolve(workInstanceId + ".yaml"),
                 StandardCopyOption.REPLACE_EXISTING);
         }
@@ -103,8 +103,8 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS,
                 Arrays.asList(submitWorkReq.getPluginReq().getArgs()));
         } else {
-            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, Collections.singletonList(
-                Base64.getEncoder().encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes())));
+            flinkConfig.set(ApplicationConfiguration.APPLICATION_ARGS, Collections.singletonList(Base64.getEncoder()
+                .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8))));
         }
 
         // 配置名称
@@ -124,7 +124,7 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
             KubernetesConfigOptions.ImagePullPolicy.IfNotPresent);
         flinkConfig.set(KubernetesConfigOptions.NAMESPACE, "zhiqingyun-space");
         flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, "zhiqingyun");
-        flinkConfig.set(KubernetesConfigOptions.CONTAINER_IMAGE, "flink:1.18.1-scala_2.12");
+        flinkConfig.set(KubernetesConfigOptions.CONTAINER_IMAGE, "flink:2.2.0-scala_2.12");
         flinkConfig.set(KubernetesConfigOptions.TASK_MANAGER_CPU, 2.0);
         flinkConfig.set(KubernetesConfigOptions.KUBERNETES_POD_TEMPLATE, submitWorkReq.getAgentHomePath()
             + File.separator + "pod" + File.separator + submitWorkReq.getWorkInstanceId() + ".yaml");
@@ -134,19 +134,11 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         flinkConfig.set(TaskManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse("1g"));
         flinkConfig.set(TaskManagerOptions.NUM_TASK_SLOTS, 1);
         flinkConfig.set(RestartStrategyOptions.RESTART_STRATEGY, "disable");
-        flinkConfig.setLong("kubernetes.client.shutdown-timeout", 30000);
+        flinkConfig.setString("kubernetes.client.shutdown-timeout", "30000");
 
         submitWorkReq.getFlinkSubmit().getConf().forEach((k, v) -> {
-            if (v instanceof String) {
+            if (v != null) {
                 flinkConfig.setString(k, String.valueOf(v));
-            } else if (v instanceof Boolean) {
-                flinkConfig.setBoolean(k, Boolean.parseBoolean(String.valueOf(v)));
-            } else if (v instanceof Double) {
-                flinkConfig.setDouble(k, Double.parseDouble(String.valueOf(v)));
-            } else if (v instanceof Integer) {
-                flinkConfig.setInteger(k, Integer.parseInt(String.valueOf(v)));
-            } else if (v instanceof Long) {
-                flinkConfig.setLong(k, Long.parseLong(String.valueOf(v)));
             } else {
                 throw new IllegalArgumentException("Unsupported type for key: " + k + ", value: " + v);
             }
@@ -302,7 +294,8 @@ public class FlinkKubernetesAgentService implements FlinkAgentService {
         if (logFiles != null) {
             for (File logFile : logFiles) {
                 if (logFile.getName().contains("application") || logFile.getName().contains("taskmanager")) {
-                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(logFile))) {
+                    try (BufferedReader bufferedReader =
+                        Files.newBufferedReader(logFile.toPath(), StandardCharsets.UTF_8)) {
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
                             logBuilder.append(line).append("\n");

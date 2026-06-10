@@ -22,7 +22,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.PipelineOptions;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.runtime.jobgraph.JobGraph;
-import org.apache.flink.runtime.jobgraph.SavepointConfigOptions;
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings;
 import org.apache.flink.runtime.messages.Acknowledge;
 import org.apache.logging.log4j.util.Strings;
@@ -34,6 +33,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -43,6 +43,8 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 public class FlinkStandaloneAgentService implements FlinkAgentService {
+
+    private static final String SAVEPOINT_PATH_KEY = "execution.savepoint.path";
 
     @Override
     public String getAgentType() {
@@ -63,8 +65,8 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
 
             // 添加配置
             Configuration configuration = new Configuration();
-            configuration.setString(RestOptions.ADDRESS, restAddress);
-            configuration.setInteger(RestOptions.PORT, Integer.parseInt(restPort));
+            configuration.set(RestOptions.ADDRESS, restAddress);
+            configuration.set(RestOptions.PORT, Integer.parseInt(restPort));
             return configuration;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -100,16 +102,8 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
         }
 
         submitWorkReq.getFlinkSubmit().getConf().forEach((k, v) -> {
-            if (v instanceof String) {
+            if (v != null) {
                 configuration.setString(k, String.valueOf(v));
-            } else if (v instanceof Boolean) {
-                configuration.setBoolean(k, Boolean.parseBoolean(String.valueOf(v)));
-            } else if (v instanceof Double) {
-                configuration.setDouble(k, Double.parseDouble(String.valueOf(v)));
-            } else if (v instanceof Integer) {
-                configuration.setInteger(k, Integer.parseInt(String.valueOf(v)));
-            } else if (v instanceof Long) {
-                configuration.setLong(k, Long.parseLong(String.valueOf(v)));
             } else {
                 throw new IllegalArgumentException("Unsupported type for key: " + k + ", value: " + v);
             }
@@ -122,11 +116,12 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
                     + submitWorkReq.getFlinkSubmit().getAppResource())))
                 .setEntryPointClassName(submitWorkReq.getFlinkSubmit().getEntryClass()).setConfiguration(configuration)
                 .setArguments(submitWorkReq.getPluginReq().getArgs()).setUserClassPaths(userClassPaths);
-            if (configuration.get(SavepointConfigOptions.SAVEPOINT_PATH) != null) {
-                program = builder
-                    .setSavepointRestoreSettings(
-                        SavepointRestoreSettings.forPath(configuration.get(SavepointConfigOptions.SAVEPOINT_PATH)))
-                    .build();
+            if (configuration.getString(SAVEPOINT_PATH_KEY, null) != null) {
+                program =
+                    builder
+                        .setSavepointRestoreSettings(
+                            SavepointRestoreSettings.forPath(configuration.getString(SAVEPOINT_PATH_KEY, null)))
+                        .build();
             } else {
                 program = builder.build();
             }
@@ -135,13 +130,15 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
                 .setJarFile(new File((submitWorkReq.getAgentHomePath() + File.separator + "plugins" + File.separator
                     + submitWorkReq.getFlinkSubmit().getAppResource())))
                 .setEntryPointClassName(submitWorkReq.getFlinkSubmit().getEntryClass()).setConfiguration(configuration)
-                .setArguments(
-                    Base64.getEncoder().encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes()))
+                .setArguments(Base64.getEncoder()
+                    .encodeToString(JSON.toJSONString(submitWorkReq.getPluginReq()).getBytes(StandardCharsets.UTF_8)))
                 .setUserClassPaths(userClassPaths);
-            if (configuration.get(SavepointConfigOptions.SAVEPOINT_PATH) != null) {
-                program = builder.setSavepointRestoreSettings(
-                    SavepointRestoreSettings.forPath(configuration.getString(SavepointConfigOptions.SAVEPOINT_PATH)))
-                    .build();
+            if (configuration.getString(SAVEPOINT_PATH_KEY, null) != null) {
+                program =
+                    builder
+                        .setSavepointRestoreSettings(
+                            SavepointRestoreSettings.forPath(configuration.getString(SAVEPOINT_PATH_KEY, null)))
+                        .build();
             } else {
                 program = builder.build();
             }
@@ -184,8 +181,7 @@ public class FlinkStandaloneAgentService implements FlinkAgentService {
     public GetWorkLogRes getWorkLog(GetWorkLogReq getWorkLogReq) throws Exception {
 
         Configuration configuration = genConfiguration(getWorkLogReq.getFlinkHome());
-        String restUrl =
-            configuration.getString(RestOptions.ADDRESS) + ":" + configuration.getInteger(RestOptions.PORT);
+        String restUrl = configuration.get(RestOptions.ADDRESS) + ":" + configuration.get(RestOptions.PORT);
 
         // 判断作业是否成功
         String status;

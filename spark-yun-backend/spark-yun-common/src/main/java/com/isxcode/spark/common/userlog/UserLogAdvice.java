@@ -1,14 +1,13 @@
 package com.isxcode.spark.common.userlog;
 
-import static com.isxcode.spark.common.config.CommonConfig.TENANT_ID;
-import static com.isxcode.spark.common.config.CommonConfig.USER_ID;
+import com.isxcode.spark.common.security.ContextHolder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.isxcode.spark.backend.api.base.exceptions.SuccessResponseException;
 import com.isxcode.spark.backend.api.base.properties.IsxAppProperties;
 import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -46,16 +45,16 @@ public class UserLogAdvice {
 
         userActionEntity = new UserActionEntity();
         userActionEntity.setStartTimestamp(System.currentTimeMillis());
-        if (Strings.isEmpty(USER_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getUserId())) {
             userActionEntity.setUserId("anonymous");
         } else {
-            userActionEntity.setUserId(USER_ID.get());
+            userActionEntity.setUserId(ContextHolder.getUserId());
         }
 
-        if (Strings.isEmpty(TENANT_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getTenantId())) {
             userActionEntity.setTenantId("anonymous");
         } else {
-            userActionEntity.setTenantId(TENANT_ID.get());
+            userActionEntity.setTenantId(ContextHolder.getTenantId());
         }
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -92,7 +91,7 @@ public class UserLogAdvice {
             return;
         }
 
-        if (Strings.isEmpty(USER_ID.get())) {
+        if (Strings.isEmpty(ContextHolder.getUserId())) {
             userActionEntity.setCreateBy("anonymous");
         }
         userActionEntity.setEndTimestamp(System.currentTimeMillis());

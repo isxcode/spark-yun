@@ -1,5 +1,13 @@
 # 至轻云-超轻量级智能化大数据中心
 
+### 注意：大版本升级维护中，切到稳定版本commit
+
+```bash
+git clone https://github.com/isxcode/spark-yun.git
+cd spark-yun
+git checkout 94060eae67def45353d87710a448509dc95785ee
+```
+
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
 [![build](https://github.com/isxcode/spark-yun/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build.yml)
 [![GitHub Repo stars](https://img.shields.io/github/stars/isxcode/spark-yun)](https://github.com/isxcode/spark-yun)

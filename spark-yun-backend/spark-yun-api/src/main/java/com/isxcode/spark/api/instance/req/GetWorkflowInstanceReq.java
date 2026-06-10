@@ -1,6 +1,6 @@
 package com.isxcode.spark.api.instance.req;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data

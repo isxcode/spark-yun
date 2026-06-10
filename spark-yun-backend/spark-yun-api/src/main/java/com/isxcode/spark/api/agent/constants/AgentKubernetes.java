@@ -5,7 +5,7 @@ package com.isxcode.spark.api.agent.constants;
  */
 public interface AgentKubernetes {
 
-    String SPARK_DOCKER_IMAGE = "spark:3.4.1";
+    String SPARK_DOCKER_IMAGE = "spark:4.1.2";
 
     String NAMESPACE = "zhiqingyun-space";
 

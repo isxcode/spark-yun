@@ -8,10 +8,11 @@ import com.isxcode.spark.api.cluster.res.QueryAllClusterRes;
 import com.isxcode.spark.modules.cluster.entity.ClusterEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ClusterMapper {
 
     @Mapping(target = "activeNodeNum", expression = "java(0)")

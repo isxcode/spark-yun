@@ -10,8 +10,9 @@ import com.isxcode.spark.modules.alarm.entity.AlarmInstanceEntity;
 import com.isxcode.spark.modules.alarm.entity.MessageEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AlarmMapper {
 
     MessageEntity addMessageReqToMessageEntity(AddMessageReq addMessageReq);
