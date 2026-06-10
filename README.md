@@ -1,6 +1,6 @@
 # 至轻云-超轻量级智能化大数据中心
 
-## 注意：大版本升级维护中，请切换到稳定版本commit:**94060eae67def45353d87710a448509dc95785ee**
+### 注意：大版本升级维护中，切换稳定版本commit
 
 ```bash
 git clone https://github.com/isxcode/spark-yun.git
