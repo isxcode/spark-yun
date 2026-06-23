@@ -1,4 +1,4 @@
-# 至轻云-超轻量级智能化大数据中心
+# 至轻云-超轻量智能数据中心
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
 [![build](https://github.com/isxcode/spark-yun/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build.yml)
@@ -25,15 +25,8 @@
         <td><a href="https://zhiqingyun-demo.isxcode.com">https://zhiqingyun-demo.isxcode.com</a></td>
     </tr>
     <tr>
-        <td>部署文档</td>
-        <td><a href="https://zhiqingyun.isxcode.com/zh/docs/zh/1/2">https://zhiqingyun.isxcode.com/zh/docs/zh/1/2</a></td></tr>
-    <tr>
-        <td>安装包下载</td>
-        <td><a href="https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz">https://zhiqingyun-demo.isxcode.com/tools/open/file/zhiqingyun.tar.gz</a></td>
-    </tr>
-    <tr>
         <td>产品推荐</td>
-        <td><a href="https://zhishuyun.isxcode.com">[至数云] - 超轻量级人工智能应用平台</a></td>
+        <td><a href="https://zhishuyun.isxcode.com">[至数云] - 超轻量智能应用平台</a></td>
     </tr>
     <tr>
         <td>关键词</td>
@@ -77,15 +70,17 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 相关文档
 
-- [快速体验](https://zhiqingyun.isxcode.com/zh/docs/zh/1/0)
-- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/zh/2/0)
-- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/zh/5/3)
+- [快速体验](https://zhiqingyun.isxcode.com/zh/docs/1/0)
+- [产品手册](https://zhiqingyun.isxcode.com/zh/docs/2/0)
+- [开发手册](https://zhiqingyun.isxcode.com/zh/docs/5/3)
 - [博客](https://ispong.isxcode.com)
 
 ### 源码构建
 
+- Mac或Linux
+
 ```bash
-# 操作系统: Mac或Linux
+
 # 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
@@ -95,8 +90,9 @@ docker run --rm \
   gradle package
 ```
 
+- Windows
+
 ```bash
-# 操作系统: Windows
 # 安装包路径: C:\Users\isxcode\Downloads\spark-yun\spark-yun-dist\build\distributions\zhiqingyun.tar.gz
 cd Downloads
 git clone https://github.com/isxcode/spark-yun.git
