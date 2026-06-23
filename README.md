@@ -55,9 +55,9 @@
 ### 立即体验
 
 演示地址：https://zhiqingyun-demo.isxcode.com </br>
-体验账号：zhiyao </br>
-账号密码：zhiyao123 [已禁用，联系管理员] </br>
-添加微信：wx_ispong
+体验账号：邮箱/短信注册 </br>
+体验时间：1天 </br>
+咨询微信：wx_ispong
 
 ### 快速部署
 
