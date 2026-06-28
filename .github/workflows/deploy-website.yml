@@ -81,7 +81,7 @@ jobs:
         run: |
           cd /home/runner/work/spark-yun/spark-yun/zhiqingyun-platform/website
           tar -czf website.tar.gz ./.output
-          mv website.tar.gz /home/runner/work/spark-yun/spark-yun/zhiqingyun-platform/
+          mv website.tar.gz /home/runner/work/spark-yun/spark-yun/
 
       - name: Copy website via ssh password
         uses: appleboy/scp-action@v0.1.7
