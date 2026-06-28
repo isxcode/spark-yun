@@ -11,7 +11,7 @@ on:
         description: 'repository'
         required: true
         type: string
-        default: 'isxcode'
+        default: 'ispong'
       branch_number:
         description: 'branch'
         required: true
@@ -35,40 +35,28 @@ jobs:
       fail-fast: false
       matrix:
         node:
-          - '18'
+          - '22'
 
     steps:
-
-      - name: Set timezone to Asia/Shanghai
-        run: |
-          sudo timedatectl set-timezone Asia/Shanghai
-          date
 
       - name: Checkout spark-yun
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: ${{ inputs.repository_account }}/spark-yun
+          repository: ${{ inputs.repository_account }}/zhiqingyun-platform
           ref: ${{ inputs.branch_number }}
-
-      - name: Checkout spark-yun-vip
-        uses: actions/checkout@v4
-        with:
-          token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: ${{ inputs.repository_account }}/spark-yun-vip
-          ref: ${{ inputs.branch_number }}
-          path: "/home/runner/work/spark-yun/spark-yun/spark-yun-vip"
+          path: "/home/runner/work/spark-yun/zhiqingyun-platform"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.0.6
+          version: 11.6.0
           run_install: false
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{ matrix.node }}
 
       - name: Get pnpm store directory
         shell: bash
@@ -85,15 +73,15 @@ jobs:
 
       - name: Build with Nodejs
         run: |
-          cd docs
+          cd /home/runner/work/spark-yun/zhiqingyun-platform/website
           pnpm install --force
           pnpm run build
 
       - name: Tar dist
         run: |
-          cd /home/runner/work/spark-yun/spark-yun/docs
+          cd /home/runner/work/spark-yun/zhiqingyun-platform/website
           tar -czf website.tar.gz ./.output
-          mv website.tar.gz /home/runner/work/spark-yun/spark-yun/
+          mv website.tar.gz /home/runner/work/spark-yun/zhiqingyun-platform/
 
       - name: Copy website via ssh password
         uses: appleboy/scp-action@v0.1.7
@@ -111,11 +99,19 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script_stop: false
+          script_stop: true
           timeout: 1800s
           script: |
-            pm2 delete all
+            set -euo pipefail
+            export PATH=/opt/node/bin:$PATH
+            node -e "const major = Number(process.versions.node.split('.')[0]); if (major < 22) { throw new Error('Website runtime requires Node.js 22 or newer, current: ' + process.version) }"
+            pm2 delete zhiqingyun-website || true
             rm -rf /opt/.output
             tar -vzxf /tmp/website.tar.gz -C /opt/
             rm -rf /tmp/website.tar.gz
-            pm2 start /opt/.output/server/index.mjs
+            test -s /opt/.output/server/contents.sqlite
+            test -s /opt/.output/public/__nuxt_content/content/sql_dump.txt
+            HOST=127.0.0.1 PORT=3000 NODE_ENV=production pm2 start /opt/.output/server/index.mjs --name zhiqingyun-website --cwd /opt/.output --interpreter "$(command -v node)" --time --update-env
+            sleep 3
+            curl -fsS http://127.0.0.1:3000/zh/docs/1/6-mac | grep -q "Mac系统源码编译"
+            pm2 save
