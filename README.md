@@ -55,7 +55,7 @@
 ### 立即体验
 
 演示地址：https://zhiqingyun-demo.isxcode.com </br>
-体验账号：邮箱注册 </br>
+体验账号：手机号登录 </br>
 体验时间：1天 </br>
 咨询微信：fanZqyccc
 
