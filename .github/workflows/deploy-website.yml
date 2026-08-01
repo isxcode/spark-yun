@@ -43,9 +43,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ env.ADMIN_GITHUB_TOKEN }}
-          repository: ${{ inputs.repository_account }}/zhiqingyun-platform
+          repository: ${{ inputs.repository_account }}/spark-yun
           ref: ${{ inputs.branch_number }}
-          path: "/home/runner/work/spark-yun/spark-yun/zhiqingyun-platform"
+          path: "/home/runner/work/spark-yun/spark-yun/spark-yun"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -73,13 +73,13 @@ jobs:
 
       - name: Build with Nodejs
         run: |
-          cd /home/runner/work/spark-yun/spark-yun/zhiqingyun-platform/website
+          cd /home/runner/work/spark-yun/spark-yun/spark-yun/website
           pnpm install --force
           pnpm run build
 
       - name: Tar dist
         run: |
-          cd /home/runner/work/spark-yun/spark-yun/zhiqingyun-platform/website
+          cd /home/runner/work/spark-yun/spark-yun/spark-yun/website
           tar -czf website.tar.gz ./.output
           mv website.tar.gz /home/runner/work/spark-yun/spark-yun/
 
