@@ -12,20 +12,20 @@
         <td>产品官网</td>
         <td><a href="https://zhiqingyun.isxcode.com">https://zhiqingyun.isxcode.com</a></td>
     </tr>
-    <tr>
-        <td>源码仓库</td>
-        <td><a href="https://github.com/isxcode/spark-yun">https://github.com/isxcode/spark-yun</a></td>
-    </tr>
-    <tr>
-        <td>码云仓库</td>
-        <td><a href="https://gitee.com/isxcode/spark-yun">https://gitee.com/isxcode/spark-yun</a></td>
-    </tr>
-    <tr>
-        <td>演示环境</td>
+      <tr>
+        <td>托管平台</td>
         <td><a href="https://zhiqingyun-demo.isxcode.com">https://zhiqingyun-demo.isxcode.com</a></td>
     </tr>
     <tr>
-        <td>产品推荐</td>
+        <td>GitHub</td>
+        <td><a href="https://github.com/isxcode/spark-yun">https://github.com/isxcode/spark-yun</a></td>
+    </tr>
+    <tr>
+        <td>Gitee</td>
+        <td><a href="https://gitee.com/isxcode/spark-yun">https://gitee.com/isxcode/spark-yun</a></td>
+    </tr>
+    <tr>
+        <td>友情推荐</td>
         <td><a href="https://zhishuyun.isxcode.com">[至数云] - 超轻量智能应用平台</a></td>
     </tr>
     <tr>
@@ -36,32 +36,43 @@
 
 ### 产品介绍
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款企业级、智能化大数据中心。一键部署，开箱即用。可快速实现大数据计算、数据采集、数据清洗、数据安全、数据质量、数据管理、数据接口开放等功能，助力企业构建新一代智慧数据中心。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至轻云是一款企业级、智能化大数据中心。一键部署，开箱即用。可快速实现大数据计算、数据采集、数据研发、数据安全、数据治理、数据资产、数据开放等功能，助力企业构建新一代智慧数据中心。
 
-### 功能列表
+### 功能列表(开源社区)
 
-| 模块     | 功能（包含商业版）                                                             |
+| 模块     | 功能                                                                 |
+| :------- | :------------------------------------------------------------------- |
+| 资源管理 | 计算集群、数据源、驱动管理、资源中心                                 |
+| 数据开发 | 作业流、函数仓库                                                     |
+| 运维监控 | 资源总览、调度历史                                                   |
+| 后台管理 | 租户成员、角色管理、后台设置                               |
+| 平台管理 | 用户中心、租户管理、登录方式、登录日志、行为日志、平台授权、平台设置 |
+| 个人中心 | 基础信息、修改密码、修改手机、修改邮箱、修改语言                     |
+
+### 功能列表(企业商用)
+
+| 模块     | 功能                                                                           |
 | :------- | :----------------------------------------------------------------------------- |
 | 至轻智能 | 智能问答、提示词管理、MCP一键分享                                              |
-| 资源管理 | 计算集群、数据源、驱动管理、计算容器、文件管理                                 |
-| 数据规划 | 数据分层、数据标准                                                             |
-| 项目管理 | 项目列表、资源审批                                                             |
-| 数据研发 | 数据建模、作业开发、实时计算、函数仓库、全局变量、依赖合集、发布审批 |
-| 数据运维 | 资源总览、调度历史、基线告警                                                   |
+| 资源管理 | 计算集群、数据源、驱动管理、计算容器、资源中心                                 |
+| 数据规划 | 数据分层、数据架构、代码标准、字段标准                                         |
+| 项目管理 | 项目列表、项目成员、项目资源                                                   |
+| 数据研发 | 数据建模、数据开发、实时计算、全局变量、函数仓库、依赖合集、发布审批           |
+| 数据运维 | 资源监控、调度历史、基线告警                                                   |
 | 数据监控 | 监控总览、结构采集、数据中心                                                   |
 | 数据治理 | 治理总览、数据质量、治理工单                                                   |
 | 数据安全 | 审计总览、分类分级、敏感数据、我的数据、权限审批                               |
 | 数据资产 | 资产总览、数据指标、数据标签、数据目录、数据地图                               |
 | 数据服务 | 数据大屏、接口服务、接口日志、黑白名单、数据报表、表单管理、分享表单           |
+| 数据应用 | 应用总览、数据门户、仪表盘                                                     |
 | 后台管理 | 租户成员、角色管理、组织架构、通知配置、智能配置、后台设置                     |
-| 平台管理 | 用户中心、租户管理、免密登录、登录日志、行为日志、平台授权、平台设置           |
+| 平台管理 | 用户中心、租户管理、免密登录、登录方式、登录日志、行为日志、平台授权、平台设置 |
 | 个人中心 | 基础信息、修改密码、修改手机、修改邮箱、偏好设置、消息中心                     |
 
-### 立即体验
+### 托管平台
 
-演示地址：https://zhiqingyun-demo.isxcode.com </br>
-体验账号：短信注册「添加咨询微信，审批账号」</br>
-体验时间：1天 </br>
+平台地址：https://zhiqingyun-demo.isxcode.com </br>
+账号注册：点击登录方式，切换短信登录 (添加咨询微信，审批账号，租户有效期1天)</br>
 咨询微信：fanZqyccc
 
 ### 快速部署
@@ -82,10 +93,9 @@ docker run -p 8080:8080 -d isxcode/zhiqingyun
 
 ### 源码构建
 
-- Mac或Linux
+- Mac或Linux(terminal执行)
 
 ```bash
-
 # 安装包路径: /tmp/spark-yun/spark-yun-dist/build/distributions/zhiqingyun.tar.gz
 cd /tmp
 git clone https://github.com/isxcode/spark-yun.git
@@ -95,7 +105,7 @@ docker run --rm \
   gradle package
 ```
 
-- Windows
+- Windows(CMD执行)
 
 ```bash
 # 安装包路径: C:\Users\isxcode\Downloads\spark-yun\spark-yun-dist\build\distributions\zhiqingyun.tar.gz
