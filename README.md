@@ -30,7 +30,7 @@
     </tr>
     <tr>
         <td>关键词</td>
-        <td>大数据, 问数, 数仓, 湖仓, 中台, 数据治理, Spark, Flink, Hadoop, Doris, Hive</td>
+        <td>大数据, 智数, 数仓, 湖仓, 中台, 数据治理, Spark, Flink, Hadoop, Doris, Hive</td>
     </tr>
 </table>
 
@@ -54,20 +54,21 @@
 | 模块     | 功能                                                                           |
 | :------- | :----------------------------------------------------------------------------- |
 | 至轻智能 | 智能问数、提示词管理、MCP管理                                                  |
-| 资源管理 | 计算集群、数据来源、应用连接、计算容器、存储资源、文件管理                     |
-| 数据规划 | 数据架构、数据分层、代码标准、字段标准                                         |
+| 资源管理 | 计算集群、数据来源、计算容器、应用连接、存储资源、文件资源                     |
+| 数据规划 | 数据分层、数据架构、代码标准、字段标准                                         |
 | 项目管理 | 项目列表、项目成员、项目资源                                                   |
-| 数据研发 | 数据建模、数据开发、数据转发、实时计算、全局变量、函数仓库、依赖合集           |
-| 数据运维 | 资源监控、发布审批、调度历史、基线告警                                         |
+| 数据研发 | 数据建模、数据开发、实时计算、全局变量、函数仓库、依赖合集                     |
+| 数据运维 | 运维总览、发布审批、基线告警、调度实例                                         |
 | 数据监控 | 监控总览、结构采集、采集实例、数据中心                                         |
-| 数据治理 | 治理总览、数据质量、治理工单、数据融合、数据审批                               |
-| 数据安全 | 审计总览、分类分级、敏感数据、我的数据、权限审批                               |
-| 数据资产 | 资产总览、我的数据、数据指标、数据标签、数据目录、数据地图                     |
-| 数据服务 | 黑白名单、接口服务、数据市场                                                   |
-| 数据应用 | 数据大屏、数据报表、表单管理                                                   |
+| 数据质量 | 质量总览、质量规则、质量方案、质量工单                                         |
+| 数据管理 | 数据总览、数据融合、数据维护、数据审批                                         |
+| 数据安全 | 安全总览、分级分类、敏感加密、权限审批、访问审计                               |
+| 数据资产 | 资产总览、数据指标、数据标签、我的数据、数据目录、数据地图                     |
+| 数据服务 | 服务总览、黑白名单、数据转发、接口服务                                         |
+| 数据应用 | 数据市场、数据报表、数据大屏、应用表单                                         |
 | 后台管理 | 租户成员、角色管理、组织架构、通知配置、智能配置、后台设置                     |
 | 平台管理 | 用户中心、租户管理、免密登录、登录方式、登录日志、行为日志、平台授权、平台设置 |
-| 个人中心 | 基础信息、修改密码、修改手机、修改邮箱、偏好设置、消息中心                     |
+| 个人中心 | 基础信息、修改密码、修改手机、修改邮箱、令牌安全、偏好设置、消息中心           |
 
 ### 托管平台
 
@@ -121,31 +122,32 @@ docker run --rm ^
 
 <table>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/sy-1.png" alt="1" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/sy-2.png" alt="2" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-5.png" alt="1" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-6.png" alt="2" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/sy-3.png" alt="3" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/sy-4.png" alt="4" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-7.png" alt="3" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-8.png" alt="4" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/sy-5.png" alt="5" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/sy-6.png" alt="6" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-9.png" alt="5" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-10.png" alt="6" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/sy-7.png" alt="7" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/sy-8.png" alt="8" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-11.png" alt="7" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-12.png" alt="8" width="400"/></td>
     </tr>
     <tr>
-       <td><img src="https://img.isxcode.com/picgo/sy-9.png" alt="9" width="400"/></td>
-       <td><img src="https://img.isxcode.com/picgo/sy-10.png" alt="10" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-13.png" alt="9" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-14.png" alt="10" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/sy-11.png" alt="11" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/sy-12.png" alt="12" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-15.png" alt="11" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-16.png" alt="12" width="400"/></td>
     </tr>
     <tr>
-        <td><img src="https://img.isxcode.com/picgo/sy-13.png" alt="13" width="400"/></td>
-        <td><img src="https://img.isxcode.com/picgo/sy-14.png" alt="14" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-17.png" alt="13" width="400"/></td>
+        <td><img src="https://zhiqingyun-saas.isxcode.com/tools/open/file/web-product-18.png" alt="14" width="400"/></td>
     </tr>
 </table>
+  
