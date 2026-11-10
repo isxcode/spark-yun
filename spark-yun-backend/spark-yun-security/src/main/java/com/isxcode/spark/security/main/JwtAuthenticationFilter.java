@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 验证jwt, 获取用户id
         String userUuid;
         try {
-            userUuid = JwtUtils.decrypt(isxAppProperties.getJwtKey(), authorization, isxAppProperties.getAesSlat(),
+            userUuid = JwtUtils.decrypt(isxAppProperties.getAesSlat(), authorization, isxAppProperties.getJwtKey(),
                 String.class);
             USER_ID.set(userUuid);
         } catch (Exception e) {
