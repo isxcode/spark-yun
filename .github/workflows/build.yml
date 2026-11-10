@@ -223,40 +223,6 @@ jobs:
           tags: isxcode/zhiqingyun:${{ inputs.version_number }}
           push: true
 
-  # 上传到服务器
-  upload-server:
-    needs: build
-
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-
-    steps:
-
-      - name: Set timezone to Asia/Shanghai
-        run: |
-          sudo timedatectl set-timezone Asia/Shanghai
-
-      - name: Download zhiqingyun tar
-        uses: actions/download-artifact@v4
-        with:
-          name: zhiqingyun
-          path: ./
-
-      - name: Upload package to Ali server
-        uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          timeout: 3600s
-          source: "zhiqingyun.tar.gz"
-          target: /data/file/
-
   # 上传阿里镜像仓库
   upload-ali-hub:
     needs: build
