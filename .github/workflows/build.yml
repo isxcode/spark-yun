@@ -281,6 +281,7 @@ jobs:
           platforms: linux/amd64
           tags: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:${{ inputs.version_number }}-amd64
           push: true
+          provenance: false
 
       - name: Build and Push Arm64
         uses: docker/build-push-action@v5
@@ -289,6 +290,7 @@ jobs:
           platforms: linux/arm64
           tags: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun:${{ inputs.version_number }}-arm64
           push: true
+          provenance: false
 
   # 上传到代理镜像到阿里云
   upload-agent-ali-hub:
@@ -341,3 +343,4 @@ jobs:
           platforms: linux/amd64
           tags: registry.cn-shanghai.aliyuncs.com/isxcode/zhiqingyun-agent:${{ inputs.version_number }}
           push: true
+          provenance: false
