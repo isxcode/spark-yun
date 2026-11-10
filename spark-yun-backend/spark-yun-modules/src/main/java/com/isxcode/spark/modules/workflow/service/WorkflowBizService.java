@@ -852,8 +852,8 @@ public class WorkflowBizService {
         // 检验token是否生效
         WorkflowToken workflowToken;
         try {
-            workflowToken = JwtUtils.decrypt(isxAppProperties.getJwtKey(), invokeWorkflowReq.getToken(),
-                isxAppProperties.getAesSlat(), WorkflowToken.class);
+            workflowToken = JwtUtils.decrypt(isxAppProperties.getAesSlat(), invokeWorkflowReq.getToken(),
+                isxAppProperties.getJwtKey(), WorkflowToken.class);
         } catch (Exception e) {
             throw new IsxErrorException("作业流token解析异常:" + e.getMessage());
         }
