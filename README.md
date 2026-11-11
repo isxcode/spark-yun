@@ -1,4 +1,4 @@
-# 至轻云-轻量级智能数据中心
+# 至轻云-轻量级智能数据平台
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/isxcode/zhiqingyun)](https://hub.docker.com/r/isxcode/zhiqingyun)
 [![build](https://github.com/isxcode/spark-yun/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/isxcode/spark-yun/actions/workflows/build.yml)
